@@ -43,9 +43,11 @@ esac
 # Check command line arguments
 #--------------------------------------------------------------------
 RUNDIR=`pwd`
-SRCDIR=`dirname $0`
 BUILDDIR=$RUNDIR/build
 SOURCESDIR=$SRCDIR/sources
+SRCDIR=`dirname $0`
+# Find absolute path to SRCDIR
+SRCDIR=`cd $SRCDIR && pwd`
 
 gs_command_line=${@}
 gs_run_batch=no
@@ -259,6 +261,7 @@ else
   FOUND_LIBOBJC=no
 fi
 
+FFCALLSOURCESDIR=$SOURCESDIR
 FOUND_SOURCES=yes
 IS_CVS=no
 if [ -d $SRCDIR/../core ]; then
@@ -563,7 +566,11 @@ elif [ $LIBFFI_INSTALLED = yes ];then
   echo libffi already installed >&5
   echo libffi already installed
 else
+  SAVESOURCESDIR=$SOURCESDIR
+  SOURCESDIR=$FFCALLSOURCESDIR
   gs_build_package
+  SOURCESDIR=$SAVESOURCESDIR
+  unset $SAVESOURCESDIR
   REBUILD_MAKE=yes
 fi
 
