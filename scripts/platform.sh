@@ -5,7 +5,18 @@
 
 gs_platform()
 {
-  gs_machine=`(uname -s) 2>/dev/null || echo unknown`
+  gs_build=`$SRCDIR/config.guess` 2>&1
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  else
+    gs_build=`$SRCDIR/config.sub $gs_build`
+  fi
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  fi
+  gs_build_cpu=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+  gs_build_vendor=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+  gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 }
 
 gs_platform_generic()
@@ -52,9 +63,9 @@ gs_platform_unknown()
 
 gs_flags()
 {
-  case "$gs_machine" in
-    Darwin*)   gs_platform_darwin ;;
-    SunOS*)    gs_platform_solaris ;;
+  case "$gs_build_os" in
+    darwin*)   gs_platform_darwin ;;
+    solaris*)  gs_platform_solaris ;;
     *)         gs_platform_unknown ;;
   esac
 }

@@ -103,6 +103,7 @@ SOURCESDIR=$SRCDIR/sources
 # in case the user set it themselves.
 if test -n "$gs_system_prefix"; then
   GNUSTEP_SYSTEM_ROOT=$gs_system_prefix
+  export GNUSTEP_SYSTEM_ROOT
 fi
 if test -n "$GNUSTEP_SYSTEM_ROOT"; then
   if test \! "`basename $GNUSTEP_SYSTEM_ROOT`" = System; then
@@ -351,8 +352,8 @@ fi
 # Configure. Run the configure script which checks the system out.
 #--------------------------------------------------------------------
 echo "******** Checking system for installation issues **********"
-echo "Configuring for $gs_machine" >&5
-echo "Configuring for $gs_machine"
+echo "Configuring for $gs_build" >&5
+echo "Configuring for $gs_build"
 gs_flags
 PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
 PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
@@ -376,8 +377,8 @@ if [ $? != 0 ]; then
   rm -f logs.tar.gz
   tar -cf logs.tar logs
   gzip logs.tar
-  echo "If you don't understand something or think a test is in error"
-  echo "Please email bug-gnustep@gnu.org and send the $BUILDDIR/logs.tar.gz file"
+  echo "If you don't understand something or think a test is in error,"
+  echo "please email bug-gnustep@gnu.org and send the $BUILDDIR/logs.tar.gz file"
   exit 1
 fi
 
@@ -512,7 +513,13 @@ fi
 # Reset the environment, just to make sure it's clean.
 if [ -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh ]; then
     gs_save=$GNUSTEP_SYSTEM_ROOT
-    . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh
+    case "$gs_build_os" in
+      # Solaris 2.7 freaks out about this, for some reason.
+      solaris*)  ;;
+	     *) 
+        . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh
+	;;
+    esac
     GNUSTEP_SYSTEM_ROOT=$gs_save
     unset gs_save
 fi
@@ -621,7 +628,7 @@ if [ -n "$gs_install_prefix" ]; then
 fi
 PKG_PATCHES=`find $SOURCESDIR -name base*patch`
 if [ $NO_PRIV = yes ]; then
-  PKG_PATCHES='$PKG_PATCHES $SRCDIR/home-gdomap.patch'
+  PKG_PATCHES="$PKG_PATCHES $SRCDIR/home-gdomap.patch"
 fi
 gsexitstatus=0
 if [ "$GNUSTEP_BASE_INSTALLED" = yes -a $do_upgrade_base = no ]; then

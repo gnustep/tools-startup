@@ -59,4 +59,4 @@ snapshot:
 	    cp ../../../current/* sources; \
 	  fi; \
 	  cd ..
-	#tar --gzip -cf gnustep-startup-snap.tar.gz gnustep-startup-snap
+	tar --gzip -cf gnustep-startup-snap.tar.gz gnustep-startup-snap
