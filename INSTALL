@@ -1,2 +1,6 @@
 
-Run the InstallGNUstep script to install everything. See the README
+Run the InstallGNUstep script to install everything. At a Unix prompt:
+
+InstallGNustep
+
+See the README for more information

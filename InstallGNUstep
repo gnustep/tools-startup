@@ -56,8 +56,8 @@ if [ "`whoami`" != root ]; then
   AS_ROOT=no
   echo WARNING: You are not logged in as root
   echo
-  echo GNUstep needs to be installed with root privlidges. If you
-  echo do not have root privlidges, you can also install GNUstep if
+  echo GNUstep needs to be installed with root privileges. If you
+  echo do not have root privileges, you can also install GNUstep if
   echo you have sudo access or you can install it in your home
   echo directory. If you have no idea what any of this means, you
   echo "should choose option two (2) below (or quit (option 3) and read "

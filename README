@@ -33,6 +33,16 @@ or if you are using csh:
 
 setenv GNUSTEP_SYSTEM_ROOT /usr/local/GNUstep/System
 
+Passing flags to make
+---------------------
+
+You can set the MAKEFLAGS environement variable to pass make flags to
+InstallGNUstep. For instance:
+
+export MAKEFILES=debug=yes
+
+will compile all the core libraries with debugging enable.
+
 Discussion
 ==========
 

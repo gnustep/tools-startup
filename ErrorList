@@ -30,7 +30,7 @@ Could not determine binutils version. Perhaps you are working on a
 system that doesn't include this information. It's probably OK to continue.
 
 I106 Information
-You have an old or nonexistant iconv implementation. iconv is not
+You have an old or nonexistent iconv implementation. iconv is not
 required, but is needed for string and font encodings. It comes with
 glib 2.1.2 or later.
 
@@ -84,11 +84,11 @@ I190 Information
 $GNUSTEP_SYSTEM_ROOT was set and has something installed there but
 configure's prefix was not set to this location. I'm assuming you
 want to install GNUstep somewhere else than where it is currently
-installed. If not, when you run conifgure, set the prefix by typing
+installed. If not, when you run configure, set the prefix by typing
 --prefix=$GNUSTEP_SYSTEM_ROOT
 
 I199 Information
-GNUstep is not installed yet. Please procede with installation of GNUstep
+GNUstep is not installed yet. Please proceed with installation of GNUstep
 as long as you have resolved other errors list above.
 
 
@@ -105,7 +105,7 @@ you either have gcc 3.x installed or install gnustep-objc.
 E280 Error
 I don't seem to be able to use your Objective-C compiler to produce
 working binaries!  Please check your Objective-C compiler installation.
-Either the Objective-C comiler part of gcc is not installed or the 
+Either the Objective-C compiler part of gcc is not installed or the 
 Objective-C library is not installed.
 
 E281 Error
