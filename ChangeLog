@@ -1,3 +1,9 @@
+2004-02-18  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: More warnings.
+	* InstallGNustep: Better check for ffcall, libffi.
+	* configure.in: Check for opensll, jpeg, tiff, png.
+
 2003-11-26  Adam Fedor  <fedor@gnu.org>
 
 	* home-gdomap.patch: New file

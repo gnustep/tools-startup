@@ -3,6 +3,7 @@
 SRCDIR=`pwd`
 BUILDDIR=/tmp/gnustep
 SOURCESDIR=$SRCDIR/../sources
+FFSOURCESDIR=$SRCDIR/../sources
 
 # FIXME: Option to set these on the command line
 LIB_COMBO=gnu-gnu-gnu
@@ -82,27 +83,27 @@ if [ "`whoami`" != root ]; then
        NO_PRIV=yes
        HAVE_SUDO=no;;
   esac
+else
+  echo -n "Press the Return/Enter key to begin continue: "
+  read user_enter
 fi
 
-if [ $AS_ROOT=no -a $HAVE_SUDO=yes ]; then
+if [ $AS_ROOT = no -a $HAVE_SUDO = yes ]; then
   echo "***You will be prompted for a sudo password during installation ***"
 fi
 
 #--------------------------------------------------------------------
 # Find GNUstep sources
 #--------------------------------------------------------------------
-FFCALL=ffcall-1.8d
-
-FOUND_SOURCES=yes
-if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no ]; then
-  FFCALL=`find $SOURCESDIR -name ffcall-1*`
-  if [ x$FFCALL = x ]; then
-    echo Cannot find ffcall sources
-    FOUND_SOURCES=no
-  fi
+FOUND_FFCALL=yes
+FFCALL=`find $FFSOURCESDIR -name ffcall-1*`
+if [ x$FFCALL = x ]; then
+  FOUND_FFCALL=no
+else
   FFCALL=`basename $FFCALL .tar.gz`
 fi
 
+FOUND_SOURCES=yes
 IS_CVS=no
 if [ -d $SRCDIR/../core ]; then
   # Compile from CVS checkout
@@ -195,8 +196,18 @@ else
 fi
 echo Library combo: $LIB_COMBO
 echo
+
+if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no ]; then
+  echo "******** Source files not found **********"
+  echo "Make sure there is a directory one level above this script directory"
+  echo "named sources and that it has ffcall-1.8d.tar.gz present"
+  echo "Download this file from ftp://ftp.gnustep.org/pub/gnustep/dev-libs"
+  exit 1
+fi
+
 echo -n "Press the Return/Enter key to begin building GNUstep: "
 read user_enter
+echo
 
 #--------------------------------------------------------------------
 # GNUstep make
@@ -261,7 +272,7 @@ elif [ $LIBFFI_INSTALLED = yes ];then
 else
   echo "******** Installing ffcall **********"
   rm -f logs/$PLOG*
-  tar -zxf $SOURCESDIR/$FFCALL.tar.gz
+  tar -zxf $FFSOURCESDIR/$FFCALL.tar.gz
   cd $FFCALL
   ./configure --prefix=$GNUSTEP_SYSTEM_ROOT \
    --libdir=$GNUSTEP_SYSTEM_ROOT/Library/Libraries \

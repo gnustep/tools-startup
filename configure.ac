@@ -213,6 +213,29 @@ else
 fi
 
 #--------------------------------------------------------------------
+# Check OpenSSL for HTTPS support.
+#--------------------------------------------------------------------
+  ssl_ok=no
+  AC_CHECK_HEADERS(openssl/ssl.h)
+  if test $ac_cv_header_openssl_ssl_h = yes; then
+    AC_CHECK_LIB(crypto, CRYPTO_malloc)
+    if test $ac_cv_lib_crypto_CRYPTO_malloc = yes; then
+      # ssl needs socket on Solaris
+      AC_CHECK_LIB(socket, main)
+      AC_CHECK_LIB(ssl, ssl2_clear)
+      AC_CHECK_LIB(cipher,des_setkey)
+      if test $ac_cv_lib_ssl_ssl2_clear = yes; then
+        ssl_ok=yes
+      fi
+    fi
+  fi
+
+if test $ssl_ok = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W125"
+
+fi
+
+#--------------------------------------------------------------------
 # Check for strange network stuff used by gdomap
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(for variable length socket addresses)
@@ -651,6 +674,10 @@ if test "$have_jpeg" = yes; then
     GRAPHIC_CFLAGS="$with_jpeg_include $GRAPHIC_CFLAGS"
   fi
 fi
+if test "$have_jpeg" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W403"
+fi
+
 
 #--------------------------------------------------------------------
 # Find TIFF
@@ -685,6 +712,14 @@ fi
 
 if test "$have_tiff" = no; then
   SETUP_ERRORS="$SETUP_ERRORS E401"
+fi
+
+#--------------------------------------------------------------------
+# Find additional image libs
+#--------------------------------------------------------------------
+AC_CHECK_LIB(png, main)
+if test "$ac_cv_lib_png_main" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W409"
 fi
 
 #--------------------------------------------------------------------

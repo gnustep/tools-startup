@@ -39,6 +39,11 @@ For security reasons, the make program will not pass LD_LIBRARY_PATH
 along. You will need to compile applications with 
 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH'.
 
+W125 Warning 
+The OpenSSL package (libcrypto, etc) is needed to access https connections
+with NSURL and for other purposes. This package is optional so you are
+not required to install it.
+
 W130 Warning
 The SO_REUSEADDR socket option for controlling re-use of network
 sockets immediately after shutdown appears to be broken on this
@@ -126,6 +131,14 @@ GNUstep.
 E401 Error
 You need to install the TIFF library (libtiff and libtiff-devel) in order
 to use the GNUstep gui.
+
+W403 Warning
+You need to install the JPEG library (libjpeg)) in order to load JPEG
+images with the GNUstep gui.
+
+W409 Warning
+You need to install the PNG library (libpng) in order to load PNG
+images with the GNUstep gui.
 
 I999
 End of info messages.
