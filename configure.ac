@@ -167,7 +167,7 @@ AC_MSG_CHECKING([for apple compiler flags])
 cc_cppprecomp=`${CC} -no-cpp-precomp 2>&1 | grep -c "unrecognized"`
 cc_bundle=`${CC} -bundle 2>&1 | grep -c "couldn"`
 # 0 means we have the flag
-if test $cc_bundle = 0; then
+if test  "$GCC_VERSION" = 3 -a $cc_bundle = 0; then
   SETUP_ERRORS="$SETUP_ERRORS E093"
   cc_bundle=yes
 fi
