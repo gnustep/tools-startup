@@ -35,8 +35,10 @@ gs_platform()
   gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 }
 
+# Note: hostname -s doesn't work on every system...
+NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+
 # Figure out where the GNUstep files are
-NAME=`hostname -s`
 RUNDIR=`pwd`
 if [ -f InstallGNUstep ]; then
   TOPDIR=`cd ..; pwd`

@@ -47,14 +47,12 @@ gs_build_package()
   fi
   gsexitstatus=0
   if [ x"$PKG_CONFIG" != xNO ]; then
-    # Configure the project, unless we are making from CVS
-    if [ \! -f config.log -o $IS_CVS = no ]; then
-      echo ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} >&5
-      ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
-      gsexitstatus=$?
-    fi
+    echo ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} >&5
+    ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
+    gsexitstatus=$?
     cp config.log ../logs/$PLOG-config.log
     if [ $gsexitstatus != 0 -o \! -f config.status ]; then
+      gsexitstatus=1
       cd ..
       return
     fi

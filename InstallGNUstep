@@ -189,7 +189,7 @@ if [ $? = 0 ]; then
   HAVE_SUDO=yes
 fi
 AS_ROOT=yes
-# If we are running in batch more, just assume that the user has install
+# If we are running in batch mode, just assume that the user has install
 # privileges (i.e. assume they know what they are doing).
 if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
   AS_ROOT=no
@@ -454,7 +454,7 @@ if [ $do_upgrade_make = yes -o $do_upgrade_base = yes -o $do_upgrade_gui = yes ]
     echo $ECHO_N "Install new versions? (y or n): $ECHO_C"
     read user_option
   else
-    echo In batch more. Will upgrade to new versions
+    echo In batch mode. Will upgrade to new versions
     user_option=y
   fi
   if [ "$user_option" = n -o  "$user_option" = N -o "$user_option" = no -o "$user_option" = NO -o "$user_option" = No ]; then
@@ -584,10 +584,14 @@ elif [ $LIBFFI_INSTALLED = yes ];then
   echo libffi already installed >&5
   echo libffi already installed
 else
+  SAVE_IS_CVS=$IS_CVS
+  IS_CVS=no
   SAVESOURCESDIR=$SOURCESDIR
   SOURCESDIR=$FFCALLSOURCESDIR
   gs_build_package
   SOURCESDIR=$SAVESOURCESDIR
+  IS_CVS=$SAVE_IS_CVS
+  unset $SAVE_IS_CVS
   unset $SAVESOURCESDIR
   REBUILD_MAKE=yes
 fi
@@ -611,7 +615,15 @@ if [ $GCC_VERSION = 2 ]; then
     echo Warning: Could not find gnustep-objc sources to install >&5
     echo Warning: Could not find gnustep-objc sources to install
   else
+  SAVE_IS_CVS=$IS_CVS
+  IS_CVS=no
+  SAVESOURCESDIR=$SOURCESDIR
+  SOURCESDIR=$FFCALLSOURCESDIR
   gs_build_package
+  SOURCESDIR=$SAVESOURCESDIR
+  IS_CVS=$SAVE_IS_CVS
+  unset $SAVE_IS_CVS
+  unset $SAVESOURCESDIR
   REBUILD_MAKE=yes
   fi
   echo "  Exit statis is $gsexitstatus" >&5

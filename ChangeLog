@@ -1,8 +1,16 @@
 2005-04-05  Adam Fedor  <fedor@gnu.org>
 
+	* InstallGNUstep: Set variables so libobjc is found when compiling 
+	from CVS.
+	* scripts/common.sh (gs_build_package): Revert previous patch.
+	* scripts/run-gnustep: More general hostname check.
+
+2005-04-05  Adam Fedor  <fedor@gnu.org>
+
 	* InstallGNUstep: Don't add slash after $gnustep_install_prefix
 	* scripts/common.sh (gs_patch_package): Assume unreversed patch.
-	Don't configure if compiling from CVS and we already configured.
+	(gs_build_package) Don't configure if compiling from CVS and we 
+	already configured.
 	* scripts/run-gnustep: Several fixes.
 
 2005-04-04  Adam Fedor  <fedor@gnu.org>

@@ -38,7 +38,7 @@ cvs-dist:
 	cvs -z3 export -r start-$(VERTAG) gnustep/Startup
 	mv gnustep/Startup gnustep-startup-$(GNUSTEP_START_VERSION)
 	cd gnustep-startup-$(GNUSTEP_START_VERSION); \
-	  mkdir sources; \
+	  if [\! -d sources ]; then mkdir sources; fi; \
 	  if [ -d ../../../current ]; then \
 	    cp ../../../current/* sources; \
 	  fi; \
