@@ -42,7 +42,7 @@ NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
 RUNDIR=`pwd`
 if [ -f InstallGNUstep ]; then
   TOPDIR=`cd ..; pwd`
-elif [-f Startup/InstallGNUstep ]; then
+elif [ -f Startup/InstallGNUstep ]; then
   TOPDIR=$RUNDIR
 else
   TOPDIR=$HOME/src/gnustep-$NAME
