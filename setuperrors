@@ -14,7 +14,7 @@ if [ ! -f setupvars ]; then
   echo "*********************************************************************"
   exit 1
 fi
-. setupvars
+. ./setupvars
 
 GOT_ERRORS=no
 

@@ -1,7 +1,8 @@
 2005-03-21  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Get absolute path for SRCDIR and always look for
-	ffcall in sources dir.
+	ffcall in sources dir. Specify . path for scripts.
+	* setuperrors: Specify . path for scripts.
 
 2005-03-16  Adam Fedor  <fedor@gnu.org>
 

@@ -395,7 +395,7 @@ fi
 
 # Read in the current setup. Check the versions of the installed packages 
 # against the ones we have and ask the user if there is a discrepancy.
-. setupvars
+. ./setupvars
 if [ $IS_CVS = yes ]; then
   CURRENT_MAKE_VERSION=CVS
   CURRENT_BASE_VERSION=CVS
