@@ -1,0 +1,42 @@
+2005-02-15  Adam Fedor  <fedor@gnu.org>
+
+	* Version: 0.9.0
+	* ANNOUNCE: Add package versions
+
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
+	* ANNOUNCE: New file
+	* Makefile: Fix version.
+
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix some flags
+	* scripts/platforms.sh: Add solaris support
+	* Makefile: Simple dist creation
+
+2005-02-06  Adam Fedor  <fedor@gnu.org>
+
+	* Refactor scripts. More robust. Update documentation and
+	configuration.	
+
+2004-02-18  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: More warnings.
+	* InstallGNustep: Better check for ffcall, libffi.
+	* configure.in: Check for opensll, jpeg, tiff, png.
+
+2003-11-26  Adam Fedor  <fedor@gnu.org>
+
+	* home-gdomap.patch: New file
+	* InstallGNUstep: Use it. Use $MAKE.
+
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Better error checking
+	* configure.ac: Script fixes. Darwin support
+	* ErrorList: More warnings.
+
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* Initial import.
+

@@ -7,6 +7,11 @@ Your gcc version is not an official release and may be broken.
 Particularly if you are using RedHat before 7.2 or Mandrake, you should 
 upgrade gcc to a newer version.
 
+E101 Error
+No ld/binutils program installed. It's likely you are missing most
+or all programs needed for compiling. Check your operating system for
+information on installing a developer system.
+
 W102 Warning
 Make version is not recent enough or you are not using GNU
 make. You may have many problems compiling and/or running GNUstep.
@@ -20,15 +25,24 @@ W104 Warning
 ld/binutils version is not recent enough. Try to get a binutils version
 more recent that 2.9.6
 
+I105 Information
+Could not determine binutils version. Perhaps you are working on a
+system that doesn't include this information. It's probably OK to continue.
+
 I106 Information
-You have an old or nonexistant iconv implementation. iconv is not
+You have an old or nonexistent iconv implementation. iconv is not
 required, but is needed for string and font encodings. It comes with
 glib 2.1.2 or later.
 
-W109 Warning
-You are running a suid program (like sudo). For security, the make program
-will not pass LD_LIBRARY_PATH along. You will need to comile
-applications with 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH'. 
+W109 Warning 
+For security reasons, your make program will not pass LD_LIBRARY_PATH
+along. You may need to compile/install applications with 
+'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
+
+W125 Warning 
+The OpenSSL package (libcrypto, etc) is needed to access https connections
+with NSURL and for other purposes. This package is optional so you are
+not required to install it.
 
 W130 Warning
 The SO_REUSEADDR socket option for controlling re-use of network
@@ -75,12 +89,12 @@ I190 Information
 $GNUSTEP_SYSTEM_ROOT was set and has something installed there but
 configure's prefix was not set to this location. I'm assuming you
 want to install GNUstep somewhere else than where it is currently
-installed. If not, when you run conifgure, set the prefix by typing
+installed. If not, when you run configure, set the prefix by typing
 --prefix=$GNUSTEP_SYSTEM_ROOT
 
 I199 Information
-GNUstep is not installed yet. Please procede with installation of GNUstep
-as long as you have resolved other errors list above.
+GNUstep is not installed yet. Please proceed with installation of GNUstep
+as long as you have resolved other errors listed here.
 
 
 E270 Error
@@ -96,7 +110,7 @@ you either have gcc 3.x installed or install gnustep-objc.
 E280 Error
 I don't seem to be able to use your Objective-C compiler to produce
 working binaries!  Please check your Objective-C compiler installation.
-Either the Objective-C comiler part of gcc is not installed or the 
+Either the Objective-C compiler part of gcc is not installed or the 
 Objective-C library is not installed.
 
 E281 Error
@@ -117,6 +131,14 @@ GNUstep.
 E401 Error
 You need to install the TIFF library (libtiff and libtiff-devel) in order
 to use the GNUstep gui.
+
+W403 Warning
+You need to install the JPEG library (libjpeg)) in order to load JPEG
+images with the GNUstep gui.
+
+W409 Warning
+You need to install the PNG library (libpng) in order to load PNG
+images with the GNUstep gui.
 
 I999
 End of info messages.

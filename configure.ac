@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.0.1, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 1.0.0, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -28,7 +28,7 @@ SETUP_ERRORS=
 
 AC_CANONICAL_TARGET([])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([configure.ac])
+AC_CONFIG_SRCDIR([InstallGNUstep])
 AM_CONFIG_HEADER(config.h)
 
 #--------------------------------------------------------------------
@@ -57,6 +57,7 @@ fi
 AC_PROG_CC
 AC_PROG_CPP
 
+AC_MSG_CHECKING(for library combo)
 AC_ARG_WITH(library-combo,[
 --with-library-combo		Define the default library combination
 ],
@@ -65,16 +66,36 @@ ac_cv_library_combo=$ac_cv_library_combo
 )
 
 if test "$ac_cv_library_combo" = ""; then
-  if test $host_os = nextstep4; then
-    ac_cv_library_combo=nx-nx-nx
-  else
-    ac_cv_library_combo=gnu-gnu-gnu
-  fi
+  case "$host_os" in
+    darwin*)   ac_cv_library_combo=apple-apple-apple ;;
+    nextstep4) ac_cv_library_combo=nx-nx-nx          ;;
+    openstep4) ac_cv_library_combo=nx-nx-nx          ;;
+    *)         ac_cv_library_combo=gnu-gnu-gnu       ;;
+  esac
 fi
+case "$ac_cv_library_combo" in
+  apple) ac_cv_library_combo=apple-apple-apple ;;
+  gnu)   ac_cv_library_combo=gnu-gnu-gnu ;;
+  nx)    ac_cv_library_combo=nx-nx-nx ;;
+esac
+
 AC_SUBST(ac_cv_library_combo)
+AC_MSG_RESULT($ac_cv_library_combo)
 
-OBJC_RUNTIME_LIB=`echo $ac_cv_library_combo | awk -F- '{print $1}'`
+#--------------------------------------------------------------------
+# specific target_os options
+#--------------------------------------------------------------------
+case "$target_os" in
+  freebsd* | openbsd* )	
+	        INCLUDES="$INCLUDES -I/usr/local/include"
+		LIB_DIR="$LIB_DIR -L/usr/local/lib";;
+  netbsd*)	INCLUDES="$INCLUDES -I/usr/pkg/include"
+		LIB_DIR="$LIB_DIR -Wl,-R/usr/pkg/lib -L/usr/pkg/lib";;
+esac
 
+#--------------------------------------------------------------------
+# Determine the host, build, and target systems
+#--------------------------------------------------------------------
 case $target_os in
   *cygwin*  ) CYGWIN=yes;;
   *mingw32* ) MINGW32=yes;;
@@ -121,11 +142,13 @@ fi
 # Find the binary and compile tools
 #--------------------------------------------------------------------
 AC_CHECK_PROG(AR, ar, ar)
+AC_CHECK_PROG(LD, ld, ld)
 AC_CHECK_PROG(DLLTOOL, dlltool, dlltool)
 AC_PROG_RANLIB
 
 AC_PROG_INSTALL
 AC_PROG_LN_S([])
+AC_PATH_PROG(WHOAMI, whoami, echo, $PATH:/usr/ucb)
 
 GNU_MAKE=make
 case $host_os in
@@ -150,25 +173,37 @@ make_broken=[`make -f maketest --warn-undefined-variables 2>&1 | grep -c warn`]
 rm -f maketest
 if test "$make_broken" = 1; then
   AC_MSG_RESULT(broken)
-  SETUP_ERRORS="$SETUP_ERRORS W109"
+  case $host_os in
+    darwin*) ;;
+    *)  SETUP_ERRORS="$SETUP_ERRORS W109" ;;
+  esac
 else
   AC_MSG_RESULT(ok)
 fi
 
-
-AC_MSG_CHECKING(binutils version > 2.9)
-ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
-ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
-if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
-  AC_MSG_RESULT(yes $ld_version)
+if test x"$ac_cv_prog_LD" != x; then
+  AC_MSG_CHECKING(binutils version > 2.9)
+  ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>/dev/null`]
+  ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
+  if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
+    AC_MSG_RESULT(yes $ld_version)
+  else
+    AC_MSG_RESULT(no $ld_version)
+    case $host_os in
+      *darwin*)
+        ;;
+      *solaris*)
+        SETUP_ERRORS="$SETUP_ERRORS W103";;
+      *)
+        if test x"$ld_version" = x; then
+          SETUP_ERRORS="$SETUP_ERRORS I105"
+        else
+          SETUP_ERRORS="$SETUP_ERRORS W104"
+        fi;;
+    esac
+  fi
 else
-  AC_MSG_RESULT(no $ld_version)
-  case $host_os in
-    *solaris*)
-      SETUP_ERRORS="$SETUP_ERRORS W103";;
-    *)
-      SETUP_ERRORS="$SETUP_ERRORS W104";;
-  esac
+  SETUP_ERRORS="$SETUP_ERRORS E101"
 fi
 
 AC_MSG_CHECKING(iconv version > 2.1)
@@ -178,6 +213,8 @@ if test -n "$iconv_version" -a "$iconv_version" \> 2.1; then
 else
   AC_MSG_RESULT(no $iconv_version)
   case $host_os in
+    *darwin*)
+      ;;
     *solaris*)
       ;;
     *)
@@ -188,52 +225,39 @@ fi
 #--------------------------------------------------------------------
 # Set Apple/Darwin/OSX/NeXT information for other tests
 #--------------------------------------------------------------------
-OBJC_RUNTIME_LIB=`echo $LIBRARY_COMBO | tr '-' ' ' | awk '{print $1}'`
+OBJC_RUNTIME_LIB=`echo $ac_cv_library_combo | awk -F- '{print $1}'`
 AC_MSG_CHECKING(the Objective-C runtime)
-if test "$OBJC_RUNTIME_LIB" = "nx"; then
+if test "$OBJC_RUNTIME_LIB" = "nx" -o "$OBJC_RUNTIME_LIB" = "apple"; then
   AC_MSG_RESULT(NeXT)
   LIBOBJC='-lobjc'
-  CPPFLAGS="$CPPFLAGS -fnext-runtime -DNeXT_RUNTIME"
+  OBJCFLAGS="-fnext-runtime -DNeXT_RUNTIME"
 else
   AC_MSG_RESULT(GNU)
   LIBOBJC='-lobjc'
-  CPPFLAGS="$CPPFLAGS -fgnu-runtime"
+  OBJCFLAGS="-fgnu-runtime"
 fi
 
 #--------------------------------------------------------------------
-# Check for strange network stuff used by gdomap
+# Check OpenSSL for HTTPS support.
 #--------------------------------------------------------------------
-AC_MSG_CHECKING(for variable length socket addresses)
-AC_TRY_COMPILE([
-  #include <sys/types.h>
-  #include <sys/socket.h>
-  #include <net/if.h>
-  ],
-  [struct ifreq s; s.ifr_addr.sa_len = 0;],
-  sa_len=1, sa_len=0)
-if test $sa_len = 1; then
-  AC_MSG_RESULT(yes)
-  AC_DEFINE(HAVE_SA_LEN,,
-            [Define if your system has variable length network addresses])
-else
-  AC_MSG_RESULT(no)
-fi
+  ssl_ok=no
+  AC_CHECK_HEADERS(openssl/ssl.h)
+  if test $ac_cv_header_openssl_ssl_h = yes; then
+    AC_CHECK_LIB(crypto, CRYPTO_malloc)
+    if test $ac_cv_lib_crypto_CRYPTO_malloc = yes; then
+      # ssl needs socket on Solaris
+      AC_CHECK_LIB(socket, main)
+      AC_CHECK_LIB(ssl, ssl2_clear)
+      AC_CHECK_LIB(cipher,des_setkey)
+      if test $ac_cv_lib_ssl_ssl2_clear = yes; then
+        ssl_ok=yes
+      fi
+    fi
+  fi
 
-#--------------------------------------------------------------------
-# Check if system has buggy SO_REUSEADDR
-#--------------------------------------------------------------------
-AC_MSG_CHECKING(whether SO_REUSADDR is broken)
-AC_TRY_RUN([#include "$srcdir/config/config.reuseaddr.c"],
-	reuseaddr_ok=1,
-	reuseaddr_ok=0,
-	reuseaddr_ok=0)
-if test $reuseaddr_ok = 0; then
-  AC_DEFINE(BROKEN_SO_REUSEADDR,,
-            [Define if SO_REUSEADDR is broken on this system])
-  AC_MSG_RESULT(yes)
-  SETUP_ERRORS="$SETUP_ERRORS W130"
-else
-  AC_MSG_RESULT(no)
+if test $ssl_ok = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W125"
+
 fi
 
 #--------------------------------------------------------------------
@@ -374,20 +398,21 @@ AC_SUBST(GNUSTEP_INSTALLED)
 # Set location of GNUstep dirs for later use
 GNUSTEP_HDIR=
 if test $GNUSTEP_INSTALLED = yes; then
-  GNUSTEP_HDIR=$GNUSTEP_SYSTEM_ROOT/Library/Headers
+  GNUSTEP_HDIR=$prefix/Library/Headers
   if test "$GNUSTEP_FLATTENED" = yes; then
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries
+    GNUSTEP_LDIR=$prefix/Library/Libraries
   else
-    clean_target_os=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_os.sh $target_os`
-    clean_target_cpu=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_cpu.sh $target_cpu`
+    clean_target_os=`$prefix/Library/Makefiles/clean_os.sh $target_os`
+    clean_target_cpu=`$prefix/Library/Makefiles/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/$obj_dir/
+    GNUSTEP_LDIR=$prefix/Library/Libraries/$obj_dir/
   fi
 fi
 
 # Check to see if the libobjc library is in our GNUSTEP_SYSTEM_ROOT.
 # If so, there are probably other libraries that we want there also, so
 # leave the proper includes in CPPFLAGS and LDFLAGS
+GS_CUSTOM_OBJC=NONE
 AC_MSG_CHECKING(for GNUstep up-to-date objc library)
 gs_cv_objc_libdir=NONE
 if test -f "$GNUSTEP_HDIR/objc/objc.h"; then
@@ -396,6 +421,7 @@ if test -f "$GNUSTEP_HDIR/objc/objc.h"; then
   else
     gs_cv_objc_libdir=NONE
   fi
+  GS_CUSTOM_OBJC=$gs_cv_objc_libdir
 fi
 gcc_shared_libobjc=`gcc -print-file-name=libobjc.so`
 if test -f "$gcc_shared_libobjc"; then
@@ -452,67 +478,61 @@ OBJC_THREAD=$withval,
 OBJC_THREAD=
 )
 
+
 AC_MSG_CHECKING(whether objc has thread support)
-CFLAGS="$CFLAGS -x objective-c -I$srcdir $OBJC_CPPFLAGS $OBJC_LDFLAGS"
-if test "$OBJC_RUNTIME_LIB" = "gnu"; then
-  CFLAGS="$CFLAGS -fgnu-runtime"
-fi
-if test "$OBJC_RUNTIME_LIB" = "nx"; then
-  CFLAGS="$CFLAGS -DNeXT_RUNTIME"
-fi
-if test "$OBJC_RUNTIME_LIB" = "apple"; then
-  CFLAGS="$CFLAGS -DNeXT_RUNTIME"
-fi
+saved_CFLAGS="$CFLAGS"
+saved_LIBS="$LIBS"
+CFLAGS="$CFLAGS -x objective-c -I$srcdir $OBJCFLAGS"
 if test "$OBJC_THREAD" != ""; then
   LIBS="-lobjc $LIBS $OBJC_THREAD"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
 	objc_threaded="$OBJC_THREAD",
 	objc_threaded="", objc_threaded="")
 elif test "$host_os" = linux-gnu; then
   LIBS="-lobjc -lpthread"
-  AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpthread",
+  AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], objc_threaded="-lpthread",
 	objc_threaded="", objc_threaded="-lpthread")
 elif test "`echo $host_os|sed 's/[[0-9]].*//'|sed s/elf//`" = freebsd; then
   LIBS="-pthread -lobjc"
-  AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-pthread",
+  AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], objc_threaded="-pthread",
        objc_threaded="", objc_threaded="-pthread")
   if test x"$objc_threaded" = x""; then
     LIBS="-lpthread -lobjc"
-    AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpthread",
+    AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], objc_threaded="-lpthread",
 	objc_threaded="", objc_threaded="-lpthread")
   fi
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc -lpcthread"
-    AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpcthread",
+    AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], objc_threaded="-lpcthread",
 	objc_threaded="", objc_threaded="-lpcthread")
   fi
 elif test "$MINGW32" = yes; then
   # Mingw doesn't need anything extra for threads
   LIBS="-lobjc $LIBS"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
 	objc_threaded="works",
 	objc_threaded="", objc_threaded="works")
 else
   LIBS="-lobjc $LIBS"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
 	objc_threaded="works",
 	objc_threaded="", objc_threaded="")
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc $saved_LIBS -lpthread "
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
     	objc_threaded="-lpthread", 
 	objc_threaded="", objc_threaded="")
   fi
   if test x"$objc_threaded" = x""; then
     # Solaris, OpenBSD/sparc
     LIBS="-lobjc $saved_LIBS -lpthread -lposix4"
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
     	objc_threaded="-lpthread -lposix4", 
 	objc_threaded="", objc_threaded="")
   fi
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc $saved_LIBS -lthread "
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "$srcdir/config/config_thread.m"], 
     	objc_threaded="-lthread", 
 	objc_threaded="", objc_threaded="")
   fi
@@ -528,6 +548,9 @@ fi
 ac_cv_objc_threaded="$objc_threaded"
 AC_SUBST(objc_threaded)
 AC_SUBST(ac_cv_objc_threaded)
+# Restore LIBS and CFLAGS
+LIBS="$saved_LIBS"
+CFLAGS="$saved_CFLAGS"
 
 #--------------------------------------------------------------------
 # Setup dynamic linking 
@@ -538,6 +561,10 @@ OBJC_SYS_DYNAMIC_LINKER()
 # Check whether Objective-C /really/ works
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(whether objc really works)
+saved_CPPFLAGS="$CPPFLAGS"
+saved_LIBS="$LIBS"
+CPPFLAGS="$CPPFLAGS -x objective-c $OBJCFLAGS"
+LIBS="$LIBS $LIBOBJC $objc_threaded"		    
 AC_CACHE_VAL(objc_works,
   AC_TRY_RUN([#include "$srcdir/config/config.objc.m"],
   objc_works=yes, 
@@ -554,6 +581,8 @@ else
     SETUP_ERRORS="$SETUP_ERRORS E281"
   fi
 fi
+
+# Don't revert any Objective-C flags as they are used in the next test
 
 #---------------------------------------------------------------------
 # Guess if we are using a compiler which has the (GNU extension) +load 
@@ -604,6 +633,9 @@ CPPFLAGS="$string_saved_CPPFLAGS"
 AC_SUBST(NX_CONST_STRING_CPPFLAGS)
 AC_SUBST(NX_CONST_STRING_CLASS)
 
+LIBS="$saved_LIBS"
+CPPFLAGS="$saved_CPPFLAGS"
+
 #--------------------------------------------------------------------
 # Gui Depends
 #--------------------------------------------------------------------
@@ -639,6 +671,10 @@ if test "$have_jpeg" = yes; then
     GRAPHIC_CFLAGS="$with_jpeg_include $GRAPHIC_CFLAGS"
   fi
 fi
+if test "$have_jpeg" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W403"
+fi
+
 
 #--------------------------------------------------------------------
 # Find TIFF
@@ -676,6 +712,14 @@ if test "$have_tiff" = no; then
 fi
 
 #--------------------------------------------------------------------
+# Find additional image libs
+#--------------------------------------------------------------------
+AC_CHECK_LIB(png, main)
+if test "$ac_cv_lib_png_main" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W409"
+fi
+
+#--------------------------------------------------------------------
 # Basic GNUstep installation
 #--------------------------------------------------------------------
 GNUSTEP_SOURCED=no
@@ -689,18 +733,25 @@ if test $GNUSTEP_INSTALLED = yes; then
   fi
 
   # gnustep libraries installed?
-  CPPFLAGS="$CPPFLAGS -I$prefix/Library/Headers -I$prefix/Library/Headers/gnustep -I$prefix/Library/Headers/$clean_target_cpu/$clean_target_os"
+  saved_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
+  if test "$GNUSTEP_FLATTENED" = yes; then
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
+  fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
   have_back=no
-  if test -f $GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle/libgnustep-back; then
+  if test -f $prefix/Library/Bundles/libgnustep-back.bundle/libgnustep-back; then
     have_back=yes
   fi
+  CPPFLAGS="$saved_CPPFLAGS"
 
 fi
 
 AC_SUBST(GNUSTEP_SOURCED)
+AC_SUBST(GS_CUSTOM_OBJC)
 AC_SUBST(ac_cv_header_callback_h)
+AC_SUBST(ac_cv_header_ffi_h)
 AC_SUBST(ac_cv_header_AppKit_NSApplication_h)
 AC_SUBST(ac_cv_header_Foundation_NSObject_h)
 AC_SUBST(have_back)
