@@ -22,7 +22,8 @@ gs_patch_package()
     if [ $file != __DONE__ ]; then
       echo Applying patch $file
       echo Applying patch $file >&5
-      patch -t -p0 < $file >&5
+      # Assume unreversed patches to avoid undoing a patch when we run again.
+      patch -f -p0 < $file >&5
     fi
   done
 }
@@ -40,14 +41,18 @@ gs_build_package()
   if [ -n "$PKG_PATCHES" ]; then
     gs_patch_package
   fi
+  # Clean the project, unless we are making from CVS
   if [ -f config.log -a $IS_CVS = no ]; then
     make distclean
   fi
   gsexitstatus=0
   if [ x"$PKG_CONFIG" != xNO ]; then
-    echo ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} >&5
-    ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
-    gsexitstatus=$?
+    # Configure the project, unless we are making from CVS
+    if [ \! -f config.log -o $IS_CVS = no ]; then
+      echo ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} >&5
+      ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
+      gsexitstatus=$?
+    fi
     cp config.log ../logs/$PLOG-config.log
     if [ $gsexitstatus != 0 -o \! -f config.status ]; then
       cd ..

@@ -25,7 +25,7 @@
 # compiles and installs the packages if all the prerequisites are 
 # satisfied. To run this script, at the command line, type
 #
-# InstallGNUstep
+# ./InstallGNUstep
 
 #--------------------------------------------------------------------
 # Check the shell. Do a few checks on how the shell behaves, so that we
@@ -518,7 +518,7 @@ PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
 fi
-PKG_PATCHES=
+PKG_PATCHES=`find $SOURCESDIR -name make*patch`
 gsexitstatus=0
 if [ $GNUSTEP_INSTALLED = yes -a $do_upgrade_make = no ]; then
   echo GNUstep Make already installed >&5
@@ -533,8 +533,8 @@ fi
 
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls $gs_install_prefix/$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh >&5 2>&1
-if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix/$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+ls $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
   gs_log_error
   exit 1
 fi

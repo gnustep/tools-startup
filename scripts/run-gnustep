@@ -47,7 +47,7 @@ else
 fi
 BUILDDIR=$TOPDIR/core
 cd $TOPDIR
-if [ !\ -f InstallGNUstep ]; then
+if [ \! -f InstallGNUstep ]; then
   echo "ERROR: Could not find GNUstep source directory"
   exit 1
 fi
@@ -65,17 +65,17 @@ gsexitstatus=$?
 # Archive the results
 rm -f $gs_build-results.txt
 rm -f $gs_build-logs.tar.gz
+GSDATE=`date`
 if [ $gsexitstatus != 0 ]; then
   mv $BUILDDIR/logs.tar.gz $gs_build-logs.tar.gz
-  cat "Fail Compile $gs_build `date`" > $gs_build-results.txt
+  echo "Fail Compile $gs_build $GSDATE" > $gs_build-results.txt
 else
-  cat "Success Compile $gs_build `date`" > $gs_build-results.txt
+  echo "Success Compile $gs_build $GSDATE" > $gs_build-results.txt
 fi
 
 # Upload the results somewhere
-ftp ftp.gnustep.org << EOF
-anonymous
-bug-gnustep@gnu.org
+ftp -n ftp.gnustep.org << EOF
+user anonymous bug-gnustep@gnu.org
 cd pub/incoming
 put $gs_build-results.txt
 binary

@@ -1,3 +1,10 @@
+2005-04-05  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Don't add slash after $gnustep_install_prefix
+	* scripts/common.sh (gs_patch_package): Assume unreversed patch.
+	Don't configure if compiling from CVS and we already configured.
+	* scripts/run-gnustep: Several fixes.
+
 2005-04-04  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Handle setting CPPFLAGS/LDFLAGS better.
