@@ -1,3 +1,8 @@
+2005-03-16  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Added --builddir and --config-options arguments.
+	* configure.ac: Fix version
+
 2005-03-02  Adam Fedor  <fedor@gnu.org>
 
 	* Version: 0.9.2

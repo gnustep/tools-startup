@@ -56,6 +56,11 @@ behavior of the script.
 	    prefix on the command line. For example:
 	       --prefix=/usr/local/GNUstep/System
 
+--builddir  Set the directory to build the packages. Normally this is
+	    {pwd}/build, where {pwd} is the current working directory.
+
+--config-options
+	    Extra options to pass to the configure routines.
 
 Discussion
 ==========

@@ -42,10 +42,16 @@ esac
 #--------------------------------------------------------------------
 # Check command line arguments
 #--------------------------------------------------------------------
+RUNDIR=`pwd`
+SRCDIR=`dirname $0`
+BUILDDIR=$RUNDIR/build
+SOURCESDIR=$SRCDIR/sources
+
 gs_command_line=${@}
 gs_run_batch=no
 gs_install_prefix=
 gs_system_prefix=
+PKG_EXTRA_CONFIG=
 while test $# != 0
 do
   gs_option=
@@ -58,6 +64,8 @@ do
       echo "  --debug	- Compile packages with debug info"
       echo
       echo "  --prefix={dir}	- GNUstep system root location"
+      echo "  --builddir={dir}	- Location to build packages"
+      echo "  --config-options={options}	- Extra configuration options"
       #echo "  --install-root={dir}	- Install dir prefix"
       exit 0
       ;;
@@ -76,6 +84,10 @@ do
   case $gs_option in
     --prefix)
       gs_system_prefix=$gs_optarg;; 
+    --builddir)
+      BUILDDIR=$gs_optarg;; 
+    --config-options)
+      PKG_EXTRA_CONFIG=$gs_optarg;; 
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end
@@ -94,10 +106,6 @@ done
 # Misc setup. Set the default source, build, and install directories.
 # Also source the sub-scripts that contain functions that we need.
 #--------------------------------------------------------------------
-
-SRCDIR=`pwd`
-BUILDDIR=$SRCDIR/build
-SOURCESDIR=$SRCDIR/sources
 
 # Make sure GNUSTEP_SYSTEM_ROOT has a /System at the end
 # in case the user set it themselves.
@@ -301,15 +309,15 @@ fi
 if [ \! -d $BUILDDIR ]; then
   echo "************************************************************"
   echo "Cannot create the build directory $BUILDDIR."
-  echo "trying to build in /tmp/gnustep"
-  BUILDDIR=/tmp/gnustepbuild
+  echo "trying to build in /tmp/gnustep-build"
+  BUILDDIR=/tmp/gnustep-build
   mkdir $BUILDDIR
 fi
 if [ \! -d $BUILDDIR ]; then
   echo "************************************************************"
   echo "Cannot create the build directory $BUILDDIR."
   echo "trying to build in your home directory...."
-  BUILDDIR=$HOME/gnustepbuild
+  BUILDDIR=$HOME/gnustep-build
   mkdir $BUILDDIR
   if [ ! -d $BUILDDIR ]; then
     echo "No. that doesn't work either. Contact bug-gnustep@gnu.org for help"
@@ -364,7 +372,7 @@ echo $PKG_LDFLAGS
 
 echo "" >&5
 echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO $PKG_CPPFLAGS $PKG_LDFLAGS" >&5
-$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO $PKG_CPPFLAGS $PKG_LDFLAGS
+$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO $PKG_EXTRA_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -487,7 +495,7 @@ echo
 PLOG=01-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG=--with-library-combo=$LIBRARY_COMBO
+PKG_CONFIG="$PKG_EXTRA_CONFIG --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
@@ -595,7 +603,7 @@ fi
 PLOG=03-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG=--with-library-combo=$LIBRARY_COMBO
+PKG_CONFIG="$PKG_EXTRA_CONFIG --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
@@ -621,7 +629,7 @@ fi
 PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
-PKG_CONFIG=
+PKG_CONFIG=$PKG_EXTRA_CONFIG
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
@@ -651,7 +659,7 @@ fi
 PLOG=05-gui
 PKG=$GGUI
 PKG_DISPLAY="GNUstep Gui"
-PKG_CONFIG=
+PKG_CONFIG=$PKG_EXTRA_CONFIG
 # PKG_INSTALL Keep from previous setting
 PKG_PATCHES=`find $SOURCESDIR -name gui*patch`
 gsexitstatus=0
@@ -675,7 +683,7 @@ fi
 PLOG=06-back
 PKG=$GBACK
 PKG_DISPLAY="GNUstep Back"
-PKG_CONFIG=
+PKG_CONFIG=$PKG_EXTRA_CONFIG
 # PKG_INSTALL Keep from previous setting
 PKG_PATCHES=`find $SOURCESDIR -name back*patch`
 gsexitstatus=0

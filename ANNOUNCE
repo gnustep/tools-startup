@@ -41,7 +41,7 @@ Changes in version 0.9.2
 
 Some arguments can be specified to the script.
 Added support for applying patches.
-Better checking if an build error has occured.
+Better checking if a build error has occured.
 
 Where can you get it?  How can you compile it?
 ==============================================
