@@ -1,0 +1,41 @@
+
+The GNUstep Startup Package, version 0.9.0 is now available.
+
+What is the GNUstep Startup Package?
+====================================
+
+GNUstep Startup is a compilation of the following core GNUstep packages:
+gnustep-make
+gnustep-base
+gnustep-gui
+gnustep-back
+
+In addition, there is a set of scripts to automatically build and
+install the core GNUstep system.  You can run it at any time: before,
+during, and after you have installed GNUstep.
+
+After installing GNUstep Startup, you will have a complete runtime system
+for compiling and running GNUstep applications. For a complete developement
+system, you would also need to install the Gorm and ProjectCenter applications.
+
+The installation scripts have currently been tested on:
+
+Darwin 7.x
+Solaris 2.7
+
+Changes in version 0.9.0
+=========================
+
+Beta release. Needs testing by volunteers.
+
+
+Where can you get it?  How can you compile it?
+==============================================
+
+The gnustep-startup distribution file has been placed on
+`ftp.gnustep.org' in `pub/gnustep/core'.
+
+Please log bug reports on the GNUstep project page
+<http://savannah.gnu.org/bugs/?group=gnustep> or send bug reports to
+<bug-gnustep@gnu.org>.
+

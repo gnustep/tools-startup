@@ -15,7 +15,7 @@
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-GNUSTEP_START_VERSION=1.0.0
+GNUSTEP_START_VERSION=0.9.0
 
 VERTAG = $(subst .,_,$(GNUSTEP_START_VERSION))
 

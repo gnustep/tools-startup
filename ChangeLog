@@ -1,5 +1,10 @@
 2005-02-11  Adam Fedor  <fedor@gnu.org>
 
+	* ANNOUNCE: New file
+	* Makefile: Fix version.
+
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
 	* configure.ac: Fix some flags
 	* scripts/platforms.sh: Add solaris support
 	* Makefile: Simple dist creation
