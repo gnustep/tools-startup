@@ -133,7 +133,7 @@ if [ "$WHOAMI" != root ]; then
   echo "1) I have sudo access in order to install GNUstep"
   echo "2) I want to install GNUstep in my home directory"
   echo "3) I know what I'm doing and I don't need special permissions"
-  echo "9) I want to quit and start over."
+  echo "q) I want to quit and start over."
   echo $ECHO_N "Enter a number: $ECHO_C"
   read user_option
   case "$user_option" in
@@ -151,7 +151,7 @@ if [ "$WHOAMI" != root ]; then
     *) exit 0;;
   esac
 else
-  echo $ECHO_N "Press the Return/Enter key to begin continue: $ECHO_C"
+  echo $ECHO_N "Press the Return key to begin continue: $ECHO_C"
   read user_enter
   if [ "$user_enter" = q ]; then
     exit 0
@@ -255,6 +255,7 @@ if [ \! -d $BUILDDIR ]; then
 fi
   
 cd $BUILDDIR
+rm -rf logs
 if [ \! -d logs ]; then
   mkdir logs
 fi
@@ -394,7 +395,7 @@ if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = n
   exit 1
 fi
 
-echo $ECHO_N "Press the Return/Enter key to begin building GNUstep: $ECHO_C"
+echo $ECHO_N "Press the Return key to begin building GNUstep: $ECHO_C"
 read user_enter
 if [ "$user_enter" = q ]; then
   echo "User Stop " >&5

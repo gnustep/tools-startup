@@ -51,6 +51,26 @@ if test "x$prefix" = "xNONE"; then
   prefix="$ac_default_prefix" ;
 fi
 
+AC_ARG_WITH(system-root, 
+[--without-system-root		Don't use separate system root directory], 
+  ac_cv_system_root="$withval",  
+  ac_cv_system_root=yes)
+
+GNUSTEP_ROOT="$prefix"
+root_prefix='${prefix}'
+if test $ac_cv_system_root = yes; then
+  if test "x`basename $prefix`" = xSystem; then
+    GNUSTEP_ROOT=`dirname $prefix`
+  else
+    if test "x$prefix" = "x/"; then
+      prefix=/System
+    else
+      prefix="$prefix/System"
+    fi
+  fi
+  root_prefix='${prefix}/..'
+fi
+
 #--------------------------------------------------------------------
 # Host, compiler checks
 #--------------------------------------------------------------------

@@ -4,7 +4,8 @@
 	* InstallGNUstep: Add logging output to file. Check for previous
 	versions and allow upgrading (or not). A little better documentation.
 	* configure.ac: Remove some unneeded checks. Check currently
-	installed versions.
+	installed versions. Set prefix correctly.
+	* scripts/common.sh: Don't distclean if we are making from CVS.
 
 2005-02-15  Adam Fedor  <fedor@gnu.org>
 

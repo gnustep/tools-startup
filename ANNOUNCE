@@ -20,8 +20,9 @@ system, you would also need to install the Gorm and ProjectCenter applications.
 
 The installation scripts have currently been tested on:
 
-Darwin 7.x
-Solaris 2.7
+GNU-Linux/PPC (YellowDog Linux 3.0)
+Darwin/PPC 7.x
+Solaris/SPARC 2.7
 
 Note for developers and testers: You can use these scripts to build the
 libraries from CVS. Just go to the Startup directory in CVS and start the
@@ -32,7 +33,7 @@ Changes in version 0.9.1
 
 Improved logging. 
 Allow for upgrading packages.
-Fix bug checking for libobjc.
+Fix bug in checking for libobjc.
 
 Where can you get it?  How can you compile it?
 ==============================================

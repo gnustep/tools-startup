@@ -29,7 +29,7 @@ gs_build_package()
     echo Patching $PKG_DISPLAY to run in the home directory:
     patch -p0 < $SRCDIR/home-gdomap.patch
   fi
-  if [ -f config.log ]; then
+  if [ -f config.log -a $IS_CVS = no ]; then
     make distclean
   fi
   if [ x"$PKG_CONFIG" != xNO ]; then
