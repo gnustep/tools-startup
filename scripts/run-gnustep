@@ -47,7 +47,7 @@ else
 fi
 BUILDDIR=$TOPDIR/core
 cd $TOPDIR
-if [ \! -f InstallGNUstep ]; then
+if [ \! -f Startup/InstallGNUstep ]; then
   echo "ERROR: Could not find GNUstep source directory"
   exit 1
 fi
