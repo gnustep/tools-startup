@@ -22,6 +22,10 @@ gs_platform_darwin()
     GS_CPPFLAGS="-I/sw/include"
     GS_LDFLAGS="-L/sw/lib"
   fi
+  if [ -d /sw/lib/freetype2/bin ]; then
+    # We prefer the Fink freetyp2 lib to the X11R6 one
+    PATH=/sw/lib/freetype2/bin:$PATH
+  fi
 }
 
 gs_platform_solaris()

@@ -16,9 +16,14 @@ For platform specific prerequisites, see:
 
 http://www.gnustep.org/resources/documentation/User/GNUstep/machines_toc.html
 
+The script will tell you if you have missed anything.
 To begin, type:
 
-InstallGNUstep
+./InstallGNUstep
+
+or, preferably:
+
+sudo ./InstallGNUstep
 
 This runs configuration tests that check if your system is setup
 correctly to install GNUstep. At the end of these tests, a report is
@@ -32,34 +37,25 @@ gnustep-base
 gnustep-gui
 gnustep-back
 There is no need to install these packages after installing the Startup
-package. You can proceed directly to installing GNUstep Applications after
-this.
+package. You can proceed directly to installing GNUstep Applications or
+any optional GNUstep libraries after this.
 
-Advanced Users
-==============
+Options
+=======
 
-Extra instructions if you're feeling lucky...
+InstallGNUstep accepts a small number of arguments that can change the
+behavior of the script.
 
-Intalling in another location
-------------------------------
+--help	    Print out the arguments that InstallGNUstep accepts
 
-To install GNUstep in a non-default location, use for example:
+--batch	    Install the GNUstep system without asking any questions.
 
-export GNUSTEP_SYSTEM_ROOT=/usr/local/GNUstep/System
+--debug	    Compile all the libraries with debugging information.
 
-or if you are using csh:
+--prefix    To install GNUstep in a non-default location, set the directory
+	    prefix on the command line. For example:
+	       --prefix=/usr/local/GNUstep/System
 
-setenv GNUSTEP_SYSTEM_ROOT /usr/local/GNUstep/System
-
-Passing flags to make
----------------------
-
-You can set the MAKEFLAGS environement variable to pass make flags to
-InstallGNUstep. For instance:
-
-export MAKEFILES=debug=yes
-
-will compile all the core libraries with debugging enable.
 
 Discussion
 ==========

@@ -40,6 +40,57 @@ esac
 
 
 #--------------------------------------------------------------------
+# Check command line arguments
+#--------------------------------------------------------------------
+gs_command_line=${@}
+gs_run_batch=no
+gs_install_prefix=
+gs_system_prefix=
+while test $# != 0
+do
+  gs_option=
+  case $1 in
+    --help | -h)
+      echo "$0: Script to install GNUstep core libraries"
+      echo "Options:"
+      echo "  --help	- Print help"
+      echo "  --batch	- Don't ask any questions"
+      echo "  --debug	- Compile packages with debug info"
+      echo
+      echo "  --prefix={dir}	- GNUstep system root location"
+      #echo "  --install-root={dir}	- Install dir prefix"
+      exit 0
+      ;;
+    --batch | -b)
+      gs_run_batch=yes;;
+    --debug | -d)
+      MAKEFLAGS="$MAKEFLAGS debug=yes";;
+    --*=*)
+      gs_option=`expr "x$1" : 'x\([^=]*\)='`
+      gs_optarg=`expr "x$1" : 'x[^=]*=\(.*\)'`
+      ;;
+    *)
+      ;;
+  esac
+
+  case $gs_option in
+    --prefix)
+      gs_system_prefix=$gs_optarg;; 
+    --install-root)
+      gs_install_prefix=$gs_optarg
+      # Make sure it has a slash at the end
+      case $gs_install_prefix in
+        *\/) ;;
+        *) gs_install_prefix=$gs_install_prefix/
+      esac
+      ;;
+    *)
+      ;;
+  esac
+  shift
+done
+
+#--------------------------------------------------------------------
 # Misc setup. Set the default source, build, and install directories.
 # Also source the sub-scripts that contain functions that we need.
 #--------------------------------------------------------------------
@@ -50,6 +101,9 @@ SOURCESDIR=$SRCDIR/sources
 
 # Make sure GNUSTEP_SYSTEM_ROOT has a /System at the end
 # in case the user set it themselves.
+if test -n "$gs_system_prefix"; then
+  GNUSTEP_SYSTEM_ROOT=$gs_system_prefix
+fi
 if test -n "$GNUSTEP_SYSTEM_ROOT"; then
   if test \! "`basename $GNUSTEP_SYSTEM_ROOT`" = System; then
     if test "x$GNUSTEP_SYSTEM_ROOT" = "x/"; then
@@ -120,6 +174,12 @@ if [ $? = 0 ]; then
 fi
 AS_ROOT=yes
 if [ "$WHOAMI" != root ]; then
+  if [ $gs_run_batch = yes ]; then
+    echo Script not running as root in batch mode
+    echo If you want to run in batch more, type sudo $0
+    echo Terminating
+    exit 1
+  fi
   AS_ROOT=no
   echo WARNING: You are not logged in as root
   echo
@@ -151,10 +211,12 @@ if [ "$WHOAMI" != root ]; then
     *) exit 0;;
   esac
 else
-  echo $ECHO_N "Press the Return key to begin continue: $ECHO_C"
-  read user_enter
-  if [ "$user_enter" = q ]; then
-    exit 0
+  if [ $gs_run_batch = no ]; then
+    echo $ECHO_N "Press the Return key to begin continue: $ECHO_C"
+    read user_enter
+    if [ "$user_enter" = q ]; then
+      exit 0
+    fi
   fi
 fi
 
@@ -262,6 +324,11 @@ fi
 rm -f logs.tar.gz
 exec 5>logs/installgnustep.log
 echo "Install log for the InstallGNUstep script" >&5
+echo >&5
+echo "Arguments: $gs_command_line" >&5
+echo "System Root: $GNUSTEP_SYSTEM_ROOT" >&5
+echo "Install Root: $gs_install_prefix" >&5
+echo >&5
 echo "Source files:" >&5
 echo " CVS: $IS_CVS " >&5
 echo $GMAKE >&5
@@ -356,8 +423,13 @@ if [ $do_upgrade_make = yes -o $do_upgrade_base = yes -o $do_upgrade_gui = yes ]
   echo same version as the ones that we will be installing. Do you want to
   echo "upgrade your packages? (Say no if you want to keep the packages you"
   echo "currently have installed)"
-  echo $ECHO_N "Install new versions? (y or n): $ECHO_C"
-  read user_option
+  if [ $gs_run_batch = no ]; then
+    echo $ECHO_N "Install new versions? (y or n): $ECHO_C"
+    read user_option
+  else
+    echo In batch more. Will upgrade to new versions
+    user_option=y
+  fi
   if [ "$user_option" = n -o  "$user_option" = N -o "$user_option" = no -o "$user_option" = NO -o "$user_option" = No ]; then
     do_upgrade_make=no
     do_upgrade_base=no
@@ -381,6 +453,8 @@ else
   echo Installing in $GNUSTEP_SYSTEM_ROOT >&5
   echo Installing in $GNUSTEP_SYSTEM_ROOT
 fi
+echo Install Prefix: $gs_install_prefix >&5
+echo Install Prefix: $gs_install_prefix
 echo Library combo: $LIBRARY_COMBO >&5
 echo Library combo: $LIBRARY_COMBO
 echo "" >&5
@@ -388,18 +462,20 @@ echo ""
 
 if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no ]; then
   echo "******** Source files not found **********"
-  echo "Make sure there is a directory one level above this script directory"
-  echo "named sources and that it has ffcall-1.8d.tar.gz present"
+  echo "The sources directory in this package had no source packages"
+  echo "which should have ffcall-1.8d.tar.gz present"
   echo "Download this file from ftp://ftp.gnustep.org/pub/gnustep/dev-libs"
   echo "Source files not found. STOP" >&5
   exit 1
 fi
 
-echo $ECHO_N "Press the Return key to begin building GNUstep: $ECHO_C"
-read user_enter
-if [ "$user_enter" = q ]; then
-  echo "User Stop " >&5
-  exit 0
+if [ $gs_run_batch = no ]; then
+  echo $ECHO_N "Press the Return key to begin building GNUstep: $ECHO_C"
+  read user_enter
+  if [ "$user_enter" = q ]; then
+    echo "User Stop " >&5
+    exit 0
+  fi
 fi
 echo
 
@@ -411,7 +487,13 @@ PLOG=01-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
 PKG_CONFIG=--with-library-combo=$LIBRARY_COMBO
-if [ $GNUSTEP_INSTALLED = yes -a $do_upgrade_make = no ];then
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=special_prefix=$gs_install_prefix
+fi
+PKG_PATCHES=
+gsexitstatus=0
+if [ $GNUSTEP_INSTALLED = yes -a $do_upgrade_make = no ]; then
   echo GNUstep Make already installed >&5
   echo GNUstep Make already installed
 else
@@ -422,13 +504,13 @@ if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
   GNUSTEP_SYSTEM_ROOT=$GNUSTEP_SYSTEM_ROOT_CONFIG
 fi
 
-if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix/$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   gs_log_error
   exit 1
 fi
 
 # Reset the environment, just to make sure it's clean.
-if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh ]; then
+if [ -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh ]; then
     gs_save=$GNUSTEP_SYSTEM_ROOT
     . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh
     GNUSTEP_SYSTEM_ROOT=$gs_save
@@ -451,16 +533,14 @@ fi
 PLOG=02-ffcall
 PKG=$FFCALL
 PKG_DISPLAY="ffcall"
-PKG_CONFIG="--prefix=$GNUSTEP_SYSTEM_ROOT \
-   --libdir=$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
-   --includedir=$GNUSTEP_SYSTEM_ROOT/Library/Headers"
+PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
+   --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
+   --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers"
+PKG_INSTALL=
+PKG_PATCHES=
+gsexitstatus=0
 
 REBUILD_MAKE=no
-#Why is this here?
-#if [ $NO_PRIV = yes ]; then
-#  # Force install
-#  FFCALL_INSTALLED=no
-#fi
 if [ $FFCALL_INSTALLED = yes ];then
   echo ffcall already installed >&5
   echo ffcall already installed
@@ -476,6 +556,12 @@ PLOG=02-libobjc
 PKG=$LIBOBJC
 PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
+fi
+PKG_PATCHES=
+gsexitstatus=0
 if [ $GCC_VERSION = 2 ]; then
   # Need to install our own version of libobjc
   if [ $GNUSTEP_CUSTOM_LIBOBJC != "NONE" ]; then
@@ -489,7 +575,7 @@ if [ $GCC_VERSION = 2 ]; then
   REBUILD_MAKE=yes
   fi
   # Need to check if libobjc and ffcall got installed...
-  if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Headers/objc/Object.h ]; then
+  if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/objc/Object.h ]; then
     gs_log_error
     exit 1
   fi
@@ -503,6 +589,12 @@ PLOG=03-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
 PKG_CONFIG=--with-library-combo=$LIBRARY_COMBO
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=special_prefix=$gs_install_prefix
+fi
+PKG_PATCHES=
+gsexitstatus=0
 if [ $REBUILD_MAKE = no ];then
   echo No need to update GNUstep Make >&5
   echo No need to update GNUstep Make
@@ -510,7 +602,7 @@ else
   gs_build_package
 fi
 
-if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   gs_log_error
   exit 1
 fi
@@ -523,6 +615,15 @@ PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
 PKG_CONFIG=
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
+fi
+PKG_PATCHES=`find $SOURCESDIR -name base*patch`
+if [ $NO_PRIV = yes ]; then
+  PKG_PATCHES='$PKG_PATCHES $SRCDIR/home-gdomap.patch'
+fi
+gsexitstatus=0
 if [ "$GNUSTEP_BASE_INSTALLED" = yes -a $do_upgrade_base = no ]; then
   echo $PKG_DISPLAY already installed >&5
   echo $PKG_DISPLAY already installed
@@ -530,8 +631,8 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h
-if [ \! -f $HEADER_CHECK ]; then
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h
+if [ $gsexitstatus != 0 -o \! -f $HEADER_CHECK ]; then
   gs_log_error
   exit 1
 fi
@@ -544,6 +645,9 @@ PLOG=05-gui
 PKG=$GGUI
 PKG_DISPLAY="GNUstep Gui"
 PKG_CONFIG=
+# PKG_INSTALL Keep from previous setting
+PKG_PATCHES=`find $SOURCESDIR -name gui*patch`
+gsexitstatus=0
 if [ "$GNUSTEP_GUI_INSTALLED" = yes -a $do_upgrade_gui = no ]; then
   echo $PKG_DISPLAY already installed >&5
   echo $PKG_DISPLAY already installed
@@ -551,8 +655,8 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$GNUSTEP_SYSTEM_ROOT/Library/Headers/AppKit/NSApplication.h
-if [ \! -f $HEADER_CHECK ]; then
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/AppKit/NSApplication.h
+if [ $gsexitstatus != 0 -o \! -f $HEADER_CHECK ]; then
   gs_log_error
   exit 1
 fi
@@ -565,6 +669,9 @@ PLOG=06-back
 PKG=$GBACK
 PKG_DISPLAY="GNUstep Back"
 PKG_CONFIG=
+# PKG_INSTALL Keep from previous setting
+PKG_PATCHES=`find $SOURCESDIR -name back*patch`
+gsexitstatus=0
 if [ "$GNUSTEP_BACK_INSTALLED" = yes  -a $do_upgrade_gui = no ]; then
   echo $PKG_DISPLAY already installed >&5
   echo $PKG_DISPLAY already installed
@@ -572,7 +679,7 @@ else
   gs_build_package
 fi
 
-if [ \! -d $GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle ]; then
+if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle ]; then
   gs_log_error
   exit 1
 fi

@@ -16,42 +16,60 @@ gs_log_error()
   echo "STOP" >&5
 }
 
+gs_patch_package()
+{
+  for file in $PKG_PATCHES __DONE__; do
+    if [ $file != __DONE__ ]; then
+      echo Applying patch $file
+      echo Applying patch $file >&5
+      patch -t -p0 < $file >&5
+    fi
+  done
+}
+
 gs_build_package()
 {
-  echo "******** Installing $PKG_DISPLAY **********"
+  echo "Building $PKG_DISPLAY ..." >&5
+  echo "******** Building $PKG_DISPLAY **********"
   rm -f logs/$PLOG*
   if [ $IS_CVS = no ]; then
     tar -zxf $SOURCESDIR/$PKG.tar.gz
   fi
 
   cd $PKG
-  if [ "$PKG_DISPLAY" = "GNUstep Base" -a $NO_PRIV = yes ]; then
-    echo Patching $PKG_DISPLAY to run in the home directory:
-    patch -p0 < $SRCDIR/home-gdomap.patch
+  if [ -n "$PKG_PATCHES" ]; then
+    gs_patch_package
   fi
   if [ -f config.log -a $IS_CVS = no ]; then
     make distclean
   fi
+  gsexitstatus=0
   if [ x"$PKG_CONFIG" != xNO ]; then
+    echo ./configure $PKG_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS >&5
     ./configure $PKG_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS
-    exitstatus=$?
+    gsexitstatus=$?
     cp config.log ../logs/$PLOG-config.log
-    if [ $exitstatus != 0 -o \! -f config.status ]; then
-      unset exitstatus
+    if [ $gsexitstatus != 0 -o \! -f config.status ]; then
       cd ..
       return
     fi
   fi
+  echo $MAKE $MAKEFLAGS >&5
   $MAKE $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
-  tail -n 1 ../logs/$PLOG.log | grep Error
-  if [ $? != 0 ]; then
+  tail -n 50 ../logs/$PLOG.log | grep Error
+  gserrorstatus=$?
+  if [ $gserrorstatus != 0 ]; then
+    echo $MAKE $MAKEFLAGS $PKG_INSTALL install >&5
     if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-      $MAKE $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-install.log
+      $MAKE $MAKEFLAGS $PKG_INSTALL install 2>&1 | tee ../logs/$PLOG-install.log
     else
       # Don't redirect stderr in case we need a password
       echo "**** Please enter password for sudo if directed: ****"
-      sudo $MAKE $MAKEFLAGS install | tee ../logs/$PLOG-install.log
+      sudo $MAKE $MAKEFLAGS $PKG_INSTALL install | tee ../logs/$PLOG-install.log
     fi
+    gsexitstatus=0
+  else
+    gsexitstatus=1
   fi
   cd ..
 }

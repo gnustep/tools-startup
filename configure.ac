@@ -329,7 +329,7 @@ GNUSTEP_HDIR=
 gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
   GNUSTEP_HDIR=$prefix/Library/Headers
-  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $prefix/Library/Makefiles/GNUstep.sh | wc -l`]
+  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $prefix/Library/Makefiles/GNUstep.sh | wc -l | tr -d ' '`]
   if test $gnustep_flattened = 1; then
     GNUSTEP_LDIR=$prefix/Library/Libraries
   else
@@ -397,6 +397,10 @@ if test $have_msg_forward = yes; then
   fi
 else
     AC_MSG_RESULT(no)
+fi
+
+if test "`echo $host_os|sed 's/[[0-9]].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then
+  SETUP_ERRORS="$SETUP_ERRORS E155"
 fi
 
 #--------------------------------------------------------------------

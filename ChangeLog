@@ -1,3 +1,13 @@
+2005-03-01  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: Add libffi error message.
+	* INSTALL, README: Updates.
+	* InstallGNUstep: Add arg processing, batch mode, preliminary 
+	packaging support, better error checking, patch support
+	* scripts/common.sh: Patch support.
+	* Makefile (snapshot): Testing target.
+	* configure.ac: Minor fixes.
+
 2005-02-19  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.9.1

@@ -47,3 +47,16 @@ cvs-dist:
 	rm -rf gnustep-startup-$(GNUSTEP_START_VERSION)
 	rmdir gnustep
 
+snapshot:
+	mkdir ../gnustep-startup-snap
+	cp -rf * ../gnustep-startup-snap
+	mv ../gnustep-startup-snap .
+	cd gnustep-startup-snap; \
+	  rm -f *~; rm -rf CVS scripts/CVS config/CVS autom4te.cache
+	cd gnustep-startup-snap; \
+	  mkdir sources; \
+	  if [ -d ../../../current ]; then \
+	    cp ../../../current/* sources; \
+	  fi; \
+	  cd ..
+	#tar --gzip -cf gnustep-startup-snap.tar.gz gnustep-startup-snap
