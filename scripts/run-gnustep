@@ -1,0 +1,84 @@
+#!/bin/sh
+#
+# Test the compilation and installation of GNUstep. This script does:
+#   1. Runs "cvs update" on the GNUstep CVS files
+#   2. Runs the Startup/InstallGNUstep script
+#   3. Uploads the results to ftp.gnustep.org
+#
+# This script assumes that GNUstep CVS files are either in the
+# current directory, or in a specific place, which is set to
+#    $HOME/src/gnustep-'$hostname -s`
+#
+# The files are installed into 
+#    $HOME/gnustep-'$hostname -s`
+#
+# NOTE: This script does not need to be run as root nor have any special
+# privleges. Since the installation is in the user's home directory, 
+# everything should work with normal privliges.
+#
+# To customize this script, you might have to change other things
+#
+
+gs_platform()
+{
+  gs_build=`$TOPDIR/Startup/config.guess` 2>&1
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  else
+    gs_build=`$TOPDIR/Startup/config.sub $gs_build`
+  fi
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  fi
+  gs_build_cpu=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+  gs_build_vendor=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+  gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+}
+
+# Figure out where the GNUstep files are
+NAME=`hostname -s`
+RUNDIR=`pwd`
+if [ -f InstallGNUstep ]; then
+  TOPDIR=`cd ..; pwd`
+elif [-f Startup/InstallGNUstep ]; then
+  TOPDIR=$RUNDIR
+else
+  TOPDIR=$HOME/src/gnustep-$NAME
+fi
+BUILDDIR=$TOPDIR/core
+cd $TOPDIR
+if [ !\ -f InstallGNUstep ]; then
+  echo "ERROR: Could not find GNUstep source directory"
+  exit 1
+fi
+gs_platform
+
+# Update CVS
+cd $TOPDIR
+cvs -z3 update
+
+# Run the install
+cd $TOPDIR/Startup
+./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
+gsexitstatus=$?
+
+# Archive the results
+rm -f $gs_build-results.txt
+rm -f $gs_build-logs.tar.gz
+if [ $gsexitstatus != 0 ]; then
+  mv $BUILDDIR/logs.tar.gz $gs_build-logs.tar.gz
+  cat "Fail Compile $gs_build `date`" > $gs_build-results.txt
+else
+  cat "Success Compile $gs_build `date`" > $gs_build-results.txt
+fi
+
+# Upload the results somewhere
+ftp ftp.gnustep.org << EOF
+anonymous
+bug-gnustep@gnu.org
+cd pub/incoming
+put $gs_build-results.txt
+binary
+put $gs_build-logs.tar.gz
+bye
+EOF

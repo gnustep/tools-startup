@@ -369,20 +369,28 @@ echo "Configuring for $gs_build"
 gs_flags
 PKG_CPPFLAGS=
 PKG_LDFLAGS=
-if test -z "$GS_CPPFLAGS"; then
-  PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
+if test -n "$GS_CPPFLAGS"; then
+  if test -n "$CPPFLAGS"; then
+    CPPFLAGS="$CPPFLAGS $GS_CPPFLAGS"
+    echo "CPPFLAGS: $CPPFLAGS" >&5
+  else
+    PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
+    echo $PKG_CPPFLAGS >&5
+  fi
 fi
-if test -z "$GS_LDFLAGS"; then
-  PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
+if test -n "$GS_LDFLAGS"; then
+  if test -n "$LDFLAGS"; then
+    LDFLAGS="$LDFLAGS $GS_LDFLAGS"
+    echo "LDFLAGS: $LDFLAGS" >&5
+  else
+    PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
+    echo $PKG_LDFLAGS >&5
+  fi
 fi
-echo $PKG_CPPFLAGS >&5
-echo $PKG_CPPFLAGS
-echo $PKG_LDFLAGS >&5
-echo $PKG_LDFLAGS
 
 echo "" >&5
-echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO $PKG_CPPFLAGS $PKG_LDFLAGS" >&5
-$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO $PKG_EXTRA_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS
+echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
+$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -709,7 +717,7 @@ fi
 PLOG=06-back
 PKG=$GBACK
 PKG_DISPLAY="GNUstep Back"
-PKG_CONFIG=$PKG_EXTRA_CONFIG
+PKG_CONFIG="--enable-graphics=art $PKG_EXTRA_CONFIG"
 # PKG_INSTALL Keep from previous setting
 PKG_PATCHES=`find $SOURCESDIR -name back*patch`
 gsexitstatus=0
@@ -722,7 +730,7 @@ fi
 
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundl >&5 2>&1
+ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle >&5 2>&1
 if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle ]; then
   gs_log_error
   exit 1

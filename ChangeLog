@@ -1,3 +1,9 @@
+2005-04-04  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Handle setting CPPFLAGS/LDFLAGS better.
+	Enable art backend.
+	* scripts/run-gnustep: Testing script.
+
 2005-04-01  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Allow install as normal user if in batch mode.

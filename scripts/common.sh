@@ -45,8 +45,8 @@ gs_build_package()
   fi
   gsexitstatus=0
   if [ x"$PKG_CONFIG" != xNO ]; then
-    echo ./configure $PKG_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS >&5
-    ./configure $PKG_CONFIG $PKG_CPPFLAGS $PKG_LDFLAGS
+    echo ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} >&5
+    ./configure ${PKG_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
     gsexitstatus=$?
     cp config.log ../logs/$PLOG-config.log
     if [ $gsexitstatus != 0 -o \! -f config.status ]; then

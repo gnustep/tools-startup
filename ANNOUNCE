@@ -25,6 +25,7 @@ The installation scripts have currently been tested on:
 GNU-Linux/PPC (YellowDog Linux 3.0)
 Darwin/PPC 7.x
 Solaris/SPARC 2.7
+NetBSD/ix86
 
 NOTES: Windows uses should preferably use the Windows binary installer
 available at www.gnustep.org. Some systems (Debian, FreeBSD, Gentoo,
