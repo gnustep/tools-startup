@@ -5,10 +5,10 @@ What is the GNUstep Startup Package?
 ====================================
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
-gnustep-make
-gnustep-base
-gnustep-gui
-gnustep-back
+gnustep-make Version 1.10.0
+gnustep-base Version 1.10.1
+gnustep-gui Version 0.9.4
+gnustep-back Version 0.9.4
 
 In addition, there is a set of scripts to automatically build and
 install the core GNUstep system.  You can run it at any time: before,
