@@ -207,7 +207,7 @@ else
 fi
 
 AC_MSG_CHECKING(iconv version > 2.1)
-iconv_version=[`iconv -V | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
+iconv_version=[`iconv -V 2>/dev/null | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
 if test -n "$iconv_version" -a "$iconv_version" \> 2.1; then
   AC_MSG_RESULT(yes $iconv_version)
 else
@@ -261,97 +261,6 @@ if test $ssl_ok = no; then
 fi
 
 #--------------------------------------------------------------------
-# Type size information needed for foundation headers.
-#--------------------------------------------------------------------
-AC_CHECK_SIZEOF(void*)
-
-GS_SINT8="signed char"
-GS_UINT8="unsigned char"
-AC_SUBST(GS_SINT8)
-AC_SUBST(GS_UINT8)
-
-AC_CHECK_SIZEOF(short)
-AC_SUBST(ac_cv_sizeof_short)
-
-AC_CHECK_SIZEOF(int)
-AC_SUBST(ac_cv_sizeof_int)
-
-AC_CHECK_SIZEOF(long)
-AC_SUBST(ac_cv_sizeof_long)
-
-AC_CHECK_SIZEOF(long long)
-AC_SUBST(ac_cv_sizeof_long_long)
-
-AC_CHECK_SIZEOF(float)
-AC_SUBST(ac_cv_sizeof_float)
-
-AC_CHECK_SIZEOF(double)
-AC_SUBST(ac_cv_sizeof_double)
-
-AC_SUBST(ac_cv_sizeof_voidp)
-if test $ac_cv_sizeof_voidp = $ac_cv_sizeof_int; then
-  GS_ADDR="unsigned int"
-else
-  if test $ac_cv_sizeof_voidp = $ac_cv_sizeof_long; then
-    GS_ADDR="unsigned long"
-  else
-    if test $ac_cv_sizeof_voidp = $ac_cv_sizeof_long_long; then
-      GS_ADDR="unsigned long long"
-    else
-      SETUP_ERRORS="$SETUP_ERRORS E140"
-    fi
-  fi
-fi
-AC_SUBST(GS_ADDR)
-
-if test $ac_cv_sizeof_short = 2; then
-  GS_SINT16="signed short"
-  GS_UINT16="unsigned short"
-else
-  if test $ac_cv_sizeof_int = 2; then
-    GS_SINT16="signed int"
-    GS_UINT16="unsigned int"
-  else
-    SETUP_ERRORS="$SETUP_ERRORS E141"
-  fi
-fi
-AC_SUBST(GS_SINT16)
-AC_SUBST(GS_UINT16)
-
-if test $ac_cv_sizeof_int = 4; then
-  GS_SINT32="signed int"
-  GS_UINT32="unsigned int"
-else
-  if test $ac_cv_sizeof_long = 4; then
-    GS_SINT32="signed long"
-    GS_UINT32="unsigned long"
-  else
-    if test $ac_cv_sizeof_short = 4; then
-      GS_SINT32="signed short"
-      GS_UINT32="unsigned short"
-    else
-      SETUP_ERRORS="$SETUP_ERRORS E142"
-    fi
-  fi
-fi
-AC_SUBST(GS_SINT32)
-AC_SUBST(GS_UINT32)
-
-if test $ac_cv_sizeof_float = 4; then
-  GS_FLT32="float"
-else
-  SETUP_ERRORS="$SETUP_ERRORS E143"
-fi
-AC_SUBST(GS_FLT32)
-
-if test $ac_cv_sizeof_double = 8; then
-  GS_FLT64="double"
-else
-  SETUP_ERRORS="$SETUP_ERRORS E144"
-fi
-AC_SUBST(GS_FLT64)
-
-#--------------------------------------------------------------------
 # Check if Objective-C is installed
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(for Objective-C compiler)
@@ -397,9 +306,11 @@ AC_SUBST(GNUSTEP_INSTALLED)
 #--------------------------------------------------------------------
 # Set location of GNUstep dirs for later use
 GNUSTEP_HDIR=
+gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
   GNUSTEP_HDIR=$prefix/Library/Headers
-  if test "$GNUSTEP_FLATTENED" = yes; then
+  gnustep_flattened=[`grep GNUSTEP_FLATTENED $prefix/Library/Makefiles/GNUstep.sh | wc -l`]
+  if test $gnustep_flattened = 1; then
     GNUSTEP_LDIR=$prefix/Library/Libraries
   else
     clean_target_os=`$prefix/Library/Makefiles/clean_os.sh $target_os`
@@ -553,11 +464,6 @@ LIBS="$saved_LIBS"
 CFLAGS="$saved_CFLAGS"
 
 #--------------------------------------------------------------------
-# Setup dynamic linking 
-#--------------------------------------------------------------------
-OBJC_SYS_DYNAMIC_LINKER()
-
-#--------------------------------------------------------------------
 # Check whether Objective-C /really/ works
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(whether objc really works)
@@ -582,62 +488,11 @@ else
   fi
 fi
 
-# Don't revert any Objective-C flags as they are used in the next test
-
-#---------------------------------------------------------------------
-# Guess if we are using a compiler which has the (GNU extension) +load 
-# method which is executed before main.  
-# Defines HAVE_LOAD_METHOD if +load methods are called before main.
-# Needed by NSProcessInfo.m
-#---------------------------------------------------------------------
-AC_MSG_CHECKING(if +load method is executed before main)
-AC_CACHE_VAL(objc_load_method_worked,
-  AC_TRY_RUN([#include "$srcdir/config/config.loadtest.m"],
-	objc_load_method_worked=yes,
-	objc_load_method_worked=no,
-	objc_load_method_worked=no)
-)
-if test $objc_load_method_worked = yes; then
-  AC_DEFINE(HAVE_LOAD_METHOD,,
-            [Define if your Obj-C compiler calls +load methods before main])
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
-fi
-
-#---------------------------------------------------------------------
-# Guess if we are using a compiler which allows us to change the class
-# to be used for constant strings by using the -fconstant-string-class
-# option.  If that is the case, we change it to NSConstantString.
-#---------------------------------------------------------------------
-string_saved_CPPFLAGS="$CPPFLAGS"
-CPPFLAGS="$CPPFLAGS -fconstant-string-class=FooConstantString"
-AC_MSG_CHECKING(if the compiler supports -fconstant-string-class)
-AC_CACHE_VAL(objc_compiler_supports_constant_string_class,
-  AC_TRY_RUN([#include "$srcdir/config/config.constant-string-class.m"],
-  objc_compiler_supports_constant_string_class=yes,
-  objc_compiler_supports_constant_string_class=no,
-  objc_compiler_supports_constant_string_class=no)
-)
-if test $objc_compiler_supports_constant_string_class = yes; then
-  NX_CONST_STRING_CPPFLAGS="-fconstant-string-class=NSConstantString"
-  NX_CONST_STRING_CLASS=NSConstantString
-  AC_MSG_RESULT(yes)
-else
-  NX_CONST_STRING_CPPFLAGS=""
-  NX_CONST_STRING_CLASS=NXConstantString
-  AC_MSG_RESULT(no)
-fi
-CPPFLAGS="$string_saved_CPPFLAGS"
-
-AC_SUBST(NX_CONST_STRING_CPPFLAGS)
-AC_SUBST(NX_CONST_STRING_CLASS)
-
 LIBS="$saved_LIBS"
 CPPFLAGS="$saved_CPPFLAGS"
 
 #--------------------------------------------------------------------
-# Gui Depends
+# GUI/Graphic library Depends
 #--------------------------------------------------------------------
 AC_CHECK_LIB(m, main)
 
@@ -735,8 +590,10 @@ if test $GNUSTEP_INSTALLED = yes; then
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
   CPPFLAGS="$CPPFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
-  if test "$GNUSTEP_FLATTENED" = yes; then
+  if test $gnustep_flattened = 0; then
     CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
+    # Also possible we are supporting multiple combos...
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$ac_cv_library_combo  -I$GNUSTEP_HDIR/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
   fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
@@ -748,6 +605,48 @@ if test $GNUSTEP_INSTALLED = yes; then
 
 fi
 
+#--------------------------------------------------------------------
+# GNUstep Installed version
+#--------------------------------------------------------------------
+GNUSTEP_MAKE_VERSION=0
+GNUSTEP_BASE_VERSION=0
+GNUSTEP_GUI_VERSION=0
+if test $GNUSTEP_INSTALLED = yes; then
+
+  # Check the version of gnustep-make
+  AC_MSG_CHECKING(GNUstep Make version)
+  gversion=$prefix/Library/Makefiles/config.make
+  if test $gnustep_flattened = 0; then
+    gversion=$prefix/Library/Makefiles/$clean_target_cpu/$clean_target_os/config.make
+  fi
+  # Note: we need multiple [[ to get around autoconf's m4 processing
+  GNUSTEP_MAKE_VERSION=[`grep GNUSTEP_MAKE_VERSION $gversion | sed "s/.*=\([0-9.]\)/\1/"`]
+  AC_MSG_RESULT($GNUSTEP_MAKE_VERSION)
+
+  AC_MSG_CHECKING(GNUstep Base version)
+  if test $ac_cv_header_Foundation_NSObject_h = yes; then
+    gversion=$prefix/Library/Libraries/Resources/gnustep-base/Info-gnustep.plist
+    if test -f $gversion ; then
+      GNUSTEP_BASE_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+    else
+      GNUSTEP_BASE_VERSION=0.0.0
+    fi
+  fi
+  AC_MSG_RESULT($GNUSTEP_BASE_VERSION)
+
+  AC_MSG_CHECKING(GNUstep Gui version)
+  if test $ac_cv_header_AppKit_NSApplication_h = yes; then
+    gversion=$prefix/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
+    if test -f $gversion ; then
+      GNUSTEP_GUI_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+    else
+      GNUSTEP_GUI_VERSION=0.0.0
+    fi
+  fi
+  AC_MSG_RESULT($GNUSTEP_GUI_VERSION)
+
+fi
+
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
 AC_SUBST(ac_cv_header_callback_h)
@@ -756,6 +655,10 @@ AC_SUBST(ac_cv_header_AppKit_NSApplication_h)
 AC_SUBST(ac_cv_header_Foundation_NSObject_h)
 AC_SUBST(have_back)
 AC_SUBST(SETUP_ERRORS)
+AC_SUBST(GNUSTEP_MAKE_VERSION)
+AC_SUBST(GNUSTEP_BASE_VERSION)
+AC_SUBST(GNUSTEP_GUI_VERSION)
+AC_SUBST(gnustep_flattened)
 
 #--------------------------------------------------------------------
 # Produce the output files

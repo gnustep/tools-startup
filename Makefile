@@ -15,8 +15,7 @@
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-GNUSTEP_START_VERSION=0.9.0
-
+include Version
 VERTAG = $(subst .,_,$(GNUSTEP_START_VERSION))
 
 all:
@@ -40,10 +39,11 @@ cvs-dist:
 	mv gnustep/Startup gnustep-startup-$(GNUSTEP_START_VERSION)
 	cd gnustep-startup-$(GNUSTEP_START_VERSION); \
 	  mkdir sources; \
-	  if [-d ../../current ]; then \
-	    cp ../../current/* sources; \
+	  if [ -d ../../../current ]; then \
+	    cp ../../../current/* sources; \
 	  fi; \
 	  cd ..
-	tar --gzip -cf gnustep-start-$(GNUSTEP_START_VERSION).tar.gz gnustep-start-$(GNUSTEP_START_VERSION)
-	rm -rf gnustep-start-$(GNUSTEP_START_VERSION)
+	tar --gzip -cf gnustep-startup-$(GNUSTEP_START_VERSION).tar.gz gnustep-startup-$(GNUSTEP_START_VERSION)
+	rm -rf gnustep-startup-$(GNUSTEP_START_VERSION)
+	rmdir gnustep
 

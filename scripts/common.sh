@@ -5,12 +5,15 @@
 gs_log_error()
 {
   rm -f logs.tar.gz
+  cp setupvars logs
   tar -cf logs.tar logs
   gzip logs.tar
   echo "---------------------------------------------------------"
   echo "Installation of $PKG_DISPLAY failed. Send the $BUILDDIR/logs.tar.gz"
   echo "file to bug-gnustep@gnu.org for help"
   echo "---------------------------------------------------------"
+  echo "Installation of $PKG_DISPLAY failed. Send the $BUILDDIR/logs.tar.gz" >&5
+  echo "STOP" >&5
 }
 
 gs_build_package()

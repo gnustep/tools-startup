@@ -1,0 +1,12 @@
+
+Changes in version 0.9.1
+=========================
+
+Improved logging. 
+Allow for upgrading packages.
+Fix bug checking for libobjc.
+
+Changes in version 0.9.0
+=========================
+
+Beta release. Needs testing by volunteers.

@@ -1,3 +1,11 @@
+2005-02-19  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.9.1
+	* InstallGNUstep: Add logging output to file. Check for previous
+	versions and allow upgrading (or not). A little better documentation.
+	* configure.ac: Remove some unneeded checks. Check currently
+	installed versions.
+
 2005-02-15  Adam Fedor  <fedor@gnu.org>
 
 	* Version: 0.9.0

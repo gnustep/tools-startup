@@ -1,5 +1,5 @@
 
-The GNUstep Startup Package, version 0.9.0 is now available.
+The GNUstep Startup Package, version 0.9.1 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
@@ -23,17 +23,22 @@ The installation scripts have currently been tested on:
 Darwin 7.x
 Solaris 2.7
 
-Changes in version 0.9.0
+Note for developers and testers: You can use these scripts to build the
+libraries from CVS. Just go to the Startup directory in CVS and start the
+installation from there.
+
+Changes in version 0.9.1
 =========================
 
-Beta release. Needs testing by volunteers.
-
+Improved logging. 
+Allow for upgrading packages.
+Fix bug checking for libobjc.
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup distribution file has been placed on
-`ftp.gnustep.org' in `pub/gnustep/core'.
+The gnustep-startup-0.9.1.tar.gz distribution file has been placed at
+<http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page
 <http://savannah.gnu.org/bugs/?group=gnustep> or send bug reports to
