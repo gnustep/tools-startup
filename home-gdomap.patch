@@ -1,0 +1,9 @@
+--- Tools/gdomap.h.old	Thu Jun 19 21:08:45 2003
++++ Tools/gdomap.h	Thu Jun 19 21:08:54 2003
+@@ -233,5 +233,5 @@
+  * 	other systems which have not performed the same remapping.  You
+  *	should not do it unless you have no choice.
+  */
+-/* #define	GDOMAP_PORT_OVERRIDE	6006 */
++#define	GDOMAP_PORT_OVERRIDE	6006
+ 

@@ -7,6 +7,21 @@ SOURCESDIR=$SRCDIR/../sources
 # FIXME: Option to set these on the command line
 LIB_COMBO=gnu-gnu-gnu
 
+if [ -z $MAKE ]; then
+  if gmake -v >/dev/null 2>&1
+  then
+    MAKE=gmake
+  else
+    MAKE=make
+  fi
+fi
+if [ -z $CC ]; then
+  if [ -x /usr/bin/gcc3 ]; then
+    CC=gcc3
+    export CC
+  fi
+fi
+
 #--------------------------------------------------------------------
 # Welcome
 #--------------------------------------------------------------------
@@ -199,17 +214,15 @@ else
   cd $GMAKE
   ./configure --with-library-combo=$LIB_COMBO
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
+  $MAKE 2>&1 | tee ../logs/$PLOG.log 
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
+    $MAKE install 2>&1 | tee ../logs/$PLOG-intall.log
   else
     # Don't redirect stderr in case we need a password
-    sudo make install | tee ../logs/$PLOG-intall.log
+    sudo $MAKE install | tee ../logs/$PLOG-intall.log
   fi
   cd ..
 fi
-
-. $GMAKE/GNUstep.sh
 
 if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   rm -f logs.tar.gz
@@ -221,6 +234,8 @@ if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   echo "---------------------------------------------------------"
   exit 1
 fi
+
+source $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
 
 #--------------------------------------------------------------------
 # Build pre-reqs
@@ -252,12 +267,12 @@ else
    --libdir=$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
    --includedir=$GNUSTEP_SYSTEM_ROOT/Library/Headers
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
+  $MAKE 2>&1 | tee ../logs/$PLOG.log 
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
+    $MAKE install 2>&1 | tee ../logs/$PLOG-intall.log
   else
     # Don't redirect stderr in case we need a password
-    sudo make install | tee ../logs/$PLOG-intall.log
+    sudo $MAKE install | tee ../logs/$PLOG-intall.log
   fi
   cd ..
 fi
@@ -278,17 +293,15 @@ else
   cd $GMAKE
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
+  $MAKE 2>&1 | tee ../logs/$PLOG.log 
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
+    $MAKE install 2>&1 | tee ../logs/$PLOG-intall.log
   else
     # Don't redirect stderr in case we need a password
-    sudo make install | tee ../logs/$PLOG-intall.log
+    sudo $MAKE install | tee ../logs/$PLOG-intall.log
   fi
   cd ..
 fi
-
-. $GMAKE/GNUstep.sh
 
 if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   rm -f logs.tar.gz
@@ -319,18 +332,18 @@ else
   cd $PKG
   if [ $NO_PRIV = yes ]; then
     echo Patching GNUstep-Base to run in the home directory:
-    patch -p0 < $SOURCESDIR/home-gdomap.patch
+    patch -p0 < $SRCDIR/home-gdomap.patch
   fi
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
+  $MAKE $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
   tail -n1 ../logs/$PLOG.log | grep Error
   if [ $? != 0 ]; then
     if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+      $MAKE $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
     else
       # Don't redirect stderr in case we need a password
-      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+      sudo $MAKE $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
     fi
   fi
   cd ..
@@ -364,14 +377,14 @@ else
   cd $PKG
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log 
+  $MAKE $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log 
   tail -n1 ../logs/$PLOG.log | grep Error
   if [ $? != 0 ]; then
     if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+      $MAKE $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
     else
       # Don't redirect stderr in case we need a password
-      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+      sudo $MAKE $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
     fi
   fi
   cd ..
@@ -405,14 +418,14 @@ else
   cd $PKG
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
+  $MAKE $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
   tail -n1 ../logs/$PLOG.log | grep Error
   if [ $? != 0 ]; then
     if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+      $MAKE $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
     else
       # Don't redirect stderr in case we need a password
-      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+      sudo $MAKE $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
     fi
   fi
   cd ..

@@ -32,3 +32,28 @@ export GNUSTEP_SYSTEM_ROOT=/usr/local/GNUstep/System
 or if you are using csh:
 
 setenv GNUSTEP_SYSTEM_ROOT /usr/local/GNUstep/System
+
+Discussion
+==========
+
+This install script is meant to make it as easy as possible to install
+a bare-bones GNUstep system. That is, it doesn't require all the optional
+libraries you might want to have (SSL, jpeg, etc). It also doesn't
+use the art backend (at least by default), even though it displays much
+better. Ideally, after this bare-bones system is installed, we could start
+up a real GNUstep application which could do a much better job doing any one
+or all of the following:
+
+1. Instructing the user how to set up a complete system
+2. Downloading any additional required files
+3. Compiling and installing an 'optimized' system
+4. Compiling and installing useful applications.
+
+
+This install script can be used in two ways. First, if you have checked
+out the sources from CVS, this script expects the core directory to 
+be located on the same level as the Startup directory (e.g. ../core)
+
+If you have tar.gz files downloaded (or this comes on a CD with the
+sources). The sources should be in a directory called sources on the
+same level as the Startup directory (e.g. ../sources).
