@@ -1,3 +1,10 @@
+2005-04-06  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.10.1
+	
+	* configure.ac: Check for Apple cc
+	* ErrorList: Add error for Apple cc.
+
 2005-04-05  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Set variables so libobjc is found when compiling 

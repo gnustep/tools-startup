@@ -159,6 +159,21 @@ if test "$GCC_VERSION" = 2 -a "$gs_cv_gcc_minor_version=" = 96; then
 fi
 
 #--------------------------------------------------------------------
+# Check if we are using Apple cc
+#--------------------------------------------------------------------
+cc_cppprecomp=0
+cc_byndle=0
+AC_MSG_CHECKING([for apple compiler flags])
+cc_cppprecomp=`${CC} -no-cpp-precomp 2>&1 | grep -c "unrecognized"`
+cc_bundle=`${CC} -bundle 2>&1 | grep -c "couldn"`
+# 0 means we have the flag
+if test $cc_bundle = 0; then
+  SETUP_ERRORS="$SETUP_ERRORS E093"
+  cc_bundle=yes
+fi
+AC_MSG_RESULT($cc_bundle)
+
+#--------------------------------------------------------------------
 # Find the binary and compile tools
 #--------------------------------------------------------------------
 AC_CHECK_PROG(AR, ar, ar)

@@ -3255,6 +3255,23 @@ if test "$GCC_VERSION" = 2 -a "$gs_cv_gcc_minor_version=" = 96; then
 fi
 
 #--------------------------------------------------------------------
+# Check if we are using Apple cc
+#--------------------------------------------------------------------
+cc_cppprecomp=0
+cc_byndle=0
+echo "$as_me:$LINENO: checking for apple compiler flags" >&5
+echo $ECHO_N "checking for apple compiler flags... $ECHO_C" >&6
+cc_cppprecomp=`${CC} -no-cpp-precomp 2>&1 | grep -c "unrecognized"`
+cc_bundle=`${CC} -bundle 2>&1 | grep -c "couldn"`
+# 0 means we have the flag
+if test $cc_bundle = 0; then
+  SETUP_ERRORS="$SETUP_ERRORS E093"
+  cc_bundle=yes
+fi
+echo "$as_me:$LINENO: result: $cc_bundle" >&5
+echo "${ECHO_T}$cc_bundle" >&6
+
+#--------------------------------------------------------------------
 # Find the binary and compile tools
 #--------------------------------------------------------------------
 # Extract the first word of "ar", so it can be a program name with args.

@@ -7,6 +7,11 @@ Your gcc version is not an official release and may be broken.
 Particularly if you are using RedHat before 7.2 or Mandrake, you should 
 upgrade gcc to a newer version.
 
+E093 Warning
+It appears you are using the Apple cc compiler. The Apple compiler does
+not compile GNUstep. You need to install an FSF compiler, or make sure
+that the FSF compiler is found first in your PATH.
+
 E101 Error
 No ld/binutils program installed. It's likely you are missing most
 or all programs needed for compiling. Check your operating system for
