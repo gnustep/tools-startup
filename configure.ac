@@ -183,7 +183,7 @@ fi
 
 if test x"$ac_cv_prog_LD" != x; then
   AC_MSG_CHECKING(binutils version > 2.9)
-  ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>\dev\null`]
+  ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>/dev/null`]
   ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
   if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
     AC_MSG_RESULT(yes $ld_version)
@@ -398,14 +398,14 @@ AC_SUBST(GNUSTEP_INSTALLED)
 # Set location of GNUstep dirs for later use
 GNUSTEP_HDIR=
 if test $GNUSTEP_INSTALLED = yes; then
-  GNUSTEP_HDIR=$GNUSTEP_SYSTEM_ROOT/Library/Headers
+  GNUSTEP_HDIR=$prefix/Library/Headers
   if test "$GNUSTEP_FLATTENED" = yes; then
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries
+    GNUSTEP_LDIR=$prefix/Library/Libraries
   else
-    clean_target_os=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_os.sh $target_os`
-    clean_target_cpu=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_cpu.sh $target_cpu`
+    clean_target_os=`$prefix/Library/Makefiles/clean_os.sh $target_os`
+    clean_target_cpu=`$prefix/Library/Makefiles/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/$obj_dir/
+    GNUSTEP_LDIR=$prefix/Library/Libraries/$obj_dir/
   fi
 fi
 
@@ -734,11 +734,14 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS -x objective-c -I$prefix/Library/Headers -I$prefix/Library/Headers/gnustep -I$prefix/Library/Headers/$clean_target_cpu/$clean_target_os"
+  CPPFLAGS="$CPPFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
+  if test "$GNUSTEP_FLATTENED" = yes; then
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
+  fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
   have_back=no
-  if test -f $GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle/libgnustep-back; then
+  if test -f $prefix/Library/Bundles/libgnustep-back.bundle/libgnustep-back; then
     have_back=yes
   fi
   CPPFLAGS="$saved_CPPFLAGS"

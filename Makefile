@@ -38,6 +38,12 @@ cvs-tag:
 cvs-dist:
 	cvs -z3 export -r start-$(VERTAG) gnustep/Startup
 	mv gnustep/Startup gnustep-startup-$(GNUSTEP_START_VERSION)
+	cd gnustep-startup-$(GNUSTEP_START_VERSION); \
+	  mkdir sources; \
+	  if [-d ../../current ]; then \
+	    cp ../../current/* sources; \
+	  fi; \
+	  cd ..
 	tar --gzip -cf gnustep-start-$(GNUSTEP_START_VERSION).tar.gz gnustep-start-$(GNUSTEP_START_VERSION)
 	rm -rf gnustep-start-$(GNUSTEP_START_VERSION)
 

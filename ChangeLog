@@ -1,3 +1,9 @@
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix some flags
+	* scripts/platforms.sh: Add solaris support
+	* Makefile: Simple dist creation
+
 2005-02-06  Adam Fedor  <fedor@gnu.org>
 
 	* Refactor scripts. More robust. Update documentation and

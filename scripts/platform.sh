@@ -24,6 +24,16 @@ gs_platform_darwin()
   fi
 }
 
+gs_platform_solaris()
+{
+  gs_platform_generic
+  if [ -f /usr/local/include/tiff.h ]; then
+    # Assume good tiff library is in /usr/local/lib
+    GS_CPPFLAGS="-I/usr/local/include"
+    GS_LDFLAGS="-L/usr/local/lib"
+  fi
+}
+
 gs_platform_unknown()
 {
   gs_platform_generic
@@ -40,6 +50,7 @@ gs_flags()
 {
   case "$gs_machine" in
     Darwin*)   gs_platform_darwin ;;
+    SunOS*)    gs_platform_solaris ;;
     *)         gs_platform_unknown ;;
   esac
 }
