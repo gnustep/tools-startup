@@ -329,7 +329,7 @@ GNUSTEP_HDIR=
 gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
   GNUSTEP_HDIR=$prefix/Library/Headers
-  gnustep_flattened=[`grep GNUSTEP_FLATTENED $prefix/Library/Makefiles/GNUstep.sh | wc -l`]
+  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $prefix/Library/Makefiles/GNUstep.sh | wc -l`]
   if test $gnustep_flattened = 1; then
     GNUSTEP_LDIR=$prefix/Library/Libraries
   else
