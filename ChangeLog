@@ -1,3 +1,8 @@
+2005-04-01  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Allow install as normal user if in batch mode.
+	* configure.ac: Fix flags for netbsd/freebsd.
+
 2005-03-31  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.10.0

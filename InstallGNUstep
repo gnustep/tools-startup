@@ -51,6 +51,7 @@ SOURCESDIR=$SRCDIR/sources
 
 gs_command_line=${@}
 gs_run_batch=no
+gs_no_priv=no
 gs_install_prefix=
 gs_system_prefix=
 PKG_EXTRA_CONFIG=
@@ -73,6 +74,10 @@ do
       ;;
     --batch | -b)
       gs_run_batch=yes;;
+    --nopriv)
+      # Install gdomap non-suid - special option when testing GNUstep on a
+      # machine without root install access.
+      gs_no_priv=yes;;
     --debug | -d)
       MAKEFLAGS="$MAKEFLAGS debug=yes";;
     --*=*)
@@ -169,7 +174,7 @@ echo
 # they just want to try it in their home directory.
 #--------------------------------------------------------------------
 HAVE_SUDO=no
-NO_PRIV=no
+NO_PRIV=$gs_no_priv
 WHOAMI=none
 which whoami 2>&1 > /dev/null
 if [ $? = 0 ]; then
@@ -184,13 +189,9 @@ if [ $? = 0 ]; then
   HAVE_SUDO=yes
 fi
 AS_ROOT=yes
-if [ "$WHOAMI" != root ]; then
-  if [ $gs_run_batch = yes ]; then
-    echo Script not running as root in batch mode
-    echo If you want to run in batch more, type sudo $0
-    echo Terminating
-    exit 1
-  fi
+# If we are running in batch more, just assume that the user has install
+# privileges (i.e. assume they know what they are doing).
+if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
   AS_ROOT=no
   echo WARNING: You are not logged in as root
   echo
@@ -522,6 +523,9 @@ if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
   GNUSTEP_SYSTEM_ROOT=$GNUSTEP_SYSTEM_ROOT_CONFIG
 fi
 
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $gs_install_prefix/$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh >&5 2>&1
 if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix/$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
   gs_log_error
   exit 1
@@ -602,8 +606,11 @@ if [ $GCC_VERSION = 2 ]; then
   gs_build_package
   REBUILD_MAKE=yes
   fi
+  echo "  Exit statis is $gsexitstatus" >&5
+  echo "  Install Check:" >&5
+  ls $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/objc/Object.h >&5 2>&1
   # Need to check if libobjc and ffcall got installed...
-  if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/objc/Object.h ]; then
+  if [ $gsexitstatus != 0 ]; then
     gs_log_error
     exit 1
   fi
@@ -660,7 +667,10 @@ else
 fi
 
 HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h
-if [ $gsexitstatus != 0 -o \! -f $HEADER_CHECK ]; then
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $HEADER_CHECK >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
   gs_log_error
   exit 1
 fi
@@ -684,7 +694,10 @@ else
 fi
 
 HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/AppKit/NSApplication.h
-if [ $gsexitstatus != 0 -o \! -f $HEADER_CHECK ]; then
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $HEADER_CHECK >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
   gs_log_error
   exit 1
 fi
@@ -707,6 +720,9 @@ else
   gs_build_package
 fi
 
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundl >&5 2>&1
 if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle ]; then
   gs_log_error
   exit 1

@@ -107,10 +107,10 @@ AC_MSG_RESULT($ac_cv_library_combo)
 #--------------------------------------------------------------------
 case "$target_os" in
   freebsd* | openbsd* )	
-	        INCLUDES="$INCLUDES -I/usr/local/include"
-		LIB_DIR="$LIB_DIR -L/usr/local/lib";;
-  netbsd*)	INCLUDES="$INCLUDES -I/usr/pkg/include"
-		LIB_DIR="$LIB_DIR -Wl,-R/usr/pkg/lib -L/usr/pkg/lib";;
+	        CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+		LDFLAGS="$LDFLAGS -L/usr/local/lib";;
+  netbsd*)	CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
+		LDFLAGS="$LDFLAGS -Wl,-R/usr/pkg/lib -L/usr/pkg/lib";;
 esac
 
 #--------------------------------------------------------------------
