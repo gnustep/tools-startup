@@ -1,5 +1,10 @@
 2005-03-02  Adam Fedor  <fedor@gnu.org>
 
+	* Version: 0.9.2
+	* ANNOUNCE, NEWS: Updates.
+
+2005-03-02  Adam Fedor  <fedor@gnu.org>
+
 	* InstallGNUstep: Minor fixes
 	* scripts/platform.sh: Use config.guess to get os/cpu.
 

@@ -56,7 +56,7 @@ gs_build_package()
   fi
   echo $MAKE $MAKEFLAGS >&5
   $MAKE $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
-  tail -n 50 ../logs/$PLOG.log | grep Error
+  tail -n 5 ../logs/$PLOG.log | grep Error
   gserrorstatus=$?
   if [ $gserrorstatus != 0 ]; then
     echo $MAKE $MAKEFLAGS $PKG_INSTALL install >&5

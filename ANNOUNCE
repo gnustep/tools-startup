@@ -1,5 +1,5 @@
 
-The GNUstep Startup Package, version 0.9.1 is now available.
+The GNUstep Startup Package, version 0.9.2 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
@@ -7,16 +7,18 @@ What is the GNUstep Startup Package?
 GNUstep Startup is a compilation of the following core GNUstep packages:
 gnustep-make Version 1.10.0
 gnustep-base Version 1.10.1
-gnustep-gui Version 0.9.4
+gnustep-gui Version 0.9.4 (with patches)
 gnustep-back Version 0.9.4
 
-In addition, there is a set of scripts to automatically build and
-install the core GNUstep system.  You can run it at any time: before,
-during, and after you have installed GNUstep.
+The main advantage of Startup is that it includes a script to
+automatically build and install the core GNUstep system.  
 
-After installing GNUstep Startup, you will have a complete runtime system
-for compiling and running GNUstep applications. For a complete developement
-system, you would also need to install the Gorm and ProjectCenter applications.
+After installing GNUstep Startup, you will have a complete system for
+compiling and running GNUstep applications. You will, of course, need
+to compile and install applications (such as GWorkspace) to actually
+use GNUstep in a runtime system. For a complete developement system,
+you would also need to install the Gorm and ProjectCenter
+applications.
 
 The installation scripts have currently been tested on:
 
@@ -24,21 +26,27 @@ GNU-Linux/PPC (YellowDog Linux 3.0)
 Darwin/PPC 7.x
 Solaris/SPARC 2.7
 
+NOTES: Windows uses should preferably use the Windows binary installer
+available at www.gnustep.org. Some systems (Debian, FreeBSD, Gentoo,
+etc) have precompiled binaries of GNUstep available through their
+normal distribution system. It may be preferable to get GNUstep this
+way.
+
 Note for developers and testers: You can use these scripts to build the
 libraries from CVS. Just go to the Startup directory in CVS and start the
 installation from there.
 
-Changes in version 0.9.1
+Changes in version 0.9.2
 =========================
 
-Improved logging. 
-Allow for upgrading packages.
-Fix bug in checking for libobjc.
+Some arguments can be specified to the script.
+Added support for applying patches.
+Better checking if an build error has occured.
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.9.1.tar.gz distribution file has been placed at
+The gnustep-startup-0.9.2.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page
