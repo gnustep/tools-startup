@@ -35,9 +35,9 @@ required, but is needed for string and font encodings. It comes with
 glib 2.1.2 or later.
 
 W109 Warning 
-For security reasons, the make program will not pass LD_LIBRARY_PATH
-along. You will need to compile applications with 
-'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH'.
+For security reasons, your make program will not pass LD_LIBRARY_PATH
+along. You may need to compile/install applications with 
+'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
 
 W125 Warning 
 The OpenSSL package (libcrypto, etc) is needed to access https connections
@@ -94,7 +94,7 @@ installed. If not, when you run configure, set the prefix by typing
 
 I199 Information
 GNUstep is not installed yet. Please proceed with installation of GNUstep
-as long as you have resolved other errors list above.
+as long as you have resolved other errors listed here.
 
 
 E270 Error

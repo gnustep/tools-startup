@@ -6,6 +6,16 @@ GNUstep Startup is a set of scripts to automatically build and install the
 core GNUstep system.  You can run it at any time: before, during, and after
 you have installed GNUstep.
 
+If you have never installed GNUstep before, make sure to check that you
+have all the prerequisite packages installed. For general prerequisites, see
+the GNUstep installation guide:
+
+http://www.gnustep.org/resources/documentation/User/GNUstep/gnustep-howto_2.html#SEC2
+
+For platform specific prerequisites, see:
+
+http://www.gnustep.org/resources/documentation/User/GNUstep/machines_toc.html
+
 To begin, type:
 
 InstallGNUstep
@@ -16,6 +26,14 @@ printed that gives some information on any errors or possible problems
 you may have in installing GNUstep. If configure completes
 sucessfully, then the script installs the GNUstep core libraries.
 
+NOTE: This package is a compilation of the following packages:
+gnustep-make
+gnustep-base
+gnustep-gui
+gnustep-back
+There is no need to install these packages after installing the Startup
+package. You can proceed directly to installing GNUstep Applications after
+this.
 
 Advanced Users
 ==============
@@ -48,10 +66,10 @@ Discussion
 
 This install script is meant to make it as easy as possible to install
 a bare-bones GNUstep system. That is, it doesn't require all the optional
-libraries you might want to have (SSL, jpeg, etc). It also doesn't
-use the art backend (at least by default), even though it displays much
-better. Ideally, after this bare-bones system is installed, we could start
-up a real GNUstep application which could do a much better job doing any one
+libraries you might want to have (SSL, etc). It also doesn't
+use the art backend (at least by default).
+Ideally, after this bare-bones system is installed, we could start
+up a real GNUstep application which could do a much better job of doing any one
 or all of the following:
 
 1. Instructing the user how to set up a complete system
@@ -65,5 +83,5 @@ out the sources from CVS, this script expects the core directory to
 be located on the same level as the Startup directory (e.g. ../core)
 
 If you have tar.gz files downloaded (or this comes on a CD with the
-sources). The sources should be in a directory called sources on the
-same level as the Startup directory (e.g. ../sources).
+sources). The sources should be in a directory called sources in the
+Startup directory (e.g. ./sources).

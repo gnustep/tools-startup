@@ -46,8 +46,6 @@ fi
 echo "*********************************************************************"
 if test $GOT_ERRORS = yes; then
   echo "Please correct the above errors before installing GNUstep"
-  echo "If you don't understand something or think a test is in error"
-  echo "Please email bug-gnustep@gnu.org and send the config.log file"
   exit 1
 elif test $GNUSTEP_INSTALLED = no; then
   echo "You are ready to install GNUstep. However, please pay special"
@@ -55,6 +53,7 @@ elif test $GNUSTEP_INSTALLED = no; then
   echo "them if they seem important"
 else
   echo "Now continue with the GNUstep installation"
+  echo "  gnustep-make installed: " $GNUSTEP_INSTALLED
   echo "  gnustep-base installed: " $GNUSTEP_BASE_INSTALLED
   echo "  gnustep-gui  installed: " $GNUSTEP_GUI_INSTALLED
   echo "  gnustep-back installed: " $GNUSTEP_BACK_INSTALLED
