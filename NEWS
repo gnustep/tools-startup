@@ -1,4 +1,10 @@
 
+Changes in version 0.10.0
+=========================
+
+New versions of the base, gui, and back library (still binary compatible)
+Added --builddir and -config-options arguments
+
 Changes in version 0.9.2
 =========================
 

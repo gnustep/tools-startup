@@ -44,10 +44,10 @@ esac
 #--------------------------------------------------------------------
 RUNDIR=`pwd`
 BUILDDIR=$RUNDIR/build
-SOURCESDIR=$SRCDIR/sources
 SRCDIR=`dirname $0`
 # Find absolute path to SRCDIR
 SRCDIR=`cd $SRCDIR && pwd`
+SOURCESDIR=$SRCDIR/sources
 
 gs_command_line=${@}
 gs_run_batch=no
@@ -276,25 +276,25 @@ if [ -d $SRCDIR/../core ]; then
   echo Compiling packages from CVS
 else
   # Compile from tar.gz
-  GMAKE=`find $SOURCESDIR -name gnustep-make*`
+  GMAKE=`find $SOURCESDIR -name gnustep-make*tar.gz`
   if [ x$GMAKE = x ]; then
     echo Cannot find gnustep-make distribution
     FOUND_SOURCES=no
   fi
   GMAKE=`basename $GMAKE .tar.gz`
-  GBASE=`find $SOURCESDIR -name gnustep-base*`
+  GBASE=`find $SOURCESDIR -name gnustep-base*tar.gz`
   if [ x$GBASE = x ]; then
     echo Cannot find gnustep-base distribution
     FOUND_SOURCES=no
   fi
   GBASE=`basename $GBASE .tar.gz`
-  GGUI=`find $SOURCESDIR -name gnustep-gui*`
+  GGUI=`find $SOURCESDIR -name gnustep-gui*tar.gz`
   if [ x$GGUI = x ]; then
     echo Cannot find gnustep-gui distribution
     FOUND_SOURCES=no
   fi
   GGUI=`basename $GGUI .tar.gz`
-  GBACK=`find $SOURCESDIR -name gnustep-back*`
+  GBACK=`find $SOURCESDIR -name gnustep-back*tar.gz`
   if [ x$GBACK = x ]; then
     echo Cannot find gnustep-back distribution
     FOUND_SOURCES=no
@@ -366,8 +366,14 @@ echo "******** Checking system for installation issues **********"
 echo "Configuring for $gs_build" >&5
 echo "Configuring for $gs_build"
 gs_flags
-PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
-PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
+PKG_CPPFLAGS=
+PKG_LDFLAGS=
+if test -z "$GS_CPPFLAGS"; then
+  PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
+fi
+if test -z "$GS_LDFLAGS"; then
+  PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
+fi
 echo $PKG_CPPFLAGS >&5
 echo $PKG_CPPFLAGS
 echo $PKG_LDFLAGS >&5

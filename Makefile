@@ -48,6 +48,8 @@ cvs-dist:
 	rmdir gnustep
 
 snapshot:
+	rm -rf gnustep-startup-snap
+	rm -f gnustep-startup-snap.tar.gz
 	mkdir ../gnustep-startup-snap
 	cp -rf * ../gnustep-startup-snap
 	mv ../gnustep-startup-snap .
