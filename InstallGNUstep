@@ -1,0 +1,434 @@
+#!/bin/sh
+
+SRCDIR=`pwd`
+BUILDDIR=/tmp/gnustep
+SOURCESDIR=$SRCDIR/../sources
+
+#--------------------------------------------------------------------
+# Welcome
+#--------------------------------------------------------------------
+clear
+echo
+echo
+echo
+echo "                          GNUstep Installation"
+echo
+echo
+echo "     This is an automatic installation script for GNUstep."
+echo 
+echo "This script tries to build and install the core libraries for"
+echo "GNUstep. Log files of the build process are kept so that if some"
+echo "part of the build does not work, you can send the log files to"
+echo "our attention (at bug-gnustep@gnu.org). From these we can try to"
+echo "determine what the problem is."
+echo
+echo
+
+#--------------------------------------------------------------------
+# Check how we can install (as root, sudo, home dir, etc)
+#--------------------------------------------------------------------
+HAVE_SUDO=no
+NO_PRIV=no
+which sudo > /dev/null
+if [ $? == 0 ]; then
+  HAVE_SUDO=yes
+fi
+AS_ROOT=yes
+if [ "`whoami`" != root ]; then
+  AS_ROOT=no
+  echo WARNING: You are not logged in as root
+  echo
+  echo GNUstep needs to be installed with root privlidges. If you
+  echo do not have root privlidges, you can also install GNUstep if
+  echo you have sudo access or you can install it in your home
+  echo directory. If you have no idea what any of this means, you
+  echo "should choose option two (2) below (or quit (option 3) and read "
+  echo "your computer manual on installing programs as root)."
+  echo
+  echo "1) I have sudo access in order to install GNUstep"
+  echo "2) I want to install GNUstep in my home directory"
+  echo "3) I want to quit and start over."
+  echo -n "Enter a number: "
+  read user_option
+  case "$user_option" in
+    1) if [ $HAVE_SUDO = no ]; then
+         echo Cannot find sudo program. Make sure it is in your path
+         exit 1
+       fi;;
+    2) GNUSTEP_SYSTEM_ROOT=$HOME/GNUstep/System
+       export GNUSTEP_SYSTEM_ROOT
+       NO_PRIV=yes
+       HAVE_SUDO=no;;
+    3) exit 0;;
+    4) echo Installing as normal user in $GNUSTEP_SYSTEM_ROOT
+       NO_PRIV=yes
+       HAVE_SUDO=no;;
+  esac
+fi
+
+if [ $AS_ROOT=no -a $HAVE_SUDO=yes ]; then
+  echo "***You will be prompted for a sudo password during installation ***"
+fi
+
+#--------------------------------------------------------------------
+# Find GNUstep sources
+#--------------------------------------------------------------------
+FFCALL=ffcall-1.8d
+
+IS_CVS=no
+FOUND_SOURCES=yes
+if [ -d $SRCDIR/../core ]; then
+  # Compile from CVS checkout
+  IS_CVS=yes
+  SOURCESDIR=$SRCDIR/../core
+  BUILDIR=$SOURCESDIR
+  GMAKE=make
+  GBASE=base
+  GGUI=gui
+  GBACK=back
+else
+  # Compile from tar.gz
+  GMAKE=`find $SOURCESDIR -name gnustep-make*`
+  if [ x$GMAKE = x ]; then
+    echo Cannot find gnustep-make distribution
+    FOUND_SOURCES=no
+  fi
+  GMAKE=`basename $GMAKE .tar.gz`
+  GBASE=`find $SOURCESDIR -name gnustep-base*`
+  if [ x$GBASE = x ]; then
+    echo Cannot find gnustep-base distribution
+    FOUND_SOURCES=no
+  fi
+  GBASE=`basename $GBASE .tar.gz`
+  GGUI=`find $SOURCESDIR -name gnustep-gui*`
+  if [ x$GGUI = x ]; then
+    echo Cannot find gnustep-gui distribution
+    FOUND_SOURCES=no
+  fi
+  GGUI=`basename $GGUI .tar.gz`
+  GBACK=`find $SOURCESDIR -name gnustep-back*`
+  if [ x$GBACK = x ]; then
+    echo Cannot find gnustep-back distribution
+    FOUND_SOURCES=no
+  fi
+  GBACK=`basename $GBACK .tar.gz`
+fi
+
+if [ $FOUND_SOURCES = no ]; then
+  echo "******** Source files not found **********"
+  echo "Make sure there is a directory one level above this script directory"
+  echo "named sources and that it has all the gnustep tar.gz files"
+  echo "(e.g. gnustep-make-x.x.x.tar.gz)"
+  echo "Contact bug-gnustep@gnu.org for help"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# Configure
+#--------------------------------------------------------------------
+
+if [ \! -d $BUILDDIR ]; then
+  mkdir $BUILDDIR
+fi
+if [ \! -d $BUILDDIR ]; then
+  echo "************************************************************"
+  echo "Cannot create the build directory $BUILDDIR."
+  echo "trying to build in your home directory...."
+  BUILDDIR=$HOME/gnustep
+  mkdir $BUILDDIR
+  if [ ! -d $BUILDDIR ]; then
+    echo "No. that doesn't work either. Contact bug-gnustep@gnu.org for help"
+    exit 1
+  fi
+fi
+  
+cd $BUILDDIR
+mkdir logs
+
+echo "******** Checking system for installation issues **********"
+$SRCDIR/configure
+cp config.log logs/00-config.log
+cp $SRCDIR/setuperrors .
+cp $SRCDIR/ErrorList .
+cp $SRCDIR/ErrorList.awk .
+./setuperrors
+if [ $? != 0 ]; then
+  exit 1
+fi
+. setupvars
+
+echo
+echo Building in $BUILDDIR
+if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
+  echo "Installing in default location (usually /usr/GNUstep)"
+else
+  echo Installing in $GNUSTEP_SYSTEM_ROOT
+fi
+echo
+echo -n "Press the Return/Enter key to begin building GNUstep: "
+read user_enter
+
+#--------------------------------------------------------------------
+# GNUstep make
+#--------------------------------------------------------------------
+
+PLOG=01-make
+if [ $GNUSTEP_INSTALLED = yes ];then
+  echo GNUstep Make already installed
+else
+  echo "******** Installing GNUstep Make **********"
+  rm -f logs/$PLOG*
+  if [ $IS_CVS = no ]; then
+    tar -zxf $SOURCESDIR/$GMAKE.tar.gz
+  fi
+  cd $GMAKE
+  ./configure
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+. $GMAKE/GNUstep.sh
+
+if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+  rm -f logs.tar.gz
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "---------------------------------------------------------"
+  echo "Installation of GNUstep make failed. Send the $BUILDDIR/logs.tar.gz"
+  echo "file to fedor@gnu.org or bug-gnustep@gnu.org"
+  echo "---------------------------------------------------------"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# Build pre-reqs
+#--------------------------------------------------------------------
+HAVE_RPM=no
+which rpm > /dev/null
+if [ $? == 0 ]; then
+  HAVE_RPM=yes
+fi
+if [ x"$NORPM" = xyes ]; then
+  HAVE_RPM=no
+fi
+
+PLOG=02-ffcall
+if [ $NO_PRIV = yes ]; then
+  # Force install
+  FFCALL_INSTALLED=no
+fi
+if [ $FFCALL_INSTALLED = yes ];then
+  echo ffcall already installed
+elif [ $LIBFFI_INSTALLED = yes ];then
+  echo libffi already installed
+else
+  echo "******** Installing ffcall **********"
+  rm -f logs/$PLOG*
+  tar -zxf $SOURCESDIR/$FFCALL.tar.gz
+  cd $FFCALL
+  ./configure --prefix=$GNUSTEP_SYSTEM_ROOT \
+   --libdir=$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
+   --includedir=$GNUSTEP_SYSTEM_ROOT/Library/Headers
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+#--------------------------------------------------------------------
+# GNUstep make
+#--------------------------------------------------------------------
+
+PLOG=03-make
+if [ $GNUSTEP_INSTALLED = yes ];then
+  echo GNUstep Make already installed
+else
+  echo "******** Installing GNUstep Make **********"
+  rm -f logs/$PLOG*
+  if [ $IS_CVS = no ]; then
+    tar -zxf $SOURCESDIR/$GMAKE.tar.gz
+  fi
+  cd $GMAKE
+  ./configure
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+. $GMAKE/GNUstep.sh
+
+if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+  rm -f logs.tar.gz
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "---------------------------------------------------------"
+  echo "Installation of GNUstep make failed. Send the $BUILDDIR/logs.tar.gz"
+  echo "file to fedor@gnu.org or bug-gnustep@gnu.org"
+  echo "---------------------------------------------------------"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# GNUstep base
+#--------------------------------------------------------------------
+
+PLOG=04-base
+PKG=$GBASE
+if [ "$GNUSTEP_BASE_INSTALLED" = yes ]; then
+  echo GNUstep Base already installed
+else
+  echo "******** Installing GNUstep Base **********"
+  rm -f logs/$PLOG*
+  if [ $IS_CVS = no ]; then
+    tar -zxf $SOURCESDIR/$PKG.tar.gz
+  fi
+
+  cd $PKG
+  if [ $NO_PRIV = yes ]; then
+    echo Patching GNUstep-Base to run in the home directory:
+    patch -p0 < $SOURCESDIR/home-gdomap.patch
+  fi
+  ./configure
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h ]; then
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "---------------------------------------------------------"
+  echo "Installation of GNUstep base failed. Send the $BUILDDIR/logs.tar.gz"
+  echo "file to fedor@gnu.org or bug-gnustep@gnu.org"
+  echo "---------------------------------------------------------"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# GNUstep gui
+#--------------------------------------------------------------------
+
+PLOG=05-gui
+PKG=$GGUI
+if [ "$GNUSTEP_GUI_INSTALLED" = yes ]; then
+  echo GNUstep Gui already installed
+else
+  echo "******** Installing GNUstep Gui **********"
+  rm -f logs/$PLOG*
+  if [ $IS_CVS = no ]; then
+    tar -zxf $SOURCESDIR/$PKG.tar.gz
+  fi
+  cd $PKG
+  ./configure
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Headers/AppKit/NSApplication.h ]; then
+  rm -f logs.tar.gz
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "---------------------------------------------------------"
+  echo "Installation of GNUstep gui failed. Send the $BUILDDIR/logs.tar.gz"
+  echo "file to fedor@gnu.org or bug-gnustep@gnu.org"
+  echo "---------------------------------------------------------"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# GNUstep back
+#--------------------------------------------------------------------
+
+PLOG=06-back
+PKG=$GBACK
+if [ "$GNUSTEP_BACK_INSTALLED" = yes ]; then
+  echo GNUstep Back already installed
+else
+  echo "******** Installing GNUstep Back **********"
+  rm -f logs/$PLOG*
+  if [ $IS_CVS = no ]; then
+    tar -zxf $SOURCESDIR/$PKG.tar.gz
+  fi
+  cd $PKG
+  ./configure
+  cp config.log ../logs/$PLOG-config.log
+  make 2>&1 | tee ../logs/$PLOG.log 
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    make install 2>&1 | tee ../logs/$PLOG-intall.log
+  else
+    # Don't redirect stderr in case we need a password
+    sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install | tee ../logs/$PLOG-intall.log
+  fi
+  cd ..
+fi
+
+if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle/libgnustep-back ]; then
+  rm -f logs.tar.gz
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "---------------------------------------------------------"
+  echo "Installation of GNUstep back failed. Send the $BUILDDIR/logs.tar.gz"
+  echo "file to fedor@gnu.org or bug-gnustep@gnu.org"
+  echo "---------------------------------------------------------"
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# Finish 
+#--------------------------------------------------------------------
+
+
+echo "---------------------------------------------------------"
+echo
+echo Installation Finished
+echo
+echo "---------------------------------------------------------"
+echo
+echo "Now run the GNUstep initialization script (put this in your"
+echo ".bashrc or other type of startup script). Note the '.' at the"
+echo "beginning of the line."
+echo ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
+echo
+echo "Now you can install some applications and start using GNUstep"
+echo "Look for a few applications in the AppSources directory. The"
+echo "typical way to install an application is:"
+echo "  tar -zxf MyApplication.tar.gz"
+echo "  cd MyApplication"
+echo "  make"
+echo "  make install (as root, unless GNUstep is in your home dir)"
+echo ""
+echo "Then start the application:"
+echo "  openapp MyApplication.app"
+echo ""
+

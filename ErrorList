@@ -1,0 +1,122 @@
+
+E090 Error
+You need the GNU cc compiler to compile GNUstep
+
+W092 Warning
+Your gcc version is not an official release and may be broken.
+Particularly if you are using RedHat before 7.2 or Mandrake, you should 
+upgrade gcc to a newer version.
+
+W102 Warning
+Make version is not recent enough or you are not using GNU
+make. You may have many problems compiling and/or running GNUstep.
+
+W103 Warning
+ld/binutils version is not recent enough, on Solaris 8 or greater you
+need a recent version of GNU binutils to compile GNUstep. The Solaris
+ld program isn't good enough. On Solaris < 2.8 you can ignore this warning.
+
+W104 Warning
+ld/binutils version is not recent enough. Try to get a binutils version
+more recent that 2.9.6
+
+I106 Information
+You have an old or nonexistant iconv implementation. iconv is not
+required, but is needed for string and font encodings. It comes with
+glib 2.1.2 or later.
+
+W109 Warning
+You are running a suid program (like sudo). For security, the make program
+will not pass LD_LIBRARY_PATH along. You will need to comile
+applications with 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH'. 
+
+W130 Warning
+The SO_REUSEADDR socket option for controlling re-use of network
+sockets immediately after shutdown appears to be broken on this
+machine.  Networking code will be built without using this
+feature.
+The effect of this lack is that when a network service is shut
+down, it cannot be re-started on the same network port until
+an operating-system timeout has expired.
+For servers other than gdomap, GNUstep does not normally need
+a particular network port, so the problem is unlikely to arise.
+
+E140 Error
+Unable to find integer of same size as void*. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E141 Error
+Unable to determine type for 16-bit integer. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E142 Error
+Unable to determine type for 32-bit integer. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E144 Error
+Unable to determine type for 32-bit float. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E144 Error
+Unable to determine type for 64-bit float. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E150 Error
+You do not have the GNU Objective-C compiler installed
+Check to make sure you have a full installation of the GCC
+compiler that includes the Objective-C headers and libraries
+
+E151 Error
+You do not have the GNU Objective-C headers installed.
+Check to make sure you have a full installation of the GCC
+compiler that includes the Objective-C headers and libraries.
+
+I190 Information
+$GNUSTEP_SYSTEM_ROOT was set and has something installed there but
+configure's prefix was not set to this location. I'm assuming you
+want to install GNUstep somewhere else than where it is currently
+installed. If not, when you run conifgure, set the prefix by typing
+--prefix=$GNUSTEP_SYSTEM_ROOT
+
+I199 Information
+GNUstep is not installed yet. Please procede with installation of GNUstep
+as long as you have resolved other errors list above.
+
+
+E270 Error
+GNUstep requires the ffcall of libffi library to do invocations and DO
+Make sure this library is installed (see installation instructions)
+Otherwise DO will not be compatible with other systems and may cause
+hard-to-trace errors. On non-ix86 it may not work at all.
+
+E271 Error
+You do not have a recent version of the libobjc library. Make sure
+you either have gcc 3.x installed or install gnustep-objc.
+
+E280 Error
+I don't seem to be able to use your Objective-C compiler to produce
+working binaries!  Please check your Objective-C compiler installation.
+Either the Objective-C comiler part of gcc is not installed or the 
+Objective-C library is not installed.
+
+E281 Error
+I don't seem to be able to use your Objective-C compiler to produce
+working binaries!  Please check your Objective-C compiler installation.
+For gcc-3.0.x make sure that your compiler's libgcc_s and libobjc
+can be found by the dynamic linker - usually that requires you to add
+the directory given by gcc -print-file-name=libobjc.so to your
+LD_LIBRARY_PATH or /etc/ld.so.conf.
+Please refer to your compiler installation instructions for more help.
+
+W300 Warning
+You seem to have installed gnustep-make, but have not sourced the
+GNUstep script. Please type "source $GNUSTEP_SYSTEM_ROOT/Makefiles/GNUstep.sh"
+or use GNUstep.csh on csh shells. Ignore this if you are still installing
+GNUstep. 
+
+E401 Error
+You need to install the TIFF library (libtiff and libtiff-devel) in order
+to use the GNUstep gui.
+
+I999
+End of info messages.

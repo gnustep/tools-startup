@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# @configure_input@
+#
+AWK=@AWK@
+SETUP_ERRORS="@SETUP_ERRORS@"
+FFCALL_INSTALLED=@ac_cv_header_callback_h@
+LIBFFI_INSTALLED=@ac_cv_header_ffi_h@
+GNUSTEP_INSTALLED=@GNUSTEP_INSTALLED@
+GNUSTEP_SOURCED=@GNUSTEP_SOURCED@
+GNUSTEP_BASE_INSTALLED=@ac_cv_header_Foundation_NSObject_h@
+GNUSTEP_GUI_INSTALLED=@ac_cv_header_AppKit_NSApplication_h@
+GNUSTEP_BACK_INSTALLED=@have_back@
+GCC_VERSION=@GCC_VERSION@
+

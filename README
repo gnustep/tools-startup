@@ -1,0 +1,34 @@
+
+Startup
+=======
+
+GNUstep Startup is a set of scripts to automatically build and install the
+core GNUstep system.  You can run it at any time: before, during, and after
+you have installed GNUstep.
+
+To begin, type:
+
+InstallGNUstep
+
+This runs configuration tests that check if your system is setup
+correctly to install GNUstep. At the end of these tests, a report is
+printed that gives some information on any errors or possible problems
+you may have in installing GNUstep. If configure completes
+sucessfully, then the script installs the GNUstep core libraries.
+
+
+Advanced Users
+==============
+
+Extra instructions if you're feeling lucky...
+
+Intalling in another location
+------------------------------
+
+To install GNUstep in a non-default location, use for example:
+
+export GNUSTEP_SYSTEM_ROOT=/usr/local/GNUstep/System
+
+or if you are using csh:
+
+setenv GNUSTEP_SYSTEM_ROOT /usr/local/GNUstep/System
