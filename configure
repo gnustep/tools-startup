@@ -319,7 +319,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE CPP ac_cv_library_combo GCC_VERSION AR DLLTOOL RANLIB ac_ct_RANLIB LN_S GNUMAKE EGREP GS_SINT8 GS_UINT8 ac_cv_sizeof_short ac_cv_sizeof_int ac_cv_sizeof_long ac_cv_sizeof_long_long ac_cv_sizeof_float ac_cv_sizeof_double ac_cv_sizeof_voidp GS_ADDR GS_SINT16 GS_UINT16 GS_SINT32 GS_UINT32 GS_FLT32 GS_FLT64 GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded DYNAMIC_LINKER NX_CONST_STRING_CPPFLAGS NX_CONST_STRING_CLASS GNUSTEP_SOURCED ac_cv_header_callback_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL RANLIB ac_ct_RANLIB LN_S GNUMAKE EGREP GS_SINT8 GS_UINT8 ac_cv_sizeof_short ac_cv_sizeof_int ac_cv_sizeof_long ac_cv_sizeof_long_long ac_cv_sizeof_float ac_cv_sizeof_double ac_cv_sizeof_voidp GS_ADDR GS_SINT16 GS_UINT16 GS_SINT32 GS_UINT32 GS_FLT32 GS_FLT64 GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded DYNAMIC_LINKER NX_CONST_STRING_CPPFLAGS NX_CONST_STRING_CLASS GNUSTEP_SOURCED ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -3147,6 +3147,41 @@ else
 echo "${ECHO_T}no" >&6
 fi
 
+# Extract the first word of "ld", so it can be a program name with args.
+set dummy ld; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_prog_LD+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  if test -n "$LD"; then
+  ac_cv_prog_LD="$LD" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_prog_LD="ld"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+fi
+fi
+LD=$ac_cv_prog_LD
+if test -n "$LD"; then
+  echo "$as_me:$LINENO: result: $LD" >&5
+echo "${ECHO_T}$LD" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
 # Extract the first word of "dlltool", so it can be a program name with args.
 set dummy dlltool; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -3420,23 +3455,32 @@ else
 echo "${ECHO_T}ok" >&6
 fi
 
-
-echo "$as_me:$LINENO: checking binutils version > 2.9" >&5
+if test x"$ac_cv_prog_LD" != x; then
+  echo "$as_me:$LINENO: checking binutils version > 2.9" >&5
 echo $ECHO_N "checking binutils version > 2.9... $ECHO_C" >&6
-ld_version=`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`
-ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
-if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
-  echo "$as_me:$LINENO: result: yes $ld_version" >&5
+  ld_version=`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`
+  ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
+  if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
+    echo "$as_me:$LINENO: result: yes $ld_version" >&5
 echo "${ECHO_T}yes $ld_version" >&6
-else
-  echo "$as_me:$LINENO: result: no $ld_version" >&5
+  else
+    echo "$as_me:$LINENO: result: no $ld_version" >&5
 echo "${ECHO_T}no $ld_version" >&6
-  case $host_os in
-    *solaris*)
-      SETUP_ERRORS="$SETUP_ERRORS W103";;
-    *)
-      SETUP_ERRORS="$SETUP_ERRORS W104";;
-  esac
+    case $host_os in
+      *darwin*)
+        ;;
+      *solaris*)
+        SETUP_ERRORS="$SETUP_ERRORS W103";;
+      *)
+        if test x"$ld_version" = x; then
+          SETUP_ERRORS="$SETUP_ERRORS I105"
+        else
+          SETUP_ERRORS="$SETUP_ERRORS W104"
+        fi;;
+    esac
+  fi
+else
+  SETUP_ERRORS="$SETUP_ERRORS E101"
 fi
 
 echo "$as_me:$LINENO: checking iconv version > 2.1" >&5
@@ -3449,6 +3493,8 @@ else
   echo "$as_me:$LINENO: result: no $iconv_version" >&5
 echo "${ECHO_T}no $iconv_version" >&6
   case $host_os in
+    *darwin*)
+      ;;
     *solaris*)
       ;;
     *)
@@ -6910,7 +6956,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -6946,7 +6992,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -6982,7 +7028,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7018,7 +7064,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7055,7 +7101,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7093,7 +7139,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7129,7 +7175,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7165,7 +7211,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7203,7 +7249,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -7240,7 +7286,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "config_thread.m"
+#include "config/config_thread.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -8005,7 +8051,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "$srcdir/config/config.objc.m"
+#include "config/config.objc.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -8066,7 +8112,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "$srcdir/config/config.loadtest.m"
+#include "config/config.loadtest.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -8128,7 +8174,7 @@ _ACEOF
 cat confdefs.h >>conftest.$ac_ext
 cat >>conftest.$ac_ext <<_ACEOF
 /* end confdefs.h.  */
-#include "$srcdir/config/config.constant-string-class.m"
+#include "config/config.constant-string-class.m"
 _ACEOF
 rm -f conftest$ac_exeext
 if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
@@ -8953,6 +8999,7 @@ fi
 
 
 
+
 #--------------------------------------------------------------------
 # Produce the output files
 #--------------------------------------------------------------------
@@ -9641,6 +9688,7 @@ s,@CPP@,$CPP,;t t
 s,@ac_cv_library_combo@,$ac_cv_library_combo,;t t
 s,@GCC_VERSION@,$GCC_VERSION,;t t
 s,@AR@,$AR,;t t
+s,@LD@,$LD,;t t
 s,@DLLTOOL@,$DLLTOOL,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
@@ -9671,6 +9719,7 @@ s,@NX_CONST_STRING_CPPFLAGS@,$NX_CONST_STRING_CPPFLAGS,;t t
 s,@NX_CONST_STRING_CLASS@,$NX_CONST_STRING_CLASS,;t t
 s,@GNUSTEP_SOURCED@,$GNUSTEP_SOURCED,;t t
 s,@ac_cv_header_callback_h@,$ac_cv_header_callback_h,;t t
+s,@ac_cv_header_ffi_h@,$ac_cv_header_ffi_h,;t t
 s,@ac_cv_header_AppKit_NSApplication_h@,$ac_cv_header_AppKit_NSApplication_h,;t t
 s,@ac_cv_header_Foundation_NSObject_h@,$ac_cv_header_Foundation_NSObject_h,;t t
 s,@have_back@,$have_back,;t t

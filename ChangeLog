@@ -1,0 +1,10 @@
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Better error checking
+	* configure.ac: Script fixes. Darwin support
+	* ErrorList: More warnings.
+
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* Initial import.
+

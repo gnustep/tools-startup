@@ -121,6 +121,7 @@ fi
 # Find the binary and compile tools
 #--------------------------------------------------------------------
 AC_CHECK_PROG(AR, ar, ar)
+AC_CHECK_PROG(LD, ld, ld)
 AC_CHECK_PROG(DLLTOOL, dlltool, dlltool)
 AC_PROG_RANLIB
 
@@ -155,20 +156,29 @@ else
   AC_MSG_RESULT(ok)
 fi
 
-
-AC_MSG_CHECKING(binutils version > 2.9)
-ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
-ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
-if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
-  AC_MSG_RESULT(yes $ld_version)
+if test x"$ac_cv_prog_LD" != x; then
+  AC_MSG_CHECKING(binutils version > 2.9)
+  ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
+  ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
+  if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
+    AC_MSG_RESULT(yes $ld_version)
+  else
+    AC_MSG_RESULT(no $ld_version)
+    case $host_os in
+      *darwin*)
+        ;;
+      *solaris*)
+        SETUP_ERRORS="$SETUP_ERRORS W103";;
+      *)
+        if test x"$ld_version" = x; then
+          SETUP_ERRORS="$SETUP_ERRORS I105"
+        else
+          SETUP_ERRORS="$SETUP_ERRORS W104"
+        fi;;
+    esac
+  fi
 else
-  AC_MSG_RESULT(no $ld_version)
-  case $host_os in
-    *solaris*)
-      SETUP_ERRORS="$SETUP_ERRORS W103";;
-    *)
-      SETUP_ERRORS="$SETUP_ERRORS W104";;
-  esac
+  SETUP_ERRORS="$SETUP_ERRORS E101"
 fi
 
 AC_MSG_CHECKING(iconv version > 2.1)
@@ -178,6 +188,8 @@ if test -n "$iconv_version" -a "$iconv_version" \> 2.1; then
 else
   AC_MSG_RESULT(no $iconv_version)
   case $host_os in
+    *darwin*)
+      ;;
     *solaris*)
       ;;
     *)
@@ -465,54 +477,54 @@ if test "$OBJC_RUNTIME_LIB" = "apple"; then
 fi
 if test "$OBJC_THREAD" != ""; then
   LIBS="-lobjc $LIBS $OBJC_THREAD"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "config/config_thread.m"], 
 	objc_threaded="$OBJC_THREAD",
 	objc_threaded="", objc_threaded="")
 elif test "$host_os" = linux-gnu; then
   LIBS="-lobjc -lpthread"
-  AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpthread",
+  AC_TRY_RUN([#include "config/config_thread.m"], objc_threaded="-lpthread",
 	objc_threaded="", objc_threaded="-lpthread")
 elif test "`echo $host_os|sed 's/[[0-9]].*//'|sed s/elf//`" = freebsd; then
   LIBS="-pthread -lobjc"
-  AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-pthread",
+  AC_TRY_RUN([#include "config/config_thread.m"], objc_threaded="-pthread",
        objc_threaded="", objc_threaded="-pthread")
   if test x"$objc_threaded" = x""; then
     LIBS="-lpthread -lobjc"
-    AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpthread",
+    AC_TRY_RUN([#include "config/config_thread.m"], objc_threaded="-lpthread",
 	objc_threaded="", objc_threaded="-lpthread")
   fi
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc -lpcthread"
-    AC_TRY_RUN([#include "config_thread.m"], objc_threaded="-lpcthread",
+    AC_TRY_RUN([#include "config/config_thread.m"], objc_threaded="-lpcthread",
 	objc_threaded="", objc_threaded="-lpcthread")
   fi
 elif test "$MINGW32" = yes; then
   # Mingw doesn't need anything extra for threads
   LIBS="-lobjc $LIBS"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "config/config_thread.m"], 
 	objc_threaded="works",
 	objc_threaded="", objc_threaded="works")
 else
   LIBS="-lobjc $LIBS"
-  AC_TRY_RUN([#include "config_thread.m"], 
+  AC_TRY_RUN([#include "config/config_thread.m"], 
 	objc_threaded="works",
 	objc_threaded="", objc_threaded="")
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc $saved_LIBS -lpthread "
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "config/config_thread.m"], 
     	objc_threaded="-lpthread", 
 	objc_threaded="", objc_threaded="")
   fi
   if test x"$objc_threaded" = x""; then
     # Solaris, OpenBSD/sparc
     LIBS="-lobjc $saved_LIBS -lpthread -lposix4"
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "config/config_thread.m"], 
     	objc_threaded="-lpthread -lposix4", 
 	objc_threaded="", objc_threaded="")
   fi
   if test x"$objc_threaded" = x""; then
     LIBS="-lobjc $saved_LIBS -lthread "
-    AC_TRY_RUN([#include "config_thread.m"], 
+    AC_TRY_RUN([#include "config/config_thread.m"], 
     	objc_threaded="-lthread", 
 	objc_threaded="", objc_threaded="")
   fi
@@ -539,7 +551,7 @@ OBJC_SYS_DYNAMIC_LINKER()
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(whether objc really works)
 AC_CACHE_VAL(objc_works,
-  AC_TRY_RUN([#include "$srcdir/config/config.objc.m"],
+  AC_TRY_RUN([#include "config/config.objc.m"],
   objc_works=yes, 
   objc_works=no, 
   objc_works=yes)
@@ -563,7 +575,7 @@ fi
 #---------------------------------------------------------------------
 AC_MSG_CHECKING(if +load method is executed before main)
 AC_CACHE_VAL(objc_load_method_worked,
-  AC_TRY_RUN([#include "$srcdir/config/config.loadtest.m"],
+  AC_TRY_RUN([#include "config/config.loadtest.m"],
 	objc_load_method_worked=yes,
 	objc_load_method_worked=no,
 	objc_load_method_worked=no)
@@ -585,7 +597,7 @@ string_saved_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS -fconstant-string-class=FooConstantString"
 AC_MSG_CHECKING(if the compiler supports -fconstant-string-class)
 AC_CACHE_VAL(objc_compiler_supports_constant_string_class,
-  AC_TRY_RUN([#include "$srcdir/config/config.constant-string-class.m"],
+  AC_TRY_RUN([#include "config/config.constant-string-class.m"],
   objc_compiler_supports_constant_string_class=yes,
   objc_compiler_supports_constant_string_class=no,
   objc_compiler_supports_constant_string_class=no)
@@ -701,6 +713,7 @@ fi
 
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(ac_cv_header_callback_h)
+AC_SUBST(ac_cv_header_ffi_h)
 AC_SUBST(ac_cv_header_AppKit_NSApplication_h)
 AC_SUBST(ac_cv_header_Foundation_NSObject_h)
 AC_SUBST(have_back)

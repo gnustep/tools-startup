@@ -4,6 +4,9 @@ SRCDIR=`pwd`
 BUILDDIR=/tmp/gnustep
 SOURCESDIR=$SRCDIR/../sources
 
+# FIXME: Option to set these on the command line
+LIB_COMBO=gnu-gnu-gnu
+
 #--------------------------------------------------------------------
 # Welcome
 #--------------------------------------------------------------------
@@ -75,13 +78,22 @@ fi
 #--------------------------------------------------------------------
 FFCALL=ffcall-1.8d
 
-IS_CVS=no
 FOUND_SOURCES=yes
+if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no ]; then
+  FFCALL=`find $SOURCESDIR -name ffcall-1*`
+  if [ x$FFCALL = x ]; then
+    echo Cannot find ffcall sources
+    FOUND_SOURCES=no
+  fi
+  FFCALL=`basename $FFCALL .tar.gz`
+fi
+
+IS_CVS=no
 if [ -d $SRCDIR/../core ]; then
   # Compile from CVS checkout
   IS_CVS=yes
   SOURCESDIR=$SRCDIR/../core
-  BUILDIR=$SOURCESDIR
+  BUILDDIR=$SOURCESDIR
   GMAKE=make
   GBASE=base
   GGUI=gui
@@ -143,10 +155,12 @@ if [ \! -d $BUILDDIR ]; then
 fi
   
 cd $BUILDDIR
-mkdir logs
+if [ \! -d logs ]; then
+  mkdir logs
+fi
 
 echo "******** Checking system for installation issues **********"
-$SRCDIR/configure
+$SRCDIR/configure --with-library-combo=$LIB_COMBO
 cp config.log logs/00-config.log
 cp $SRCDIR/setuperrors .
 cp $SRCDIR/ErrorList .
@@ -164,6 +178,7 @@ if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
 else
   echo Installing in $GNUSTEP_SYSTEM_ROOT
 fi
+echo Library combo: $LIB_COMBO
 echo
 echo -n "Press the Return/Enter key to begin building GNUstep: "
 read user_enter
@@ -182,7 +197,7 @@ else
     tar -zxf $SOURCESDIR/$GMAKE.tar.gz
   fi
   cd $GMAKE
-  ./configure
+  ./configure --with-library-combo=$LIB_COMBO
   cp config.log ../logs/$PLOG-config.log
   make 2>&1 | tee ../logs/$PLOG.log 
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
@@ -308,18 +323,22 @@ else
   fi
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
-  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
-  else
-    # Don't redirect stderr in case we need a password
-    sudo make install | tee ../logs/$PLOG-intall.log
+  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
+  tail -n1 ../logs/$PLOG.log | grep Error
+  if [ $? != 0 ]; then
+    if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+    else
+      # Don't redirect stderr in case we need a password
+      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+    fi
   fi
   cd ..
 fi
 
 if [ \! -f $GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h ]; then
   tar -cf logs.tar logs
+  rm -f logs.tar.gz
   gzip logs.tar
   echo "---------------------------------------------------------"
   echo "Installation of GNUstep base failed. Send the $BUILDDIR/logs.tar.gz"
@@ -345,12 +364,15 @@ else
   cd $PKG
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
-  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
-  else
-    # Don't redirect stderr in case we need a password
-    sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install | tee ../logs/$PLOG-intall.log
+  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log 
+  tail -n1 ../logs/$PLOG.log | grep Error
+  if [ $? != 0 ]; then
+    if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+    else
+      # Don't redirect stderr in case we need a password
+      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+    fi
   fi
   cd ..
 fi
@@ -383,12 +405,15 @@ else
   cd $PKG
   ./configure
   cp config.log ../logs/$PLOG-config.log
-  make 2>&1 | tee ../logs/$PLOG.log 
-  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
-    make install 2>&1 | tee ../logs/$PLOG-intall.log
-  else
-    # Don't redirect stderr in case we need a password
-    sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install | tee ../logs/$PLOG-intall.log
+  make $MAKEFLAGS 2>&1 | tee ../logs/$PLOG.log
+  tail -n1 ../logs/$PLOG.log | grep Error
+  if [ $? != 0 ]; then
+    if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+      make $MAKEFLAGS install 2>&1 | tee ../logs/$PLOG-intall.log
+    else
+      # Don't redirect stderr in case we need a password
+      sudo make $MAKEFLAGS install | tee ../logs/$PLOG-intall.log
+    fi
   fi
   cd ..
 fi
