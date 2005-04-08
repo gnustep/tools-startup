@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 #
 #  Copyright (C) 2005 Free Software Foundation, Inc.
 #
@@ -369,10 +369,11 @@ echo "Configuring for $gs_build"
 gs_flags
 PKG_CPPFLAGS=
 PKG_LDFLAGS=
+echo "CPPFLAGS: $CPPFLAGS" >&5
+echo "LDFLAGS: $LDFLAGS" >&5
 if test -n "$GS_CPPFLAGS"; then
   if test -n "$CPPFLAGS"; then
     CPPFLAGS="$CPPFLAGS $GS_CPPFLAGS"
-    echo "CPPFLAGS: $CPPFLAGS" >&5
   else
     PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
     echo $PKG_CPPFLAGS >&5
@@ -381,7 +382,6 @@ fi
 if test -n "$GS_LDFLAGS"; then
   if test -n "$LDFLAGS"; then
     LDFLAGS="$LDFLAGS $GS_LDFLAGS"
-    echo "LDFLAGS: $LDFLAGS" >&5
   else
     PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
     echo $PKG_LDFLAGS >&5

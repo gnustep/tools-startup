@@ -7,7 +7,7 @@ Your gcc version is not an official release and may be broken.
 Particularly if you are using RedHat before 7.2 or Mandrake, you should 
 upgrade gcc to a newer version.
 
-E093 Warning
+E093 Error
 It appears you are using the Apple cc compiler. The Apple compiler does
 not compile GNUstep. You need to install an FSF compiler, or make sure
 that the FSF compiler is found first in your PATH.
@@ -41,8 +41,8 @@ glib 2.1.2 or later.
 
 W109 Warning 
 For security reasons, your make program will not pass LD_LIBRARY_PATH
-along. You may need to compile/install applications with 
-'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
+along. You may need to compile/install applications when you are logged in
+as root, or use 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
 
 W125 Warning 
 The OpenSSL package (libcrypto, etc) is needed to access https connections

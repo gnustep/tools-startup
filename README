@@ -62,6 +62,32 @@ behavior of the script.
 --config-options
 	    Extra options to pass to the configure routines.
 
+TroubleShooting
+===============
+
+Q1. When I type ./InstallGNUstep, I get:
+
+/bin/sh: bad interpreter: No such file or directory
+
+A1: Make sure /bin is in your path:
+
+PATH=$PATH:/bin
+
+Alternatively, you may have un-tarred the files with WinZIP or another
+program that added DOS linefeeds to all the files. Make sure to un-tar the
+files with a Unix tar program.
+
+Q2. I installed the required libraries and packages in /usr/local or 
+some other special place, and InstallGNUstep says it can't find them.
+
+A2. The best thing would be to set this information up beforehand:
+
+export CPPFLAGS=-I/usr/local/include
+export LDFLAGS=-L/usr/local/lib
+
+Then run InstallGNUstep again.
+
+
 Discussion
 ==========
 

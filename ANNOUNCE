@@ -34,9 +34,9 @@ etc) have precompiled binaries of GNUstep available through their
 normal distribution system. It may be preferable to get GNUstep this
 way.
 
-Note for developers and testers: You can use these scripts to build the
-libraries from CVS. Just go to the Startup directory in CVS and start the
-installation from there.
+Note for developers and testers: You can use these scripts to build
+the libraries from CVS. Just run the install script from the Startup
+directory in CVS.
 
 Changes in version 0.10.1
 =========================

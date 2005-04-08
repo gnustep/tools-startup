@@ -1,3 +1,13 @@
+2005-04-07  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix apple compiler check.
+	* ErrorList: Minor fix.
+	* InstallGNUstep: Print CPPFLAGS, etc.
+	* README: Update.
+
+	* CheckGNUstep: New checking script
+	* scripts/program.sh: New file.
+
 2005-04-06  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.10.1

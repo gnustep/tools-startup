@@ -163,15 +163,19 @@ fi
 #--------------------------------------------------------------------
 cc_cppprecomp=0
 cc_byndle=0
-AC_MSG_CHECKING([for apple compiler flags])
-cc_cppprecomp=`${CC} -no-cpp-precomp 2>&1 | grep -c "unrecognized"`
-cc_bundle=`${CC} -bundle 2>&1 | grep -c "couldn"`
+AC_MSG_CHECKING([for apple compiler])
+${CC} -v 2>&1 | grep Apple > /dev/null
+cc_result=$?
 # 0 means we have the flag
-if test  "$GCC_VERSION" = 3 -a $cc_bundle = 0; then
-  SETUP_ERRORS="$SETUP_ERRORS E093"
-  cc_bundle=yes
+cc_apple=no
+if test  $cc_result = 0; then
+  case $host_os in
+     darwin*)
+       SETUP_ERRORS="$SETUP_ERRORS E093"
+       cc_apple=yes;;
+  esac
 fi
-AC_MSG_RESULT($cc_bundle)
+AC_MSG_RESULT($cc_apple)
 
 #--------------------------------------------------------------------
 # Find the binary and compile tools
