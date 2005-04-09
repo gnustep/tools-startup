@@ -1,5 +1,5 @@
 
-The GNUstep Startup Package, version 0.10.1 is now available.
+The GNUstep Startup Package, version 0.10.2 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
@@ -27,6 +27,8 @@ Darwin/PPC 7.x
 Solaris/SPARC 2.7
 NetBSD/ix86
 NetBSD/sparc64
+Debian Unstable/ix86
+Gentoo/ix86
 
 NOTES: Windows uses should preferably use the Windows binary installer
 available at www.gnustep.org. Some systems (Debian, FreeBSD, Gentoo,
@@ -38,15 +40,15 @@ Note for developers and testers: You can use these scripts to build
 the libraries from CVS. Just run the install script from the Startup
 directory in CVS.
 
-Changes in version 0.10.1
+Changes in version 0.10.2
 =========================
 
-Enable the art backend by default
+Fixed a bug in the configure script
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.10.1.tar.gz distribution file has been placed at
+The gnustep-startup-0.10.2.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page

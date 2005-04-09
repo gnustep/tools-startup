@@ -1,3 +1,7 @@
+2005-04-08  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.10.2
+
 2005-04-07  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Fix apple compiler check.
