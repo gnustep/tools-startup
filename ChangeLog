@@ -1,3 +1,10 @@
+2005-04-13  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Add check for platform install of objc
+	* scripts/platform.sh: Add cygwin and mingw, and set flag to
+	compile objc on these.
+	* scripts/run-gnustep: Check for GNUstep CVS using path to script.
+
 2005-04-08  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.10.2

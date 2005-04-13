@@ -23,6 +23,19 @@ gs_platform_generic()
 {
   GS_CPPFLAGS=
   GS_LDFLAGS=
+  GS_PLATFORM_BUILD_OBJC=no
+}
+
+gs_platform_cygwin()
+{
+  gs_platform_generic
+  GS_PLATFORM_BUILD_OBJC=yes
+}
+
+gs_platform_mingw()
+{
+  gs_platform_generic
+  GS_PLATFORM_BUILD_OBJC=yes
 }
 
 gs_platform_darwin()
@@ -35,6 +48,7 @@ gs_platform_darwin()
   fi
   if [ -d /sw/lib/freetype2/bin ]; then
     # We prefer the Fink freetyp2 lib to the X11R6 one
+    # The X11R6 gives back erronous information from FTC_SBitCache_Lookup
     PATH=/sw/lib/freetype2/bin:$PATH
   fi
 }
@@ -66,6 +80,8 @@ gs_flags()
   case "$gs_build_os" in
     darwin*)   gs_platform_darwin ;;
     solaris*)  gs_platform_solaris ;;
+    cygwin*)   gs_platform_cygwin ;;
+    mingw*)    gs_platform_mingw ;;
     *)         gs_platform_unknown ;;
   esac
 }

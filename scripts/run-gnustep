@@ -5,8 +5,12 @@
 #   2. Runs the Startup/InstallGNUstep script
 #   3. Uploads the results to ftp.gnustep.org
 #
-# This script assumes that GNUstep CVS files are either in the
-# current directory, or in a specific place, which is set to
+# This script assumes it is being run from a normal CVS checkout of the
+# gnustep directory strucuture (only Startup and core are required).
+# This script tries to find the GNUstep CVS files, by checking in the
+# current directory, the directory ../.. from where the script was run
+# from (i.e. if this script is called from it's normal CVS location), or
+# as a last resport:
 #    $HOME/src/gnustep-'$hostname -s`
 #
 # The files are installed into 
@@ -40,10 +44,15 @@ NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
 
 # Figure out where the GNUstep files are
 RUNDIR=`pwd`
+SRCDIR=`dirname $0`
+# Find absolute path to SRCDIR
+SRCDIR=`cd $SRCDIR && pwd`
 if [ -f InstallGNUstep ]; then
   TOPDIR=`cd ..; pwd`
 elif [ -f Startup/InstallGNUstep ]; then
   TOPDIR=$RUNDIR
+elif [ -f $SRCDIR/../InstallGNUstep ]; then
+  TOPDIR=$SRCDIR/../..
 else
   TOPDIR=$HOME/src/gnustep-$NAME
 fi

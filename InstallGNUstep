@@ -606,7 +606,7 @@ if [ -n "$gs_install_prefix" ]; then
 fi
 PKG_PATCHES=
 gsexitstatus=0
-if [ $GCC_VERSION = 2 ]; then
+if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   # Need to install our own version of libobjc
   if [ $GNUSTEP_CUSTOM_LIBOBJC != "NONE" ]; then
     echo Custom libobjc already installed >&5
