@@ -1,5 +1,10 @@
 2005-04-13  Adam Fedor  <fedor@gnu.org>
 
+	* scripts/platform.sh (gs_platform_mingw): Add --disable-xml flag
+	* scripts/test-gnustep: Rename from run-gnustep
+
+2005-04-13  Adam Fedor  <fedor@gnu.org>
+
 	* InstallGNUstep: Add check for platform install of objc
 	* scripts/platform.sh: Add cygwin and mingw, and set flag to
 	compile objc on these.

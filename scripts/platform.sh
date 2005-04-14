@@ -36,6 +36,7 @@ gs_platform_mingw()
 {
   gs_platform_generic
   GS_PLATFORM_BUILD_OBJC=yes
+  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-xml"
 }
 
 gs_platform_darwin()
