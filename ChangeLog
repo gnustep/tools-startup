@@ -1,3 +1,10 @@
+2005-04-18  Adam Fedor  <fedor@gnu.org>
+
+	* CheckGNUstep: Better check of gdomap
+	* InstallGNUstep: Configure ffcall libs shared.
+	* configure.ac: Minor fixes.
+	* scripts/programs.sh (gs_check_tool): New function.
+
 2005-04-13  Adam Fedor  <fedor@gnu.org>
 
 	* scripts/platform.sh (gs_platform_mingw): Add --disable-xml flag

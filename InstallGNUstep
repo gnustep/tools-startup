@@ -490,7 +490,7 @@ echo ""
 if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no ]; then
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
-  echo "which should have ffcall-1.8d.tar.gz present"
+  echo "which should have ffcall-1.10.tar.gz present"
   echo "Download this file from ftp://ftp.gnustep.org/pub/gnustep/dev-libs"
   echo "Source files not found. STOP" >&5
   exit 1
@@ -571,7 +571,8 @@ PKG=$FFCALL
 PKG_DISPLAY="ffcall"
 PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
    --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
-   --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers"
+   --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
+   --enable-shared --disable-static"
 PKG_INSTALL=
 PKG_PATCHES=
 gsexitstatus=0

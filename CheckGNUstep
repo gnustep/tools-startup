@@ -163,6 +163,18 @@ if [ $gs_gdomap != 0 -o $gs_gdnc != 0 ]; then
   exit 1
 fi
 
+# Check if gdomap knows about the daemons
+echo $ECHO_N "Checking registered daemons... $ECHO_C"
+echo "Checking registered daemons... " >&5
+gs_out=`gdomap -N | grep GDNC | wc -l | tr -d ' '`
+if test "$gs_out" = "1"; then
+  echo ok
+  echo ok >&5
+else
+  echo gdnc not regestered
+  echo gdnc not regestered >&5
+fi
+
 #--------------------------------------------------------------------
 # Check Tools
 #--------------------------------------------------------------------
@@ -170,7 +182,7 @@ echo "Checking GNUstep tools:"
 echo "Checking GNUstep tools:" >&5
 GSARGS="read NSGlobalDomain"
 GSPROGRAM=defaults
-gs_check_program
+gs_check_tool
 
 if [ $gs_exit_status != 0 ]; then
   gs_check_error

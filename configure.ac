@@ -222,7 +222,7 @@ fi
 
 if test x"$ac_cv_prog_LD" != x; then
   AC_MSG_CHECKING(binutils version > 2.9)
-  ld_version=[`ld --version | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>/dev/null`]
+  ld_version=[`ld --version 2>/dev/null | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>/dev/null`]
   ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
   if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
     AC_MSG_RESULT(yes $ld_version)
