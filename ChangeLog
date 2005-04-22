@@ -1,3 +1,7 @@
+2005-04-22  Adam Fedor  <fedor@gnu.org>
+
+	* missing: Update to latest version.
+
 2005-04-18  Adam Fedor  <fedor@gnu.org>
 
 	* CheckGNUstep: Better check of gdomap
@@ -73,7 +77,7 @@
 2005-03-21  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Get absolute path for SRCDIR and always look for
-	ffcall in sources dir. Specify . path for scripts.
+	ffcall in sources dir. Specify . path for scripts. Fixes bug #12219.
 	* setuperrors: Specify . path for scripts.
 
 2005-03-16  Adam Fedor  <fedor@gnu.org>
