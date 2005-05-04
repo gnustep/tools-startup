@@ -23,13 +23,12 @@ AC_PREREQ(2.57)
 # From gnustep-base
 builtin(include, config/objc-con-autoload.m4)dnl
 builtin(include, config/objc-sys-dynamic.m4)dnl
+builtin(include, config/pathxml.m4)dnl
 
 SETUP_ERRORS=
 
 AC_CANONICAL_TARGET([])
-AM_INIT_AUTOMAKE
 AC_CONFIG_SRCDIR([InstallGNUstep])
-AM_CONFIG_HEADER(config.h)
 
 #--------------------------------------------------------------------
 # GNUstep location
@@ -251,15 +250,151 @@ if test -n "$iconv_version" -a "$iconv_version" \> 2.1; then
   AC_MSG_RESULT(yes $iconv_version)
 else
   AC_MSG_RESULT(no $iconv_version)
-  case $host_os in
-    *darwin*)
-      ;;
-    *solaris*)
-      ;;
-    *)
-      SETUP_ERRORS="$SETUP_ERRORS I106";;
-  esac
 fi
+
+#--------------------------------------------------------------------
+# Simple way to add a bunch of paths to the flags
+#--------------------------------------------------------------------
+AC_ARG_WITH(include-flags,
+    [  --with-include-flags=FLAGS specify all include flags at once],
+    include_flags="$withval", include_flags="no")
+if test ${include_flags} != "no"; then
+    CPPFLAGS="$CPPFLAGS ${include_flags}"
+fi
+
+AC_ARG_WITH(library-flags,
+    [  --with-library-flags=FLAGS specify all library flags at once],
+    library_flags="$withval", library_flags="no")
+if test ${library_flags} != "no"; then
+    LDFLAGS="$LDFLAGS ${library_flags}"
+fi
+
+#--------------------------------------------------------------------
+# Check for iconv support (for Unicode conversion).
+#--------------------------------------------------------------------
+# Do this before checking for xml2,  as xml2 may require iconv.
+#
+# We need to find an iconv library that matches the installed iconv.h header
+# (if any). It is important to check header/library compatibility. It's
+# fairly common to have iconv support both in libc and from libiconv. In that
+# case, a naive check that iconv() is in libc will succeed, but if we use
+# libiconv's iconv.h, it will redefine iconv() to functions that exist
+# only in libiconv, and we'll get link errors.
+#
+# First, check if there's a working iconv in libc (ie. if the test program
+# compiles and links without any extra flags).
+AC_MSG_CHECKING(iconv support)
+AC_LINK_IFELSE([[#include <iconv.h>
+int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+,
+  # libc has a working iconv.
+  AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
+  AC_MSG_RESULT([[yes, in libc]])
+  found_iconv=yes
+,
+  found_iconv=no
+)
+
+if test $found_iconv = no ; then
+  old_LIBS="$LIBS"
+  LIBS="-liconv $LIBS"
+  AC_LINK_IFELSE([[#include <iconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+  ,
+    # -liconv works.
+    AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
+    AC_MSG_RESULT([[yes, -liconv]])
+    found_iconv=yes
+  ,
+    found_iconv=no
+    LIBS="$old_LIBS"
+  )
+fi
+
+if test $found_iconv = no ; then
+  # -liconv didn't work. Try giconv.h and -lgiconv.
+  # BSDs install this lib as libgiconv.
+  old_LIBS="$LIBS"
+  LIBS="-lgiconv $LIBS"
+  AC_LINK_IFELSE([[#include <giconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+  ,
+    AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
+    AC_DEFINE(HAVE_GICONV,1, [Define if you have this function])
+    AC_MSG_RESULT([[yes, -lgiconv]])
+    found_iconv=yes
+  ,
+    AC_MSG_RESULT([[no]])
+    LIBS="$old_LIBS"
+  )
+fi
+
+if test $found_iconv = no; then
+  SETUP_ERRORS="$SETUP_ERRORS I106";;
+fi
+#--------------------------------------------------------------------
+# Check recent libxml for Properytlists, GSXML, GSDoc etc.
+#--------------------------------------------------------------------
+
+enable_xml=yes
+case $host_os in
+  *mingw*)
+    enable_xml=no;;
+  *)
+   ;;
+esac
+
+if test $enable_xml = yes; then
+  # Save CFLAGS and LIBS as AM_PATH_XML clobbers these variables regardless
+  # of the success of the macro.
+  saved_LIBS="$LIBS"
+  saved_CFLAGS="$CFLAGS"
+
+  AM_PATH_XML(2.3.0, enable_libxml=yes, enable_libxml=no)
+  if test $enable_libxml = yes; then
+    CPPFLAGS="$CPPFLAGS $XML_CFLAGS"
+    INCLUDE_FLAGS="$INCLUDE_FLAGS $XML_CFLAGS"
+    LIBS="$XML_LIBS $LIBS"
+    HAVE_LIBXML=1
+    AC_DEFINE(HAVE_LIBXML,1,[Define if libxml available])
+    AC_CHECK_HEADERS(libxml/SAX2.h)
+    #--------------------------------------------------------------------
+    # Check for (optional) libxslt
+    #--------------------------------------------------------------------
+    enable_xslt=yes
+
+    if test $enable_xslt = yes; then
+      AC_CHECK_LIB(xslt, xsltApplyStylesheet, xslt_ok=yes, xslt_ok=no)
+      if test "$xslt_ok" = "yes"; then
+	AC_CHECK_HEADER(libxslt/xslt.h, xslthdr_ok=yes, xslthdr_ok=no)
+	if test "$xslthdr_ok" = "no"; then
+	  xslt_ok=no
+	fi
+      fi
+      if test "$xslt_ok" = "yes"; then
+	HAVE_LIBXSLT=1
+	AC_DEFINE(HAVE_LIBXSLT,1,[Define if libxslt available])
+	LIBS="-lxslt $LIBS"
+      else
+        SETUP_ERRORS="$SETUP_ERRORS W108"
+      fi
+    else
+      HAVE_LIBXSLT=0
+      AC_MSG_WARN([Disabled support for XSLT funtionality.])
+    fi
+    AC_SUBST(HAVE_LIBXSLT)
+  else
+    HAVE_LIBXML=0
+    # Restore the CFLAGS and LIBS because AM_PATH_XML messes them
+    LIBS="$saved_LIBS"
+    CFLAGS="$saved_CFLAGS"
+    SETUP_ERRORS="$SETUP_ERRORS E107"
+  fi
+else
+  AC_MSG_WARN([Disabled support for XML funtionality.])
+  HAVE_LIBXML=0
+fi
+AC_SUBST(HAVE_LIBXML)
 
 #--------------------------------------------------------------------
 # Set Apple/Darwin/OSX/NeXT information for other tests
@@ -542,79 +677,52 @@ AC_CHECK_LIB(m, main)
 #--------------------------------------------------------------------
 # Find JPEG
 #--------------------------------------------------------------------
-GRAPHIC_CFLAGS=
-GRAPHIC_LFLAGS=
-
-AC_ARG_WITH(jpeg_library, 
-           [  --with-jpeg-library=DIR JPEG library file are in DIR], ,
-           with_jpeg_library=)
-AC_ARG_WITH(jpeg_include,  
-	[  --with-jpeg-include=DIR JPEG include files are in DIR], ,
-        with_jpeg_include=)
-
-if test -n "$with_jpeg_library"; then
-  with_jpeg_library="-L$with_jpeg_library"
-fi
-if test -n "$with_jpeg_include"; then
-  with_jpeg_include="-I$with_jpeg_include"
-fi
-
 CPPFLAGS="$with_jpeg_include ${CPPFLAGS}"
 LDFLAGS="$with_jpeg_library ${LDFLAGS}"
 AC_CHECK_HEADERS(jpeglib.h, have_jpeg=yes, have_jpeg=no)
-if test "$have_jpeg" = yes; then
-  AC_CHECK_LIB(jpeg, jpeg_destroy_decompress)
-  if test "$ac_cv_lib_jpeg_jpeg_destroy_decompress" = yes; then
-    GRAPHIC_LFLAGS="$with_jpeg_library $GRAPHIC_LFLAGS"
-    GRAPHIC_CFLAGS="$with_jpeg_include $GRAPHIC_CFLAGS"
-  fi
+AC_CHECK_LIB(jpeg, jpeg_destroy_decompress)
+have_jpeg_lib=no
+if test "$ac_cv_lib_jpeg_jpeg_destroy_decompress" = yes; then
+  have_jpeg_lib=yes
 fi
 if test "$have_jpeg" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS W403"
+  if test "$have_jpeg_lib" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS W402"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W403"
+  fi
 fi
-
 
 #--------------------------------------------------------------------
 # Find TIFF
 #--------------------------------------------------------------------
-AC_ARG_WITH(tiff_library, 
-           [  --with-tiff-library=DIR TIFF library file are in DIR], ,
-           with_tiff_library=)
-AC_ARG_WITH(tiff_include,  
-	[  --with-tiff-include=DIR TIFF include files are in DIR], ,
-        with_tiff_include=)
-
-if test -n "$with_tiff_library"; then
-  with_tiff_library="-L$with_tiff_library"
-fi
-if test -n "$with_tiff_include"; then
-  with_tiff_include="-I$with_tiff_include"
-fi
-
-CPPFLAGS="$with_tiff_include ${CPPFLAGS}"
-LDFLAGS="$with_tiff_library ${LDFLAGS}"
 AC_CHECK_LIB(z, main)
 AC_CHECK_HEADER(tiffio.h, have_tiff=yes, have_tiff=no)
-if test "$have_tiff" = yes; then
-  AC_CHECK_LIB(tiff, TIFFReadScanline)
-  if test "$ac_cv_lib_tiff_TIFFReadScanline" = yes; then
-    GRAPHIC_LFLAGS="$with_tiff_library $GRAPHIC_LFLAGS"
-    GRAPHIC_CFLAGS="$with_tiff_include $GRAPHIC_CFLAGS"
-  else
-    have_tiff=no
-  fi
+AC_CHECK_LIB(tiff, TIFFReadScanline)
+have_tiff_lib=no
+if test "$ac_cv_lib_tiff_TIFFReadScanline" = yes; then
+  have_tiff_lib=yes
 fi
 
 if test "$have_tiff" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS E401"
+  if test "$have_tiff_lib" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS E400"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS E401"
+  fi
 fi
 
 #--------------------------------------------------------------------
 # Find additional image libs
 #--------------------------------------------------------------------
+AC_CHECK_HEADER(png.h, have_png=yes, have_png=no)
 AC_CHECK_LIB(png, main)
-if test "$ac_cv_lib_png_main" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS W409"
+if test "$have_png" = no; then
+  if test "$ac_cv_lib_png_main" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS W408"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W409"
+  fi
 fi
 
 #--------------------------------------------------------------------

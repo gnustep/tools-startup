@@ -39,6 +39,16 @@ You have an old or nonexistent iconv implementation. iconv is not
 required, but is needed for string and font encodings. It comes with
 glib 2.1.2 or later.
 
+E107 Error
+No XML library support was found. The GNUstep base library will not
+build without XML, unless it is specifically disabled with --disable-xml
+This is done automatically on MinGW currently.
+
+W108 Warning
+Not XSLT library was found. GNUstep base uses this library for important
+functions. It is not required, however, so you can continue building 
+without this support.
+
 W109 Warning 
 For security reasons, your make program will not pass LD_LIBRARY_PATH
 along. You may need to compile/install applications when you are logged in
@@ -137,13 +147,28 @@ GNUstep script. Please type "source $GNUSTEP_SYSTEM_ROOT/Makefiles/GNUstep.sh"
 or use GNUstep.csh on csh shells. Ignore this if you are still installing
 GNUstep. 
 
+E400 Error
+Found the tiff library but not the tiff header files. Perhaps you need
+to install the tiff-devel package? tiff is required to load images with 
+the GNUstep gui.
+
 E401 Error
 You need to install the TIFF library (libtiff and libtiff-devel) in order
 to use the GNUstep gui.
 
+W402 Warning
+Found the jpeg library but not the jpeg header files. Perhaps you need
+to install the jpeg-devel package? jpeg is required to load JPEG images with 
+the GNUstep gui.
+
 W403 Warning
 You need to install the JPEG library (libjpeg)) in order to load JPEG
 images with the GNUstep gui.
+
+W408 Warning
+Found the png library but not the png header files. Perhaps you need
+to install the png-devel package? png is used to load PNG images with 
+the GNUstep gui.
 
 W409 Warning
 You need to install the PNG library (libpng) in order to load PNG

@@ -79,7 +79,7 @@ gs_platform
 
 # Update CVS
 cd $TOPDIR
-cvs -z3 update
+cvs -z3 update -P
 
 # Run the install
 cd $TOPDIR/Startup

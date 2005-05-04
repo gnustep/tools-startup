@@ -320,7 +320,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL RANLIB ac_ct_RANLIB LN_S WHOAMI GNUMAKE EGREP GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION gnustep_flattened LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S WHOAMI GNUMAKE XML2_CONFIG XML_CONFIG XML_CFLAGS XML_LIBS EGREP HAVE_LIBXSLT HAVE_LIBXML GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION gnustep_flattened LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -842,11 +842,6 @@ _ACEOF
 
   cat <<\_ACEOF
 
-Program names:
-  --program-prefix=PREFIX            prepend PREFIX to installed program names
-  --program-suffix=SUFFIX            append SUFFIX to installed program names
-  --program-transform-name=PROGRAM   run sed PROGRAM on installed program names
-
 System types:
   --build=BUILD     configure for building on BUILD [guessed]
   --host=HOST       cross-compile to build programs to run on HOST [BUILD]
@@ -863,8 +858,7 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
-  --disable-dependency-tracking Speeds up one-time builds
-  --enable-dependency-tracking  Do not reject slow dependency extractors
+  --disable-xmltest		Do not try to compile and run a test XML program
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -873,11 +867,10 @@ Optional Packages:
 
 --with-library-combo		Define the default library combination
 
+  --with-include-flags=FLAGS specify all include flags at once
+  --with-library-flags=FLAGS specify all library flags at once
+  --with-xml-prefix=PFX    Prefix where libxml is installed (optional)
 --with-thread-lib		Specify alternate thread library
-  --with-jpeg-library=DIR JPEG library file are in DIR
-  --with-jpeg-include=DIR JPEG include files are in DIR
-  --with-tiff-library=DIR TIFF library file are in DIR
-  --with-tiff-include=DIR TIFF include files are in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -1343,6 +1336,8 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+
+
 SETUP_ERRORS=
 
 ac_aux_dir=
@@ -1452,369 +1447,6 @@ test -n "$target_alias" &&
   test "$program_prefix$program_suffix$program_transform_name" = \
     NONENONEs,x,x, &&
   program_prefix=${target_alias}-
-am__api_version="1.6"
-# Find a good install program.  We prefer a C program (faster),
-# so one script is as good as another.  But avoid the broken or
-# incompatible versions:
-# SysV /etc/install, /usr/sbin/install
-# SunOS /usr/etc/install
-# IRIX /sbin/install
-# AIX /bin/install
-# AmigaOS /C/install, which installs bootblocks on floppy discs
-# AIX 4 /usr/bin/installbsd, which doesn't work without a -g flag
-# AFS /usr/afsws/bin/install, which mishandles nonexistent args
-# SVR4 /usr/ucb/install, which tries to use the nonexistent group "staff"
-# OS/2's system install, which has a completely different semantic
-# ./install, which can be erroneously created by make from ./install.sh.
-echo "$as_me:$LINENO: checking for a BSD-compatible install" >&5
-echo $ECHO_N "checking for a BSD-compatible install... $ECHO_C" >&6
-if test -z "$INSTALL"; then
-if test "${ac_cv_path_install+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  # Account for people who put trailing slashes in PATH elements.
-case $as_dir/ in
-  ./ | .// | /cC/* | \
-  /etc/* | /usr/sbin/* | /usr/etc/* | /sbin/* | /usr/afsws/bin/* | \
-  ?:\\/os2\\/install\\/* | ?:\\/OS2\\/INSTALL\\/* | \
-  /usr/ucb/* ) ;;
-  *)
-    # OSF1 and SCO ODT 3.0 have their own names for install.
-    # Don't use installbsd from OSF since it installs stuff as root
-    # by default.
-    for ac_prog in ginstall scoinst install; do
-      for ac_exec_ext in '' $ac_executable_extensions; do
-	if $as_executable_p "$as_dir/$ac_prog$ac_exec_ext"; then
-	  if test $ac_prog = install &&
-	    grep dspmsg "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
-	    # AIX install.  It has an incompatible calling convention.
-	    :
-	  elif test $ac_prog = install &&
-	    grep pwplus "$as_dir/$ac_prog$ac_exec_ext" >/dev/null 2>&1; then
-	    # program-specific install script used by HP pwplus--don't use.
-	    :
-	  else
-	    ac_cv_path_install="$as_dir/$ac_prog$ac_exec_ext -c"
-	    break 3
-	  fi
-	fi
-      done
-    done
-    ;;
-esac
-done
-
-
-fi
-  if test "${ac_cv_path_install+set}" = set; then
-    INSTALL=$ac_cv_path_install
-  else
-    # As a last resort, use the slow shell script.  We don't cache a
-    # path for INSTALL within a source directory, because that will
-    # break other packages using the cache if that directory is
-    # removed, or if the path is relative.
-    INSTALL=$ac_install_sh
-  fi
-fi
-echo "$as_me:$LINENO: result: $INSTALL" >&5
-echo "${ECHO_T}$INSTALL" >&6
-
-# Use test -z because SunOS4 sh mishandles braces in ${var-val}.
-# It thinks the first close brace ends the variable substitution.
-test -z "$INSTALL_PROGRAM" && INSTALL_PROGRAM='${INSTALL}'
-
-test -z "$INSTALL_SCRIPT" && INSTALL_SCRIPT='${INSTALL}'
-
-test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
-
-echo "$as_me:$LINENO: checking whether build environment is sane" >&5
-echo $ECHO_N "checking whether build environment is sane... $ECHO_C" >&6
-# Just in case
-sleep 1
-echo timestamp > conftest.file
-# Do `set' in a subshell so we don't clobber the current shell's
-# arguments.  Must try -L first in case configure is actually a
-# symlink; some systems play weird games with the mod time of symlinks
-# (eg FreeBSD returns the mod time of the symlink's containing
-# directory).
-if (
-   set X `ls -Lt $srcdir/configure conftest.file 2> /dev/null`
-   if test "$*" = "X"; then
-      # -L didn't work.
-      set X `ls -t $srcdir/configure conftest.file`
-   fi
-   rm -f conftest.file
-   if test "$*" != "X $srcdir/configure conftest.file" \
-      && test "$*" != "X conftest.file $srcdir/configure"; then
-
-      # If neither matched, then we have a broken ls.  This can happen
-      # if, for instance, CONFIG_SHELL is bash and it inherits a
-      # broken ls alias from the environment.  This has actually
-      # happened.  Such a system could not be considered "sane".
-      { { echo "$as_me:$LINENO: error: ls -t appears to fail.  Make sure there is not a broken
-alias in your environment" >&5
-echo "$as_me: error: ls -t appears to fail.  Make sure there is not a broken
-alias in your environment" >&2;}
-   { (exit 1); exit 1; }; }
-   fi
-
-   test "$2" = conftest.file
-   )
-then
-   # Ok.
-   :
-else
-   { { echo "$as_me:$LINENO: error: newly created file is older than distributed files!
-Check your system clock" >&5
-echo "$as_me: error: newly created file is older than distributed files!
-Check your system clock" >&2;}
-   { (exit 1); exit 1; }; }
-fi
-echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-test "$program_prefix" != NONE &&
-  program_transform_name="s,^,$program_prefix,;$program_transform_name"
-# Use a double $ so make ignores it.
-test "$program_suffix" != NONE &&
-  program_transform_name="s,\$,$program_suffix,;$program_transform_name"
-# Double any \ or $.  echo might interpret backslashes.
-# By default was `s,x,x', remove it if useless.
-cat <<\_ACEOF >conftest.sed
-s/[\\$]/&&/g;s/;s,x,x,$//
-_ACEOF
-program_transform_name=`echo $program_transform_name | sed -f conftest.sed`
-rm conftest.sed
-
-
-# expand $ac_aux_dir to an absolute path
-am_aux_dir=`cd $ac_aux_dir && pwd`
-
-test x"${MISSING+set}" = xset || MISSING="\${SHELL} $am_aux_dir/missing"
-# Use eval to expand $SHELL
-if eval "$MISSING --run true"; then
-  am_missing_run="$MISSING --run "
-else
-  am_missing_run=
-  { echo "$as_me:$LINENO: WARNING: \`missing' script is too old or missing" >&5
-echo "$as_me: WARNING: \`missing' script is too old or missing" >&2;}
-fi
-
-for ac_prog in gawk mawk nawk awk
-do
-  # Extract the first word of "$ac_prog", so it can be a program name with args.
-set dummy $ac_prog; ac_word=$2
-echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_prog_AWK+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -n "$AWK"; then
-  ac_cv_prog_AWK="$AWK" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_AWK="$ac_prog"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-
-fi
-fi
-AWK=$ac_cv_prog_AWK
-if test -n "$AWK"; then
-  echo "$as_me:$LINENO: result: $AWK" >&5
-echo "${ECHO_T}$AWK" >&6
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-  test -n "$AWK" && break
-done
-
-echo "$as_me:$LINENO: checking whether ${MAKE-make} sets \$(MAKE)" >&5
-echo $ECHO_N "checking whether ${MAKE-make} sets \$(MAKE)... $ECHO_C" >&6
-set dummy ${MAKE-make}; ac_make=`echo "$2" | sed 'y,:./+-,___p_,'`
-if eval "test \"\${ac_cv_prog_make_${ac_make}_set+set}\" = set"; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  cat >conftest.make <<\_ACEOF
-all:
-	@echo 'ac_maketemp="$(MAKE)"'
-_ACEOF
-# GNU make sometimes prints "make[1]: Entering...", which would confuse us.
-eval `${MAKE-make} -f conftest.make 2>/dev/null | grep temp=`
-if test -n "$ac_maketemp"; then
-  eval ac_cv_prog_make_${ac_make}_set=yes
-else
-  eval ac_cv_prog_make_${ac_make}_set=no
-fi
-rm -f conftest.make
-fi
-if eval "test \"`echo '$ac_cv_prog_make_'${ac_make}_set`\" = yes"; then
-  echo "$as_me:$LINENO: result: yes" >&5
-echo "${ECHO_T}yes" >&6
-  SET_MAKE=
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-  SET_MAKE="MAKE=${MAKE-make}"
-fi
-
- # test to see if srcdir already configured
-if test "`cd $srcdir && pwd`" != "`pwd`" &&
-   test -f $srcdir/config.status; then
-  { { echo "$as_me:$LINENO: error: source directory already configured; run \"make distclean\" there first" >&5
-echo "$as_me: error: source directory already configured; run \"make distclean\" there first" >&2;}
-   { (exit 1); exit 1; }; }
-fi
-
-# Define the identity of the package.
- PACKAGE=gnustep-setup
- VERSION=0.10.2
-
-
-cat >>confdefs.h <<_ACEOF
-#define PACKAGE "$PACKAGE"
-_ACEOF
-
-
-cat >>confdefs.h <<_ACEOF
-#define VERSION "$VERSION"
-_ACEOF
-
-# Some tools Automake needs.
-
-ACLOCAL=${ACLOCAL-"${am_missing_run}aclocal-${am__api_version}"}
-
-
-AUTOCONF=${AUTOCONF-"${am_missing_run}autoconf"}
-
-
-AUTOMAKE=${AUTOMAKE-"${am_missing_run}automake-${am__api_version}"}
-
-
-AUTOHEADER=${AUTOHEADER-"${am_missing_run}autoheader"}
-
-
-MAKEINFO=${MAKEINFO-"${am_missing_run}makeinfo"}
-
-
-AMTAR=${AMTAR-"${am_missing_run}tar"}
-
-install_sh=${install_sh-"$am_aux_dir/install-sh"}
-
-# Installed binaries are usually stripped using `strip' when the user
-# run `make install-strip'.  However `strip' might not be the right
-# tool to use in cross-compilation environments, therefore Automake
-# will honor the `STRIP' environment variable to overrule this program.
-if test "$cross_compiling" != no; then
-  if test -n "$ac_tool_prefix"; then
-  # Extract the first word of "${ac_tool_prefix}strip", so it can be a program name with args.
-set dummy ${ac_tool_prefix}strip; ac_word=$2
-echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_prog_STRIP+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -n "$STRIP"; then
-  ac_cv_prog_STRIP="$STRIP" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_STRIP="${ac_tool_prefix}strip"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-
-fi
-fi
-STRIP=$ac_cv_prog_STRIP
-if test -n "$STRIP"; then
-  echo "$as_me:$LINENO: result: $STRIP" >&5
-echo "${ECHO_T}$STRIP" >&6
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-fi
-if test -z "$ac_cv_prog_STRIP"; then
-  ac_ct_STRIP=$STRIP
-  # Extract the first word of "strip", so it can be a program name with args.
-set dummy strip; ac_word=$2
-echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
-if test "${ac_cv_prog_ac_ct_STRIP+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -n "$ac_ct_STRIP"; then
-  ac_cv_prog_ac_ct_STRIP="$ac_ct_STRIP" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_prog_ac_ct_STRIP="strip"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-
-  test -z "$ac_cv_prog_ac_ct_STRIP" && ac_cv_prog_ac_ct_STRIP=":"
-fi
-fi
-ac_ct_STRIP=$ac_cv_prog_ac_ct_STRIP
-if test -n "$ac_ct_STRIP"; then
-  echo "$as_me:$LINENO: result: $ac_ct_STRIP" >&5
-echo "${ECHO_T}$ac_ct_STRIP" >&6
-else
-  echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6
-fi
-
-  STRIP=$ac_ct_STRIP
-else
-  STRIP="$ac_cv_prog_STRIP"
-fi
-
-fi
-INSTALL_STRIP_PROGRAM="\${SHELL} \$(install_sh) -c -s"
-
-# We need awk for the "check" target.  The system "awk" is bad on
-# some platforms.
-
-
-
-
-# Add the stamp file to the list of files AC keeps track of,
-# along with our hook.
-          ac_config_headers="$ac_config_headers config.h"
-
-
 
 
 #--------------------------------------------------------------------
@@ -2785,148 +2417,6 @@ ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
-rm -f .deps 2>/dev/null
-mkdir .deps 2>/dev/null
-if test -d .deps; then
-  DEPDIR=.deps
-else
-  # MS-DOS does not allow filenames that begin with a dot.
-  DEPDIR=_deps
-fi
-rmdir .deps 2>/dev/null
-
-
-          ac_config_commands="$ac_config_commands depfiles"
-
-
-am_make=${MAKE-make}
-cat > confinc << 'END'
-doit:
-	@echo done
-END
-# If we don't find an include directive, just comment out the code.
-echo "$as_me:$LINENO: checking for style of include used by $am_make" >&5
-echo $ECHO_N "checking for style of include used by $am_make... $ECHO_C" >&6
-am__include="#"
-am__quote=
-_am_result=none
-# First try GNU make style include.
-echo "include confinc" > confmf
-# We grep out `Entering directory' and `Leaving directory'
-# messages which can occur if `w' ends up in MAKEFLAGS.
-# In particular we don't look at `^make:' because GNU make might
-# be invoked under some other name (usually "gmake"), in which
-# case it prints its new name instead of `make'.
-if test "`$am_make -s -f confmf 2> /dev/null | fgrep -v 'ing directory'`" = "done"; then
-   am__include=include
-   am__quote=
-   _am_result=GNU
-fi
-# Now try BSD make style include.
-if test "$am__include" = "#"; then
-   echo '.include "confinc"' > confmf
-   if test "`$am_make -s -f confmf 2> /dev/null`" = "done"; then
-      am__include=.include
-      am__quote="\""
-      _am_result=BSD
-   fi
-fi
-
-
-echo "$as_me:$LINENO: result: $_am_result" >&5
-echo "${ECHO_T}$_am_result" >&6
-rm -f confinc confmf
-
-# Check whether --enable-dependency-tracking or --disable-dependency-tracking was given.
-if test "${enable_dependency_tracking+set}" = set; then
-  enableval="$enable_dependency_tracking"
-
-fi;
-if test "x$enable_dependency_tracking" != xno; then
-  am_depcomp="$ac_aux_dir/depcomp"
-  AMDEPBACKSLASH='\'
-fi
-
-
-if test "x$enable_dependency_tracking" != xno; then
-  AMDEP_TRUE=
-  AMDEP_FALSE='#'
-else
-  AMDEP_TRUE='#'
-  AMDEP_FALSE=
-fi
-
-
-
-
-depcc="$CC"   am_compiler_list=
-
-echo "$as_me:$LINENO: checking dependency style of $depcc" >&5
-echo $ECHO_N "checking dependency style of $depcc... $ECHO_C" >&6
-if test "${am_cv_CC_dependencies_compiler_type+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  if test -z "$AMDEP_TRUE" && test -f "$am_depcomp"; then
-  # We make a subdir and do the tests there.  Otherwise we can end up
-  # making bogus files that we don't know about and never remove.  For
-  # instance it was reported that on HP-UX the gcc test will end up
-  # making a dummy file named `D' -- because `-MD' means `put the output
-  # in D'.
-  mkdir conftest.dir
-  # Copy depcomp to subdir because otherwise we won't find it if we're
-  # using a relative directory.
-  cp "$am_depcomp" conftest.dir
-  cd conftest.dir
-
-  am_cv_CC_dependencies_compiler_type=none
-  if test "$am_compiler_list" = ""; then
-     am_compiler_list=`sed -n 's/^#*\([a-zA-Z0-9]*\))$/\1/p' < ./depcomp`
-  fi
-  for depmode in $am_compiler_list; do
-    # We need to recreate these files for each test, as the compiler may
-    # overwrite some of them when testing with obscure command lines.
-    # This happens at least with the AIX C compiler.
-    echo '#include "conftest.h"' > conftest.c
-    echo 'int i;' > conftest.h
-    echo "${am__include} ${am__quote}conftest.Po${am__quote}" > confmf
-
-    case $depmode in
-    nosideeffect)
-      # after this tag, mechanisms are not by side-effect, so they'll
-      # only be used when explicitly requested
-      if test "x$enable_dependency_tracking" = xyes; then
-	continue
-      else
-	break
-      fi
-      ;;
-    none) break ;;
-    esac
-    # We check with `-c' and `-o' for the sake of the "dashmstdout"
-    # mode.  It turns out that the SunPro C++ compiler does not properly
-    # handle `-M -o', and we need to detect this.
-    if depmode=$depmode \
-       source=conftest.c object=conftest.o \
-       depfile=conftest.Po tmpdepfile=conftest.TPo \
-       $SHELL ./depcomp $depcc -c conftest.c -o conftest.o >/dev/null 2>&1 &&
-       grep conftest.h conftest.Po > /dev/null 2>&1 &&
-       ${MAKE-make} -s -f confmf > /dev/null 2>&1; then
-      am_cv_CC_dependencies_compiler_type=$depmode
-      break
-    fi
-  done
-
-  cd ..
-  rm -rf conftest.dir
-else
-  am_cv_CC_dependencies_compiler_type=none
-fi
-
-fi
-echo "$as_me:$LINENO: result: $am_cv_CC_dependencies_compiler_type" >&5
-echo "${ECHO_T}$am_cv_CC_dependencies_compiler_type" >&6
-CCDEPMODE=depmode=$am_cv_CC_dependencies_compiler_type
-
 
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
@@ -3704,38 +3194,610 @@ echo "${ECHO_T}yes $iconv_version" >&6
 else
   echo "$as_me:$LINENO: result: no $iconv_version" >&5
 echo "${ECHO_T}no $iconv_version" >&6
-  case $host_os in
-    *darwin*)
-      ;;
-    *solaris*)
-      ;;
-    *)
-      SETUP_ERRORS="$SETUP_ERRORS I106";;
-  esac
 fi
 
 #--------------------------------------------------------------------
-# Set Apple/Darwin/OSX/NeXT information for other tests
+# Simple way to add a bunch of paths to the flags
 #--------------------------------------------------------------------
-OBJC_RUNTIME_LIB=`echo $ac_cv_library_combo | awk -F- '{print $1}'`
-echo "$as_me:$LINENO: checking the Objective-C runtime" >&5
-echo $ECHO_N "checking the Objective-C runtime... $ECHO_C" >&6
-if test "$OBJC_RUNTIME_LIB" = "nx" -o "$OBJC_RUNTIME_LIB" = "apple"; then
-  echo "$as_me:$LINENO: result: NeXT" >&5
-echo "${ECHO_T}NeXT" >&6
-  LIBOBJC='-lobjc'
-  OBJCFLAGS="-fnext-runtime -DNeXT_RUNTIME"
+
+# Check whether --with-include-flags or --without-include-flags was given.
+if test "${with_include_flags+set}" = set; then
+  withval="$with_include_flags"
+  include_flags="$withval"
 else
-  echo "$as_me:$LINENO: result: GNU" >&5
-echo "${ECHO_T}GNU" >&6
-  LIBOBJC='-lobjc'
-  OBJCFLAGS="-fgnu-runtime"
+  include_flags="no"
+fi;
+if test ${include_flags} != "no"; then
+    CPPFLAGS="$CPPFLAGS ${include_flags}"
+fi
+
+
+# Check whether --with-library-flags or --without-library-flags was given.
+if test "${with_library_flags+set}" = set; then
+  withval="$with_library_flags"
+  library_flags="$withval"
+else
+  library_flags="no"
+fi;
+if test ${library_flags} != "no"; then
+    LDFLAGS="$LDFLAGS ${library_flags}"
 fi
 
 #--------------------------------------------------------------------
-# Check OpenSSL for HTTPS support.
+# Check for iconv support (for Unicode conversion).
 #--------------------------------------------------------------------
-  ssl_ok=no
+# Do this before checking for xml2,  as xml2 may require iconv.
+#
+# We need to find an iconv library that matches the installed iconv.h header
+# (if any). It is important to check header/library compatibility. It's
+# fairly common to have iconv support both in libc and from libiconv. In that
+# case, a naive check that iconv() is in libc will succeed, but if we use
+# libiconv's iconv.h, it will redefine iconv() to functions that exist
+# only in libiconv, and we'll get link errors.
+#
+# First, check if there's a working iconv in libc (ie. if the test program
+# compiles and links without any extra flags).
+echo "$as_me:$LINENO: checking iconv support" >&5
+echo $ECHO_N "checking iconv support... $ECHO_C" >&6
+
+cat >conftest.$ac_ext <<_ACEOF
+#include <iconv.h>
+int main(int argc,char **argv) { iconv_open("foo","bar"); }
+
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  # libc has a working iconv.
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ICONV 1
+_ACEOF
+
+  echo "$as_me:$LINENO: result: yes, in libc" >&5
+echo "${ECHO_T}yes, in libc" >&6
+  found_iconv=yes
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+found_iconv=no
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+
+if test $found_iconv = no ; then
+  old_LIBS="$LIBS"
+  LIBS="-liconv $LIBS"
+  cat >conftest.$ac_ext <<_ACEOF
+#include <iconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }
+
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  # -liconv works.
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ICONV 1
+_ACEOF
+
+    echo "$as_me:$LINENO: result: yes, -liconv" >&5
+echo "${ECHO_T}yes, -liconv" >&6
+    found_iconv=yes
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+found_iconv=no
+    LIBS="$old_LIBS"
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+
+if test $found_iconv = no ; then
+  # -liconv didn't work. Try giconv.h and -lgiconv.
+  # BSDs install this lib as libgiconv.
+  old_LIBS="$LIBS"
+  LIBS="-lgiconv $LIBS"
+  cat >conftest.$ac_ext <<_ACEOF
+#include <giconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }
+
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_ICONV 1
+_ACEOF
+
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_GICONV 1
+_ACEOF
+
+    echo "$as_me:$LINENO: result: yes, -lgiconv" >&5
+echo "${ECHO_T}yes, -lgiconv" >&6
+    found_iconv=yes
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    LIBS="$old_LIBS"
+
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+fi
+
+if test $found_iconv = no; then
+  SETUP_ERRORS="$SETUP_ERRORS I106";;
+fi
+#--------------------------------------------------------------------
+# Check recent libxml for Properytlists, GSXML, GSDoc etc.
+#--------------------------------------------------------------------
+
+enable_xml=yes
+case $host_os in
+  *mingw*)
+    enable_xml=no;;
+  *)
+   ;;
+esac
+
+if test $enable_xml = yes; then
+  # Save CFLAGS and LIBS as AM_PATH_XML clobbers these variables regardless
+  # of the success of the macro.
+  saved_LIBS="$LIBS"
+  saved_CFLAGS="$CFLAGS"
+
+
+
+# Check whether --with-xml-prefix or --without-xml-prefix was given.
+if test "${with_xml_prefix+set}" = set; then
+  withval="$with_xml_prefix"
+  xml_config_prefix="$withval"
+else
+  xml_config_prefix=""
+fi;
+# Check whether --enable-xmltest or --disable-xmltest was given.
+if test "${enable_xmltest+set}" = set; then
+  enableval="$enable_xmltest"
+
+else
+  enable_xmltest=yes
+fi;
+
+  if test x$xml_config_prefix != x ; then
+    xml_config_args="$xml_config_args --prefix=$xml_config_prefix"
+    if test x${XML2_CONFIG+set} != xset ; then
+      XML2_CONFIG=$xml_config_prefix/bin/xml2-config
+    fi
+    if test x${XML_CONFIG+set} != xset ; then
+      XML_CONFIG=$xml_config_prefix/bin/xml-config
+    fi
+  fi
+
+  # Extract the first word of "xml2-config", so it can be a program name with args.
+set dummy xml2-config; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_XML2_CONFIG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $XML2_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_XML2_CONFIG="$XML2_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_XML2_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_XML2_CONFIG" && ac_cv_path_XML2_CONFIG="no"
+  ;;
+esac
+fi
+XML2_CONFIG=$ac_cv_path_XML2_CONFIG
+
+if test -n "$XML2_CONFIG"; then
+  echo "$as_me:$LINENO: result: $XML2_CONFIG" >&5
+echo "${ECHO_T}$XML2_CONFIG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+  if test "$XML2_CONFIG" = "no" ; then
+    # Extract the first word of "xml-config", so it can be a program name with args.
+set dummy xml-config; ac_word=$2
+echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6
+if test "${ac_cv_path_XML_CONFIG+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $XML_CONFIG in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_XML_CONFIG="$XML_CONFIG" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if $as_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
+    ac_cv_path_XML_CONFIG="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+
+  test -z "$ac_cv_path_XML_CONFIG" && ac_cv_path_XML_CONFIG="no"
+  ;;
+esac
+fi
+XML_CONFIG=$ac_cv_path_XML_CONFIG
+
+if test -n "$XML_CONFIG"; then
+  echo "$as_me:$LINENO: result: $XML_CONFIG" >&5
+echo "${ECHO_T}$XML_CONFIG" >&6
+else
+  echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+fi
+
+  else
+    XML_CONFIG=$XML2_CONFIG
+  fi
+  min_xml_version=2.3.0
+  echo "$as_me:$LINENO: checking for libxml - version >= $min_xml_version" >&5
+echo $ECHO_N "checking for libxml - version >= $min_xml_version... $ECHO_C" >&6
+  no_xml=""
+  if test "$XML_CONFIG" = "no" ; then
+    XML_CFLAGS=""
+    XML_LIBS="-lxml2"
+
+    ac_save_CFLAGS="$CFLAGS"
+    ac_save_LIBS="$LIBS"
+    CFLAGS="$CFLAGS $XML_CFLAGS"
+    LIBS="$XML_LIBS $LIBS"
+    rm -f conf.xmltest
+    if test "$cross_compiling" = yes; then
+  echo $ac_n "cross compiling; assumed OK... $ac_c"
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <libxml/xmlversion.h>
+#include <libxml/parser.h>
+
+int
+main()
+{
+  int xml_major_version, xml_minor_version, xml_micro_version;
+  int major, minor, micro;
+  char *tmp_version;
+
+  system("touch conf.xmltest");
+
+  tmp_version = xmlStrdup("$min_xml_version");
+  if(sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+    printf("%s, bad version string\n", "$min_xml_version");
+    exit(1);
+  }
+
+  tmp_version = xmlStrdup(LIBXML_DOTTED_VERSION);
+  if(sscanf(tmp_version, "%d.%d.%d", &xml_major_version, &xml_minor_version, &xml_micro_version) != 3) {
+    printf("%s, bad version string\n", "$min_xml_version");
+    exit(1);
+  }
+
+  if ((xml_major_version > major) ||
+      ((xml_major_version == major) && (xml_minor_version > minor)) ||
+      ((xml_major_version == major) && (xml_minor_version == minor) &&
+       (xml_micro_version >= micro)))
+    {
+      return 0;
+    }
+  else
+    {
+      printf("\n*** An old version of libxml (%d.%d.%d) was found.\n",
+	xml_major_version, xml_minor_version, xml_micro_version);
+      printf("*** You need a version of libxml newer than %d.%d.%d. The latest version of\n",
+	major, minor, micro);
+      printf("*** libxml is always available from ftp://ftp.gnome.org.\n");
+      printf("***\n");
+      printf("*** If you have already installed a sufficiently new version, this error\n");
+      printf("*** probably means that the wrong copy of the xml-config shell script is\n");
+      printf("*** being found. The easiest way to fix this is to remove the old version\n");
+      printf("*** of libxml, but you can also set the XML_CONFIG environment to point to the\n");
+      printf("*** correct copy of xml-config. (In this case, you will have to\n");
+      printf("*** modify your LD_LIBRARY_PATH enviroment variable, or edit /etc/ld.so.conf\n");
+      printf("*** so that the correct libraries are found at run-time))\n");
+    }
+  return 1;
+}
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  :
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+no_xml=yes
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+    CFLAGS="$ac_save_CFLAGS"
+    LIBS="$ac_save_LIBS"
+  else
+    XML_CFLAGS=`$XML_CONFIG $xml_config_args --cflags`
+    XML_LIBS=`$XML_CONFIG $xml_config_args --libs`
+    xml_config_major_version=`$XML_CONFIG $xml_config_args --version | \
+      sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+    xml_config_minor_version=`$XML_CONFIG $xml_config_args --version | \
+      sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+    xml_config_micro_version=`$XML_CONFIG $xml_config_args --version | \
+      sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+    # Strip '-L/usr/lib' off since this is always in the link path.
+    XML_LIBS=`echo $XML_LIBS | sed -e 's|-L/usr/lib||'`
+
+    if test "x$enable_xmltest" = "xyes" ; then
+      ac_save_CFLAGS="$CFLAGS"
+      ac_save_LIBS="$LIBS"
+      CFLAGS="$CFLAGS $XML_CFLAGS"
+      LIBS="$XML_LIBS $LIBS"
+      rm -f conf.xmltest
+      if test "$cross_compiling" = yes; then
+  echo $ac_n "cross compiling; assumed OK... $ac_c"
+else
+  cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+#include <stdlib.h>
+#include <stdio.h>
+#include <libxml/xmlversion.h>
+#include <libxml/parser.h>
+
+int
+main()
+{
+  int xml_major_version, xml_minor_version, xml_micro_version;
+  int major, minor, micro;
+  char *tmp_version;
+
+  system("touch conf.xmltest");
+
+  tmp_version = xmlStrdup("$min_xml_version");
+  if(sscanf(tmp_version, "%d.%d.%d", &major, &minor, &micro) != 3) {
+    printf("%s, bad version string\n", "$min_xml_version");
+    exit(1);
+  }
+
+  tmp_version = xmlStrdup(LIBXML_DOTTED_VERSION);
+  if(sscanf(tmp_version, "%d.%d.%d", &xml_major_version, &xml_minor_version, &xml_micro_version) != 3) {
+    printf("%s, bad version string\n", "$min_xml_version");
+    exit(1);
+  }
+
+  if((xml_major_version != $xml_config_major_version) ||
+     (xml_minor_version != $xml_config_minor_version) ||
+     (xml_micro_version != $xml_config_micro_version))
+    {
+      printf("\n*** 'xml-config --version' returned %d.%d.%d, but libxml (%d.%d.%d)\n",
+             $xml_config_major_version, $xml_config_minor_version, $xml_config_micro_version,
+             xml_major_version, xml_minor_version, xml_micro_version);
+      printf("*** was found! If xml-config was correct, then it is best\n");
+      printf("*** to remove the old version of libxml. You may also be able to fix the error\n");
+      printf("*** by modifying your LD_LIBRARY_PATH enviroment variable, or by editing\n");
+      printf("*** /etc/ld.so.conf. Make sure you have run ldconfig if that is\n");
+      printf("*** required on your system.\n");
+      printf("*** If xml-config was wrong, set the environment variable XML_CONFIG\n");
+      printf("*** to point to the correct copy of xml-config, and remove the file config.cache\n");
+      printf("*** before re-running configure\n");
+    }
+  else
+    {
+      if ((xml_major_version > major) ||
+          ((xml_major_version == major) && (xml_minor_version > minor)) ||
+          ((xml_major_version == major) && (xml_minor_version == minor) &&
+           (xml_micro_version >= micro)))
+        {
+          return 0;
+        }
+      else
+        {
+          printf("\n*** An old version of libxml (%d.%d.%d) was found.\n",
+            xml_major_version, xml_minor_version, xml_micro_version);
+          printf("*** You need a version of libxml newer than %d.%d.%d. The latest version of\n",
+            major, minor, micro);
+          printf("*** libxml is always available from ftp://ftp.gnome.org.\n");
+          printf("***\n");
+          printf("*** If you have already installed a sufficiently new version, this error\n");
+          printf("*** probably means that the wrong copy of the xml-config shell script is\n");
+          printf("*** being found. The easiest way to fix this is to remove the old version\n");
+          printf("*** of libxml, but you can also set the XML_CONFIG environment to point to the\n");
+          printf("*** correct copy of xml-config. (In this case, you will have to\n");
+          printf("*** modify your LD_LIBRARY_PATH enviroment variable, or edit /etc/ld.so.conf\n");
+          printf("*** so that the correct libraries are found at run-time))\n");
+        }
+    }
+  return 1;
+}
+
+_ACEOF
+rm -f conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && { ac_try='./conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  :
+else
+  echo "$as_me: program exited with status $ac_status" >&5
+echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+( exit $ac_status )
+no_xml=yes
+fi
+rm -f core *.core gmon.out bb.out conftest$ac_exeext conftest.$ac_objext conftest.$ac_ext
+fi
+
+      CFLAGS="$ac_save_CFLAGS"
+      LIBS="$ac_save_LIBS"
+    fi
+  fi
+
+  if test "x$no_xml" = x ; then
+    echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+    enable_libxml=yes
+  else
+    echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6
+    if test "$XML_CONFIG" = "no" ; then
+      echo "*** The xml-config script installed by libxml could not be found"
+      echo "*** If libxml was installed in PREFIX, make sure PREFIX/bin is in"
+      echo "*** your path, or set the XML_CONFIG environment variable to the"
+      echo "*** full path to xml-config."
+    else
+      if test -f conf.xmltest ; then
+        :
+      else
+        echo "*** Could not run libxml test program, checking why..."
+        CFLAGS="$CFLAGS $XML_CFLAGS"
+        LIBS="$LIBS $XML_LIBS"
+              fi
+    fi
+
+    XML_CFLAGS=""
+    XML_LIBS=""
+    enable_libxml=no
+  fi
+
+
+  rm -f conf.xmltest
+
+  if test $enable_libxml = yes; then
+    CPPFLAGS="$CPPFLAGS $XML_CFLAGS"
+    INCLUDE_FLAGS="$INCLUDE_FLAGS $XML_CFLAGS"
+    LIBS="$XML_LIBS $LIBS"
+    HAVE_LIBXML=1
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_LIBXML 1
+_ACEOF
 
 
 echo "$as_me:$LINENO: checking for egrep" >&5
@@ -3991,6 +4053,434 @@ fi
 done
 
 
+
+for ac_header in libxml/SAX2.h
+do
+as_ac_Header=`echo "ac_cv_header_$ac_header" | $as_tr_sh`
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking $ac_header usability" >&5
+echo $ECHO_N "checking $ac_header usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <$ac_header>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking $ac_header presence" >&5
+echo $ECHO_N "checking $ac_header presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <$ac_header>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: $ac_header: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: $ac_header: present but cannot be compiled" >&5
+echo "$as_me: WARNING: $ac_header: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: $ac_header:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: $ac_header: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: $ac_header:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: $ac_header: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: $ac_header: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: $ac_header: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ---------------------------------- ##
+## Report this to bug-gnustep@gnu.org ##
+## ---------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for $ac_header" >&5
+echo $ECHO_N "checking for $ac_header... $ECHO_C" >&6
+if eval "test \"\${$as_ac_Header+set}\" = set"; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  eval "$as_ac_Header=\$ac_header_preproc"
+fi
+echo "$as_me:$LINENO: result: `eval echo '${'$as_ac_Header'}'`" >&5
+echo "${ECHO_T}`eval echo '${'$as_ac_Header'}'`" >&6
+
+fi
+if test `eval echo '${'$as_ac_Header'}'` = yes; then
+  cat >>confdefs.h <<_ACEOF
+#define `echo "HAVE_$ac_header" | $as_tr_cpp` 1
+_ACEOF
+
+fi
+
+done
+
+    #--------------------------------------------------------------------
+    # Check for (optional) libxslt
+    #--------------------------------------------------------------------
+    enable_xslt=yes
+
+    if test $enable_xslt = yes; then
+      echo "$as_me:$LINENO: checking for xsltApplyStylesheet in -lxslt" >&5
+echo $ECHO_N "checking for xsltApplyStylesheet in -lxslt... $ECHO_C" >&6
+if test "${ac_cv_lib_xslt_xsltApplyStylesheet+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lxslt  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+/* Override any gcc2 internal prototype to avoid an error.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+/* We use char because int might match the return type of a gcc2
+   builtin and then its argument prototype would still apply.  */
+char xsltApplyStylesheet ();
+int
+main ()
+{
+xsltApplyStylesheet ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (eval echo "$as_me:$LINENO: \"$ac_link\"") >&5
+  (eval $ac_link) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest$ac_exeext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_cv_lib_xslt_xsltApplyStylesheet=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_cv_lib_xslt_xsltApplyStylesheet=no
+fi
+rm -f conftest.err conftest.$ac_objext \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+echo "$as_me:$LINENO: result: $ac_cv_lib_xslt_xsltApplyStylesheet" >&5
+echo "${ECHO_T}$ac_cv_lib_xslt_xsltApplyStylesheet" >&6
+if test $ac_cv_lib_xslt_xsltApplyStylesheet = yes; then
+  xslt_ok=yes
+else
+  xslt_ok=no
+fi
+
+      if test "$xslt_ok" = "yes"; then
+	if test "${ac_cv_header_libxslt_xslt_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for libxslt/xslt.h" >&5
+echo $ECHO_N "checking for libxslt/xslt.h... $ECHO_C" >&6
+if test "${ac_cv_header_libxslt_xslt_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_libxslt_xslt_h" >&5
+echo "${ECHO_T}$ac_cv_header_libxslt_xslt_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking libxslt/xslt.h usability" >&5
+echo $ECHO_N "checking libxslt/xslt.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <libxslt/xslt.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking libxslt/xslt.h presence" >&5
+echo $ECHO_N "checking libxslt/xslt.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <libxslt/xslt.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: libxslt/xslt.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: libxslt/xslt.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: libxslt/xslt.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: libxslt/xslt.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ---------------------------------- ##
+## Report this to bug-gnustep@gnu.org ##
+## ---------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for libxslt/xslt.h" >&5
+echo $ECHO_N "checking for libxslt/xslt.h... $ECHO_C" >&6
+if test "${ac_cv_header_libxslt_xslt_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_libxslt_xslt_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_libxslt_xslt_h" >&5
+echo "${ECHO_T}$ac_cv_header_libxslt_xslt_h" >&6
+
+fi
+if test $ac_cv_header_libxslt_xslt_h = yes; then
+  xslthdr_ok=yes
+else
+  xslthdr_ok=no
+fi
+
+
+	if test "$xslthdr_ok" = "no"; then
+	  xslt_ok=no
+	fi
+      fi
+      if test "$xslt_ok" = "yes"; then
+	HAVE_LIBXSLT=1
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_LIBXSLT 1
+_ACEOF
+
+	LIBS="-lxslt $LIBS"
+      else
+        SETUP_ERRORS="$SETUP_ERRORS W108"
+      fi
+    else
+      HAVE_LIBXSLT=0
+      { echo "$as_me:$LINENO: WARNING: Disabled support for XSLT funtionality." >&5
+echo "$as_me: WARNING: Disabled support for XSLT funtionality." >&2;}
+    fi
+
+  else
+    HAVE_LIBXML=0
+    # Restore the CFLAGS and LIBS because AM_PATH_XML messes them
+    LIBS="$saved_LIBS"
+    CFLAGS="$saved_CFLAGS"
+    SETUP_ERRORS="$SETUP_ERRORS E107"
+  fi
+else
+  { echo "$as_me:$LINENO: WARNING: Disabled support for XML funtionality." >&5
+echo "$as_me: WARNING: Disabled support for XML funtionality." >&2;}
+  HAVE_LIBXML=0
+fi
+
+
+#--------------------------------------------------------------------
+# Set Apple/Darwin/OSX/NeXT information for other tests
+#--------------------------------------------------------------------
+OBJC_RUNTIME_LIB=`echo $ac_cv_library_combo | awk -F- '{print $1}'`
+echo "$as_me:$LINENO: checking the Objective-C runtime" >&5
+echo $ECHO_N "checking the Objective-C runtime... $ECHO_C" >&6
+if test "$OBJC_RUNTIME_LIB" = "nx" -o "$OBJC_RUNTIME_LIB" = "apple"; then
+  echo "$as_me:$LINENO: result: NeXT" >&5
+echo "${ECHO_T}NeXT" >&6
+  LIBOBJC='-lobjc'
+  OBJCFLAGS="-fnext-runtime -DNeXT_RUNTIME"
+else
+  echo "$as_me:$LINENO: result: GNU" >&5
+echo "${ECHO_T}GNU" >&6
+  LIBOBJC='-lobjc'
+  OBJCFLAGS="-fgnu-runtime"
+fi
+
+#--------------------------------------------------------------------
+# Check OpenSSL for HTTPS support.
+#--------------------------------------------------------------------
+  ssl_ok=no
 
 for ac_header in openssl/ssl.h
 do
@@ -5438,33 +5928,6 @@ fi
 #--------------------------------------------------------------------
 # Find JPEG
 #--------------------------------------------------------------------
-GRAPHIC_CFLAGS=
-GRAPHIC_LFLAGS=
-
-
-# Check whether --with-jpeg_library or --without-jpeg_library was given.
-if test "${with_jpeg_library+set}" = set; then
-  withval="$with_jpeg_library"
-
-else
-  with_jpeg_library=
-fi;
-
-# Check whether --with-jpeg_include or --without-jpeg_include was given.
-if test "${with_jpeg_include+set}" = set; then
-  withval="$with_jpeg_include"
-
-else
-  with_jpeg_include=
-fi;
-
-if test -n "$with_jpeg_library"; then
-  with_jpeg_library="-L$with_jpeg_library"
-fi
-if test -n "$with_jpeg_include"; then
-  with_jpeg_include="-I$with_jpeg_include"
-fi
-
 CPPFLAGS="$with_jpeg_include ${CPPFLAGS}"
 LDFLAGS="$with_jpeg_library ${LDFLAGS}"
 
@@ -5619,7 +6082,6 @@ fi
 
 done
 
-if test "$have_jpeg" = yes; then
 
 echo "$as_me:$LINENO: checking for jpeg_destroy_decompress in -ljpeg" >&5
 echo $ECHO_N "checking for jpeg_destroy_decompress in -ljpeg... $ECHO_C" >&6
@@ -5694,45 +6156,21 @@ _ACEOF
 
 fi
 
-  if test "$ac_cv_lib_jpeg_jpeg_destroy_decompress" = yes; then
-    GRAPHIC_LFLAGS="$with_jpeg_library $GRAPHIC_LFLAGS"
-    GRAPHIC_CFLAGS="$with_jpeg_include $GRAPHIC_CFLAGS"
-  fi
+have_jpeg_lib=no
+if test "$ac_cv_lib_jpeg_jpeg_destroy_decompress" = yes; then
+  have_jpeg_lib=yes
 fi
 if test "$have_jpeg" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS W403"
+  if test "$have_jpeg_lib" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS W402"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W403"
+  fi
 fi
-
 
 #--------------------------------------------------------------------
 # Find TIFF
 #--------------------------------------------------------------------
-
-# Check whether --with-tiff_library or --without-tiff_library was given.
-if test "${with_tiff_library+set}" = set; then
-  withval="$with_tiff_library"
-
-else
-  with_tiff_library=
-fi;
-
-# Check whether --with-tiff_include or --without-tiff_include was given.
-if test "${with_tiff_include+set}" = set; then
-  withval="$with_tiff_include"
-
-else
-  with_tiff_include=
-fi;
-
-if test -n "$with_tiff_library"; then
-  with_tiff_library="-L$with_tiff_library"
-fi
-if test -n "$with_tiff_include"; then
-  with_tiff_include="-I$with_tiff_include"
-fi
-
-CPPFLAGS="$with_tiff_include ${CPPFLAGS}"
-LDFLAGS="$with_tiff_library ${LDFLAGS}"
 
 echo "$as_me:$LINENO: checking for main in -lz" >&5
 echo $ECHO_N "checking for main in -lz... $ECHO_C" >&6
@@ -5945,7 +6383,6 @@ else
 fi
 
 
-if test "$have_tiff" = yes; then
 
 echo "$as_me:$LINENO: checking for TIFFReadScanline in -ltiff" >&5
 echo $ECHO_N "checking for TIFFReadScanline in -ltiff... $ECHO_C" >&6
@@ -6020,21 +6457,166 @@ _ACEOF
 
 fi
 
-  if test "$ac_cv_lib_tiff_TIFFReadScanline" = yes; then
-    GRAPHIC_LFLAGS="$with_tiff_library $GRAPHIC_LFLAGS"
-    GRAPHIC_CFLAGS="$with_tiff_include $GRAPHIC_CFLAGS"
-  else
-    have_tiff=no
-  fi
+have_tiff_lib=no
+if test "$ac_cv_lib_tiff_TIFFReadScanline" = yes; then
+  have_tiff_lib=yes
 fi
 
 if test "$have_tiff" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS E401"
+  if test "$have_tiff_lib" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS E400"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS E401"
+  fi
 fi
 
 #--------------------------------------------------------------------
 # Find additional image libs
 #--------------------------------------------------------------------
+if test "${ac_cv_header_png_h+set}" = set; then
+  echo "$as_me:$LINENO: checking for png.h" >&5
+echo $ECHO_N "checking for png.h... $ECHO_C" >&6
+if test "${ac_cv_header_png_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_png_h" >&5
+echo "${ECHO_T}$ac_cv_header_png_h" >&6
+else
+  # Is the header compilable?
+echo "$as_me:$LINENO: checking png.h usability" >&5
+echo $ECHO_N "checking png.h usability... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+$ac_includes_default
+#include <png.h>
+_ACEOF
+rm -f conftest.$ac_objext
+if { (eval echo "$as_me:$LINENO: \"$ac_compile\"") >&5
+  (eval $ac_compile) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } &&
+	 { ac_try='test -z "$ac_c_werror_flag"
+			 || test ! -s conftest.err'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; } &&
+	 { ac_try='test -s conftest.$ac_objext'
+  { (eval echo "$as_me:$LINENO: \"$ac_try\"") >&5
+  (eval $ac_try) 2>&5
+  ac_status=$?
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); }; }; then
+  ac_header_compiler=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+ac_header_compiler=no
+fi
+rm -f conftest.err conftest.$ac_objext conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_compiler" >&5
+echo "${ECHO_T}$ac_header_compiler" >&6
+
+# Is the header present?
+echo "$as_me:$LINENO: checking png.h presence" >&5
+echo $ECHO_N "checking png.h presence... $ECHO_C" >&6
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <png.h>
+_ACEOF
+if { (eval echo "$as_me:$LINENO: \"$ac_cpp conftest.$ac_ext\"") >&5
+  (eval $ac_cpp conftest.$ac_ext) 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } >/dev/null; then
+  if test -s conftest.err; then
+    ac_cpp_err=$ac_c_preproc_warn_flag
+    ac_cpp_err=$ac_cpp_err$ac_c_werror_flag
+  else
+    ac_cpp_err=
+  fi
+else
+  ac_cpp_err=yes
+fi
+if test -z "$ac_cpp_err"; then
+  ac_header_preproc=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+  ac_header_preproc=no
+fi
+rm -f conftest.err conftest.$ac_ext
+echo "$as_me:$LINENO: result: $ac_header_preproc" >&5
+echo "${ECHO_T}$ac_header_preproc" >&6
+
+# So?  What about this header?
+case $ac_header_compiler:$ac_header_preproc:$ac_c_preproc_warn_flag in
+  yes:no: )
+    { echo "$as_me:$LINENO: WARNING: png.h: accepted by the compiler, rejected by the preprocessor!" >&5
+echo "$as_me: WARNING: png.h: accepted by the compiler, rejected by the preprocessor!" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h: proceeding with the compiler's result" >&5
+echo "$as_me: WARNING: png.h: proceeding with the compiler's result" >&2;}
+    ac_header_preproc=yes
+    ;;
+  no:yes:* )
+    { echo "$as_me:$LINENO: WARNING: png.h: present but cannot be compiled" >&5
+echo "$as_me: WARNING: png.h: present but cannot be compiled" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h:     check for missing prerequisite headers?" >&5
+echo "$as_me: WARNING: png.h:     check for missing prerequisite headers?" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h: see the Autoconf documentation" >&5
+echo "$as_me: WARNING: png.h: see the Autoconf documentation" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h:     section \"Present But Cannot Be Compiled\"" >&5
+echo "$as_me: WARNING: png.h:     section \"Present But Cannot Be Compiled\"" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h: proceeding with the preprocessor's result" >&5
+echo "$as_me: WARNING: png.h: proceeding with the preprocessor's result" >&2;}
+    { echo "$as_me:$LINENO: WARNING: png.h: in the future, the compiler will take precedence" >&5
+echo "$as_me: WARNING: png.h: in the future, the compiler will take precedence" >&2;}
+    (
+      cat <<\_ASBOX
+## ---------------------------------- ##
+## Report this to bug-gnustep@gnu.org ##
+## ---------------------------------- ##
+_ASBOX
+    ) |
+      sed "s/^/$as_me: WARNING:     /" >&2
+    ;;
+esac
+echo "$as_me:$LINENO: checking for png.h" >&5
+echo $ECHO_N "checking for png.h... $ECHO_C" >&6
+if test "${ac_cv_header_png_h+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_cv_header_png_h=$ac_header_preproc
+fi
+echo "$as_me:$LINENO: result: $ac_cv_header_png_h" >&5
+echo "${ECHO_T}$ac_cv_header_png_h" >&6
+
+fi
+if test $ac_cv_header_png_h = yes; then
+  have_png=yes
+else
+  have_png=no
+fi
+
+
 
 echo "$as_me:$LINENO: checking for main in -lpng" >&5
 echo $ECHO_N "checking for main in -lpng... $ECHO_C" >&6
@@ -6103,8 +6685,12 @@ _ACEOF
 
 fi
 
-if test "$ac_cv_lib_png_main" = no; then
-  SETUP_ERRORS="$SETUP_ERRORS W409"
+if test "$have_png" = no; then
+  if test "$ac_cv_lib_png_main" = yes; then
+    SETUP_ERRORS="$SETUP_ERRORS W408"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W409"
+  fi
 fi
 
 #--------------------------------------------------------------------
@@ -6433,7 +7019,38 @@ s/^[^=]*=[	 ]*$//;
 }'
 fi
 
-DEFS=-DHAVE_CONFIG_H
+# Transform confdefs.h into DEFS.
+# Protect against shell expansion while executing Makefile rules.
+# Protect against Makefile macro expansion.
+#
+# If the first sed substitution is executed (which looks for macros that
+# take arguments), then we branch to the quote section.  Otherwise,
+# look for a macro that doesn't take arguments.
+cat >confdef2opt.sed <<\_ACEOF
+t clear
+: clear
+s,^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 (][^	 (]*([^)]*)\)[	 ]*\(.*\),-D\1=\2,g
+t quote
+s,^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 ][^	 ]*\)[	 ]*\(.*\),-D\1=\2,g
+t quote
+d
+: quote
+s,[	 `~#$^&*(){}\\|;'"<>?],\\&,g
+s,\[,\\&,g
+s,\],\\&,g
+s,\$,$$,g
+p
+_ACEOF
+# We use echo to avoid assuming a particular line-breaking character.
+# The extra dot is to prevent the shell from consuming trailing
+# line-breaks from the sub-command output.  A line-break within
+# single-quotes doesn't work because, if this script is created in a
+# platform that uses two characters for line-breaks (e.g., DOS), tr
+# would break.
+ac_LF_and_DOT=`echo; echo .`
+DEFS=`sed -n -f confdef2opt.sed confdefs.h | tr "$ac_LF_and_DOT" ' .'`
+rm -f confdef2opt.sed
+
 
 ac_libobjs=
 ac_ltlibobjs=
@@ -6450,13 +7067,6 @@ LIBOBJS=$ac_libobjs
 LTLIBOBJS=$ac_ltlibobjs
 
 
-if test -z "${AMDEP_TRUE}" && test -z "${AMDEP_FALSE}"; then
-  { { echo "$as_me:$LINENO: error: conditional \"AMDEP\" was never defined.
-Usually this means the macro was only invoked conditionally." >&5
-echo "$as_me: error: conditional \"AMDEP\" was never defined.
-Usually this means the macro was only invoked conditionally." >&2;}
-   { (exit 1); exit 1; }; }
-fi
 
 : ${CONFIG_STATUS=./config.status}
 ac_clean_files_save=$ac_clean_files
@@ -6774,14 +7384,9 @@ Usage: $0 [OPTIONS] [FILE]...
       --recheck    update $as_me by reconfiguring in the same conditions
   --file=FILE[:TEMPLATE]
 		   instantiate the configuration file FILE
-  --header=FILE[:TEMPLATE]
-		   instantiate the configuration header FILE
 
 Configuration files:
 $config_files
-
-Configuration headers:
-$config_headers
 
 Configuration commands:
 $config_commands
@@ -6890,7 +7495,6 @@ cat >>$CONFIG_STATUS <<_ACEOF
 # INIT-COMMANDS section.
 #
 
-AMDEP_TRUE="$AMDEP_TRUE" ac_aux_dir="$ac_aux_dir"
 
 
 _ACEOF
@@ -6903,9 +7507,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "setupvars" ) CONFIG_FILES="$CONFIG_FILES setupvars" ;;
-  "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
   "default" ) CONFIG_COMMANDS="$CONFIG_COMMANDS default" ;;
-  "config.h" ) CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
    { (exit 1); exit 1; }; };;
@@ -6918,7 +7520,6 @@ done
 # bizarre bug on SunOS 4.1.3.
 if $ac_need_defaults; then
   test "${CONFIG_FILES+set}" = set || CONFIG_FILES=$config_files
-  test "${CONFIG_HEADERS+set}" = set || CONFIG_HEADERS=$config_headers
   test "${CONFIG_COMMANDS+set}" = set || CONFIG_COMMANDS=$config_commands
 fi
 
@@ -7003,23 +7604,6 @@ s,@target@,$target,;t t
 s,@target_cpu@,$target_cpu,;t t
 s,@target_vendor@,$target_vendor,;t t
 s,@target_os@,$target_os,;t t
-s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t
-s,@INSTALL_SCRIPT@,$INSTALL_SCRIPT,;t t
-s,@INSTALL_DATA@,$INSTALL_DATA,;t t
-s,@PACKAGE@,$PACKAGE,;t t
-s,@VERSION@,$VERSION,;t t
-s,@ACLOCAL@,$ACLOCAL,;t t
-s,@AUTOCONF@,$AUTOCONF,;t t
-s,@AUTOMAKE@,$AUTOMAKE,;t t
-s,@AUTOHEADER@,$AUTOHEADER,;t t
-s,@MAKEINFO@,$MAKEINFO,;t t
-s,@AMTAR@,$AMTAR,;t t
-s,@install_sh@,$install_sh,;t t
-s,@STRIP@,$STRIP,;t t
-s,@ac_ct_STRIP@,$ac_ct_STRIP,;t t
-s,@INSTALL_STRIP_PROGRAM@,$INSTALL_STRIP_PROGRAM,;t t
-s,@AWK@,$AWK,;t t
-s,@SET_MAKE@,$SET_MAKE,;t t
 s,@CC@,$CC,;t t
 s,@CFLAGS@,$CFLAGS,;t t
 s,@LDFLAGS@,$LDFLAGS,;t t
@@ -7027,13 +7611,6 @@ s,@CPPFLAGS@,$CPPFLAGS,;t t
 s,@ac_ct_CC@,$ac_ct_CC,;t t
 s,@EXEEXT@,$EXEEXT,;t t
 s,@OBJEXT@,$OBJEXT,;t t
-s,@DEPDIR@,$DEPDIR,;t t
-s,@am__include@,$am__include,;t t
-s,@am__quote@,$am__quote,;t t
-s,@AMDEP_TRUE@,$AMDEP_TRUE,;t t
-s,@AMDEP_FALSE@,$AMDEP_FALSE,;t t
-s,@AMDEPBACKSLASH@,$AMDEPBACKSLASH,;t t
-s,@CCDEPMODE@,$CCDEPMODE,;t t
 s,@CPP@,$CPP,;t t
 s,@ac_cv_library_combo@,$ac_cv_library_combo,;t t
 s,@GCC_VERSION@,$GCC_VERSION,;t t
@@ -7042,10 +7619,19 @@ s,@LD@,$LD,;t t
 s,@DLLTOOL@,$DLLTOOL,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
+s,@INSTALL_PROGRAM@,$INSTALL_PROGRAM,;t t
+s,@INSTALL_SCRIPT@,$INSTALL_SCRIPT,;t t
+s,@INSTALL_DATA@,$INSTALL_DATA,;t t
 s,@LN_S@,$LN_S,;t t
 s,@WHOAMI@,$WHOAMI,;t t
 s,@GNUMAKE@,$GNUMAKE,;t t
+s,@XML2_CONFIG@,$XML2_CONFIG,;t t
+s,@XML_CONFIG@,$XML_CONFIG,;t t
+s,@XML_CFLAGS@,$XML_CFLAGS,;t t
+s,@XML_LIBS@,$XML_LIBS,;t t
 s,@EGREP@,$EGREP,;t t
+s,@HAVE_LIBXSLT@,$HAVE_LIBXSLT,;t t
+s,@HAVE_LIBXML@,$HAVE_LIBXML,;t t
 s,@GNUSTEP_INSTALLED@,$GNUSTEP_INSTALLED,;t t
 s,@objc_threaded@,$objc_threaded,;t t
 s,@ac_cv_objc_threaded@,$ac_cv_objc_threaded,;t t
@@ -7304,235 +7890,6 @@ _ACEOF
 cat >>$CONFIG_STATUS <<\_ACEOF
 
 #
-# CONFIG_HEADER section.
-#
-
-# These sed commands are passed to sed as "A NAME B NAME C VALUE D", where
-# NAME is the cpp macro being defined and VALUE is the value it is being given.
-#
-# ac_d sets the value in "#define NAME VALUE" lines.
-ac_dA='s,^\([	 ]*\)#\([	 ]*define[	 ][	 ]*\)'
-ac_dB='[	 ].*$,\1#\2'
-ac_dC=' '
-ac_dD=',;t'
-# ac_u turns "#undef NAME" without trailing blanks into "#define NAME VALUE".
-ac_uA='s,^\([	 ]*\)#\([	 ]*\)undef\([	 ][	 ]*\)'
-ac_uB='$,\1#\2define\3'
-ac_uC=' '
-ac_uD=',;t'
-
-for ac_file in : $CONFIG_HEADERS; do test "x$ac_file" = x: && continue
-  # Support "outfile[:infile[:infile...]]", defaulting infile="outfile.in".
-  case $ac_file in
-  - | *:- | *:-:* ) # input from stdin
-	cat >$tmp/stdin
-	ac_file_in=`echo "$ac_file" | sed 's,[^:]*:,,'`
-	ac_file=`echo "$ac_file" | sed 's,:.*,,'` ;;
-  *:* ) ac_file_in=`echo "$ac_file" | sed 's,[^:]*:,,'`
-	ac_file=`echo "$ac_file" | sed 's,:.*,,'` ;;
-  * )   ac_file_in=$ac_file.in ;;
-  esac
-
-  test x"$ac_file" != x- && { echo "$as_me:$LINENO: creating $ac_file" >&5
-echo "$as_me: creating $ac_file" >&6;}
-
-  # First look for the input files in the build tree, otherwise in the
-  # src tree.
-  ac_file_inputs=`IFS=:
-    for f in $ac_file_in; do
-      case $f in
-      -) echo $tmp/stdin ;;
-      [\\/$]*)
-	 # Absolute (can't be DOS-style, as IFS=:)
-	 test -f "$f" || { { echo "$as_me:$LINENO: error: cannot find input file: $f" >&5
-echo "$as_me: error: cannot find input file: $f" >&2;}
-   { (exit 1); exit 1; }; }
-	 # Do quote $f, to prevent DOS paths from being IFS'd.
-	 echo "$f";;
-      *) # Relative
-	 if test -f "$f"; then
-	   # Build tree
-	   echo "$f"
-	 elif test -f "$srcdir/$f"; then
-	   # Source tree
-	   echo "$srcdir/$f"
-	 else
-	   # /dev/null tree
-	   { { echo "$as_me:$LINENO: error: cannot find input file: $f" >&5
-echo "$as_me: error: cannot find input file: $f" >&2;}
-   { (exit 1); exit 1; }; }
-	 fi;;
-      esac
-    done` || { (exit 1); exit 1; }
-  # Remove the trailing spaces.
-  sed 's/[	 ]*$//' $ac_file_inputs >$tmp/in
-
-_ACEOF
-
-# Transform confdefs.h into two sed scripts, `conftest.defines' and
-# `conftest.undefs', that substitutes the proper values into
-# config.h.in to produce config.h.  The first handles `#define'
-# templates, and the second `#undef' templates.
-# And first: Protect against being on the right side of a sed subst in
-# config.status.  Protect against being in an unquoted here document
-# in config.status.
-rm -f conftest.defines conftest.undefs
-# Using a here document instead of a string reduces the quoting nightmare.
-# Putting comments in sed scripts is not portable.
-#
-# `end' is used to avoid that the second main sed command (meant for
-# 0-ary CPP macros) applies to n-ary macro definitions.
-# See the Autoconf documentation for `clear'.
-cat >confdef2sed.sed <<\_ACEOF
-s/[\\&,]/\\&/g
-s,[\\$`],\\&,g
-t clear
-: clear
-s,^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 (][^	 (]*\)\(([^)]*)\)[	 ]*\(.*\)$,${ac_dA}\1${ac_dB}\1\2${ac_dC}\3${ac_dD},gp
-t end
-s,^[	 ]*#[	 ]*define[	 ][	 ]*\([^	 ][^	 ]*\)[	 ]*\(.*\)$,${ac_dA}\1${ac_dB}\1${ac_dC}\2${ac_dD},gp
-: end
-_ACEOF
-# If some macros were called several times there might be several times
-# the same #defines, which is useless.  Nevertheless, we may not want to
-# sort them, since we want the *last* AC-DEFINE to be honored.
-uniq confdefs.h | sed -n -f confdef2sed.sed >conftest.defines
-sed 's/ac_d/ac_u/g' conftest.defines >conftest.undefs
-rm -f confdef2sed.sed
-
-# This sed command replaces #undef with comments.  This is necessary, for
-# example, in the case of _POSIX_SOURCE, which is predefined and required
-# on some systems where configure will not decide to define it.
-cat >>conftest.undefs <<\_ACEOF
-s,^[	 ]*#[	 ]*undef[	 ][	 ]*[a-zA-Z_][a-zA-Z_0-9]*,/* & */,
-_ACEOF
-
-# Break up conftest.defines because some shells have a limit on the size
-# of here documents, and old seds have small limits too (100 cmds).
-echo '  # Handle all the #define templates only if necessary.' >>$CONFIG_STATUS
-echo '  if grep "^[	 ]*#[	 ]*define" $tmp/in >/dev/null; then' >>$CONFIG_STATUS
-echo '  # If there are no defines, we may have an empty if/fi' >>$CONFIG_STATUS
-echo '  :' >>$CONFIG_STATUS
-rm -f conftest.tail
-while grep . conftest.defines >/dev/null
-do
-  # Write a limited-size here document to $tmp/defines.sed.
-  echo '  cat >$tmp/defines.sed <<CEOF' >>$CONFIG_STATUS
-  # Speed up: don't consider the non `#define' lines.
-  echo '/^[	 ]*#[	 ]*define/!b' >>$CONFIG_STATUS
-  # Work around the forget-to-reset-the-flag bug.
-  echo 't clr' >>$CONFIG_STATUS
-  echo ': clr' >>$CONFIG_STATUS
-  sed ${ac_max_here_lines}q conftest.defines >>$CONFIG_STATUS
-  echo 'CEOF
-  sed -f $tmp/defines.sed $tmp/in >$tmp/out
-  rm -f $tmp/in
-  mv $tmp/out $tmp/in
-' >>$CONFIG_STATUS
-  sed 1,${ac_max_here_lines}d conftest.defines >conftest.tail
-  rm -f conftest.defines
-  mv conftest.tail conftest.defines
-done
-rm -f conftest.defines
-echo '  fi # grep' >>$CONFIG_STATUS
-echo >>$CONFIG_STATUS
-
-# Break up conftest.undefs because some shells have a limit on the size
-# of here documents, and old seds have small limits too (100 cmds).
-echo '  # Handle all the #undef templates' >>$CONFIG_STATUS
-rm -f conftest.tail
-while grep . conftest.undefs >/dev/null
-do
-  # Write a limited-size here document to $tmp/undefs.sed.
-  echo '  cat >$tmp/undefs.sed <<CEOF' >>$CONFIG_STATUS
-  # Speed up: don't consider the non `#undef'
-  echo '/^[	 ]*#[	 ]*undef/!b' >>$CONFIG_STATUS
-  # Work around the forget-to-reset-the-flag bug.
-  echo 't clr' >>$CONFIG_STATUS
-  echo ': clr' >>$CONFIG_STATUS
-  sed ${ac_max_here_lines}q conftest.undefs >>$CONFIG_STATUS
-  echo 'CEOF
-  sed -f $tmp/undefs.sed $tmp/in >$tmp/out
-  rm -f $tmp/in
-  mv $tmp/out $tmp/in
-' >>$CONFIG_STATUS
-  sed 1,${ac_max_here_lines}d conftest.undefs >conftest.tail
-  rm -f conftest.undefs
-  mv conftest.tail conftest.undefs
-done
-rm -f conftest.undefs
-
-cat >>$CONFIG_STATUS <<\_ACEOF
-  # Let's still pretend it is `configure' which instantiates (i.e., don't
-  # use $as_me), people would be surprised to read:
-  #    /* config.h.  Generated by config.status.  */
-  if test x"$ac_file" = x-; then
-    echo "/* Generated by configure.  */" >$tmp/config.h
-  else
-    echo "/* $ac_file.  Generated by configure.  */" >$tmp/config.h
-  fi
-  cat $tmp/in >>$tmp/config.h
-  rm -f $tmp/in
-  if test x"$ac_file" != x-; then
-    if diff $ac_file $tmp/config.h >/dev/null 2>&1; then
-      { echo "$as_me:$LINENO: $ac_file is unchanged" >&5
-echo "$as_me: $ac_file is unchanged" >&6;}
-    else
-      ac_dir=`(dirname "$ac_file") 2>/dev/null ||
-$as_expr X"$ac_file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$ac_file" : 'X\(//\)[^/]' \| \
-	 X"$ac_file" : 'X\(//\)$' \| \
-	 X"$ac_file" : 'X\(/\)' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X"$ac_file" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
-  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
-  	  /^X\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-      { if $as_mkdir_p; then
-    mkdir -p "$ac_dir"
-  else
-    as_dir="$ac_dir"
-    as_dirs=
-    while test ! -d "$as_dir"; do
-      as_dirs="$as_dir $as_dirs"
-      as_dir=`(dirname "$as_dir") 2>/dev/null ||
-$as_expr X"$as_dir" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$as_dir" : 'X\(//\)[^/]' \| \
-	 X"$as_dir" : 'X\(//\)$' \| \
-	 X"$as_dir" : 'X\(/\)' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X"$as_dir" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
-  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
-  	  /^X\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-    done
-    test ! -n "$as_dirs" || mkdir $as_dirs
-  fi || { { echo "$as_me:$LINENO: error: cannot create directory \"$ac_dir\"" >&5
-echo "$as_me: error: cannot create directory \"$ac_dir\"" >&2;}
-   { (exit 1); exit 1; }; }; }
-
-      rm -f $ac_file
-      mv $tmp/config.h $ac_file
-    fi
-  else
-    cat $tmp/config.h
-    rm -f $tmp/config.h
-  fi
-  # Run the commands associated with the file.
-  case $ac_file in
-    config.h ) # update the timestamp
-echo 'timestamp for config.h' >"./stamp-h1"
- ;;
-  esac
-done
-_ACEOF
-cat >>$CONFIG_STATUS <<\_ACEOF
-
-#
 # CONFIG_COMMANDS section.
 #
 for ac_file in : $CONFIG_COMMANDS; do test "x$ac_file" = x: && continue
@@ -7644,91 +8001,6 @@ esac
   { echo "$as_me:$LINENO: executing $ac_dest commands" >&5
 echo "$as_me: executing $ac_dest commands" >&6;}
   case $ac_dest in
-    depfiles ) test x"$AMDEP_TRUE" != x"" || for mf in $CONFIG_FILES; do
-  # Strip MF so we end up with the name of the file.
-  mf=`echo "$mf" | sed -e 's/:.*$//'`
-  if (sed 1q $mf | fgrep 'generated by automake') > /dev/null 2>&1; then
-    dirpart=`(dirname "$mf") 2>/dev/null ||
-$as_expr X"$mf" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$mf" : 'X\(//\)[^/]' \| \
-	 X"$mf" : 'X\(//\)$' \| \
-	 X"$mf" : 'X\(/\)' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X"$mf" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
-  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
-  	  /^X\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-  else
-    continue
-  fi
-  grep '^DEP_FILES *= *[^ #]' < "$mf" > /dev/null || continue
-  # Extract the definition of DEP_FILES from the Makefile without
-  # running `make'.
-  DEPDIR=`sed -n -e '/^DEPDIR = / s///p' < "$mf"`
-  test -z "$DEPDIR" && continue
-  # When using ansi2knr, U may be empty or an underscore; expand it
-  U=`sed -n -e '/^U = / s///p' < "$mf"`
-  test -d "$dirpart/$DEPDIR" || mkdir "$dirpart/$DEPDIR"
-  # We invoke sed twice because it is the simplest approach to
-  # changing $(DEPDIR) to its actual value in the expansion.
-  for file in `sed -n -e '
-    /^DEP_FILES = .*\\\\$/ {
-      s/^DEP_FILES = //
-      :loop
-	s/\\\\$//
-	p
-	n
-	/\\\\$/ b loop
-      p
-    }
-    /^DEP_FILES = / s/^DEP_FILES = //p' < "$mf" | \
-       sed -e 's/\$(DEPDIR)/'"$DEPDIR"'/g' -e 's/\$U/'"$U"'/g'`; do
-    # Make sure the directory exists.
-    test -f "$dirpart/$file" && continue
-    fdir=`(dirname "$file") 2>/dev/null ||
-$as_expr X"$file" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$file" : 'X\(//\)[^/]' \| \
-	 X"$file" : 'X\(//\)$' \| \
-	 X"$file" : 'X\(/\)' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X"$file" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
-  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
-  	  /^X\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-    { if $as_mkdir_p; then
-    mkdir -p $dirpart/$fdir
-  else
-    as_dir=$dirpart/$fdir
-    as_dirs=
-    while test ! -d "$as_dir"; do
-      as_dirs="$as_dir $as_dirs"
-      as_dir=`(dirname "$as_dir") 2>/dev/null ||
-$as_expr X"$as_dir" : 'X\(.*[^/]\)//*[^/][^/]*/*$' \| \
-	 X"$as_dir" : 'X\(//\)[^/]' \| \
-	 X"$as_dir" : 'X\(//\)$' \| \
-	 X"$as_dir" : 'X\(/\)' \| \
-	 .     : '\(.\)' 2>/dev/null ||
-echo X"$as_dir" |
-    sed '/^X\(.*[^/]\)\/\/*[^/][^/]*\/*$/{ s//\1/; q; }
-  	  /^X\(\/\/\)[^/].*/{ s//\1/; q; }
-  	  /^X\(\/\/\)$/{ s//\1/; q; }
-  	  /^X\(\/\).*/{ s//\1/; q; }
-  	  s/.*/./; q'`
-    done
-    test ! -n "$as_dirs" || mkdir $as_dirs
-  fi || { { echo "$as_me:$LINENO: error: cannot create directory $dirpart/$fdir" >&5
-echo "$as_me: error: cannot create directory $dirpart/$fdir" >&2;}
-   { (exit 1); exit 1; }; }; }
-
-    # echo "creating $dirpart/$file"
-    echo '# dummy' > "$dirpart/$file"
-  done
-done
- ;;
     default ) chmod a+x setupvars ;;
   esac
 done

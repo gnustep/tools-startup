@@ -1,4 +1,11 @@
-2005-04-22  Adam Fedor  <fedor@gnu.org>
+2005-05-03  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Minor cleanup
+	* configure.ac: Check for xml, xslt. Better check for iconv
+	Check for user and developer packages for jpeg, tiff, png
+	* scripts/test-gnustep: cvs update -P
+
+12005-04-22  Adam Fedor  <fedor@gnu.org>
 
 	* missing: Update to latest version.
 

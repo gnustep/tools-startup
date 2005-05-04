@@ -388,6 +388,7 @@ if test -n "$GS_LDFLAGS"; then
   fi
 fi
 
+rm -f setupvars
 echo "" >&5
 echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
 $SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
