@@ -330,7 +330,7 @@ if test $found_iconv = no ; then
 fi
 
 if test $found_iconv = no; then
-  SETUP_ERRORS="$SETUP_ERRORS I106";;
+  SETUP_ERRORS="$SETUP_ERRORS I106"
 fi
 #--------------------------------------------------------------------
 # Check recent libxml for Properytlists, GSXML, GSDoc etc.
