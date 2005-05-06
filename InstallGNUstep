@@ -391,7 +391,7 @@ fi
 rm -f setupvars
 echo "" >&5
 echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
-$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}
+$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
 # system that we found.

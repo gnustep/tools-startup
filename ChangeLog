@@ -1,3 +1,7 @@
+2005-05-06  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Log the configure output
+
 2005-05-03  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Minor cleanup
