@@ -1,4 +1,17 @@
 
+
+Changes in version 0.11.0
+=========================
+
+GNUstep Base 1.10.3 is included, but this really only has one patch
+that was already included in the previous Startup release.
+
+GNUstep Back 0.9.6 is included, which adds a few minor bug fixes.
+
+More informative checks for certain libraries are included.
+
+Preliminary (and untested) support for mingw and cygwin.
+
 Changes in version 0.10.2
 =========================
 

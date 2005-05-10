@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.10.2, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 0.11.0, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -182,6 +182,8 @@ AC_MSG_RESULT($cc_apple)
 AC_CHECK_PROG(AR, ar, ar)
 AC_CHECK_PROG(LD, ld, ld)
 AC_CHECK_PROG(DLLTOOL, dlltool, dlltool)
+AC_CHECK_PROGS(AWK, gawk awk, awk)
+
 AC_PROG_RANLIB
 
 AC_PROG_INSTALL
