@@ -30,13 +30,14 @@ gs_platform_cygwin()
 {
   gs_platform_generic
   GS_PLATFORM_BUILD_OBJC=yes
+  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-gsnd"
 }
 
 gs_platform_mingw()
 {
   gs_platform_generic
   GS_PLATFORM_BUILD_OBJC=yes
-  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-xml"
+  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-xml --disable-gsnd"
 }
 
 gs_platform_darwin()

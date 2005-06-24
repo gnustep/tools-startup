@@ -39,6 +39,9 @@ cvs-dist:
 	mv gnustep/Startup gnustep-startup-$(GNUSTEP_START_VERSION)
 	cd gnustep-startup-$(GNUSTEP_START_VERSION); \
 	  if [ \! -d sources ]; then mkdir sources; fi; \
+	  if [ -d ../sources ]; then \
+	    cp ../sources/* sources; \
+	  fi; \
 	  if [ -d ../../../current ]; then \
 	    cp ../../../current/* sources; \
 	  fi; \

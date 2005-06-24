@@ -1,3 +1,11 @@
+2005-06-24  Adam Fedor  <fedor@gnu.org>
+
+	* Makefile (cvs-dist): Copy standard sources from local sources dir
+	* README: Updates.
+	* configure.ac: More complete ffi check (from gnustep-base)
+	* scripts/platform.sh (gs_platform_cygwin, gs_platform_mings):
+	Disable gsnd.
+
 2005-05-10  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.11.0

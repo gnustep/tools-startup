@@ -62,8 +62,8 @@ behavior of the script.
 --config-options
 	    Extra options to pass to the configure routines.
 
-TroubleShooting
-===============
+Trouble-Shooting
+================
 
 Q1. When I type ./InstallGNUstep, I get:
 
@@ -87,14 +87,35 @@ export LDFLAGS=-L/usr/local/lib
 
 Then run InstallGNUstep again.
 
+Q3. I get an internal compiler error when running InstallGNUstep
+(gcc 4.0.0, perhaps some other versions).
+
+A3. This is a known bug in the gcc compiler. Try running InstallGNUstep
+again with optimization off:
+
+./InstallGNUstep --debug
+
+NOTE: This should be fixed in version Startup 0.11.1
+
+Q4. I installed a required library in /usr/local/{include,lib}, but
+I still get errors.
+
+This is wierd, but many times, the gcc compiler will automatically look
+in /usr/local for include files and libraries, but the dynamic loader (ld.so)
+will not. So a program compiles fine, but will not run. During configuration
+and installation in InstallGNUstep, this may happen. Try adding
+
+/usr/local/lib 
+
+to your /etc/ld.so.conf file or add it to the LD_LIBRARY_PATH environment
+variable.
 
 Discussion
 ==========
 
 This install script is meant to make it as easy as possible to install
 a bare-bones GNUstep system. That is, it doesn't require all the optional
-libraries you might want to have (SSL, etc). It also doesn't
-use the art backend (at least by default).
+libraries you might want to have (SSL, etc). 
 Ideally, after this bare-bones system is installed, we could start
 up a real GNUstep application which could do a much better job of doing any one
 or all of the following:

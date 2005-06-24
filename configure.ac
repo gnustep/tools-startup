@@ -531,28 +531,58 @@ fi
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
 #--------------------------------------------------------------------
-AC_CHECK_HEADERS(ffi.h callback.h)
-
-AC_MSG_CHECKING(for forwarding callback in runtime)
-AC_EGREP_HEADER(__objc_msg_forward, objc/objc-api.h, have_msg_forward=yes, 
-	        have_msg_forward=no)
-if test $have_msg_forward = yes; then
-  AC_MSG_RESULT(yes)
-else
-  AC_MSG_RESULT(no)
+enable_ffcall=yes
+enable_libffi=no
+AC_CHECK_HEADER(ffi.h, have_libffi=yes, have_libffi=no)
+AC_CHECK_HEADERS(callback.h, have_ffcall=yes, have_ffcall=no)
+if test $have_ffcall = no; then
+  enable_ffcall=no
+  # If we don't have ffcall but do have libffi, use libffi
+  if test $have_libffi = yes; then
+    enable_libffi=yes
+  fi
 fi
-AC_DEFINE(have_msg_forward,,
-	  [Define if you have the _objc_msg_forward function in libobjc])
-AC_MSG_CHECKING(FFI library usage)
-WITH_FFI=none
-if test $have_msg_forward = yes; then
-  if test $ac_cv_header_callback_h = yes -o $ac_cv_header_ffi_h = yes; then
-    AC_MSG_RESULT(yes)
-  else
-    AC_MSG_RESULT(no)
+if test $have_libffi = no; then
+  enable_libffi=no
+fi
+
+have_forward_hook=yes
+saved_CPPFLAGS="$CPPFLAGS"
+CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c"
+AC_MSG_CHECKING("for forwarding callback in runtime")
+AC_COMPILE_IFELSE([#include "$srcdir/config/config.forward.m"],
+	have_forward_hook=yes, have_forward_hook=no)
+AC_MSG_RESULT($have_forward_hook)
+if test $have_forward_hook = no; then
+  enable_libffi=no
+  enable_ffcall=no
+fi
+CPPFLAGS="$saved_CPPFLAGS"
+
+AC_MSG_CHECKING("FFI library usage")
+if test $enable_libffi = yes; then
+  LIBS="-lffi $LIBS"
+  AC_TRY_LINK([#include <ffi.h>], ,ffi_ok="yes", ffi_ok="no")
+  if test $ffi_ok = yes; then
+    AC_MSG_RESULT(libffi)
+  fi
+elif test $enable_ffcall = yes; then
+  LIBS="-lcallback -lavcall $LIBS"
+  AC_TRY_LINK([#include <callback.h>], , ffi_ok="yes", ffi_ok="no")
+  if test $ffi_ok = yes; then
+    AC_MSG_RESULT(ffcall)
   fi
 else
-    AC_MSG_RESULT(no)
+  ffi_ok=no
+fi
+
+if test $ffi_ok = no; then
+  AC_MSG_RESULT(none)
+  if test $have_forward_hook = no; then
+    SETUP_ERRORS="$SETUP_ERRORS E271"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS E270"
+  fi
 fi
 
 if test "`echo $host_os|sed 's/[[0-9]].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then

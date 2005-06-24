@@ -101,7 +101,7 @@ Check to make sure you have a full installation of the GCC
 compiler that includes the Objective-C headers and libraries.
 
 E155 Error
-Darwin/PPC (Mac OP X) systems require libffi, but there is no libffi
+Darwin/PPC (Mac OS X) systems require libffi, but there is no libffi
 installed. Please install this before installing GNUstep
 
 I190 Information
