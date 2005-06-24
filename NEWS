@@ -1,4 +1,10 @@
+Changes in version 0.11.1
+=========================
 
+Minor changes for smoother compilation based on some bug reports (particularly
+on mingw, cygwin).
+
+Patch for base that works around gcc 4.0 compiler error.
 
 Changes in version 0.11.0
 =========================

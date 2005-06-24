@@ -1,5 +1,5 @@
 
-The GNUstep Startup Package, version 0.11.0 is now available.
+The GNUstep Startup Package, version 0.11.1 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
@@ -40,22 +40,18 @@ Note for developers and testers: You can use these scripts to build
 the libraries from CVS. Just run the install script from the Startup
 directory in CVS.
 
-Changes in version 0.11.0
+Changes in version 0.11.1
 =========================
 
-GNUstep base version 1.10.3 is included, but this really only has one patch
-that was already included in the previous Startup release.
+Minor changes for smoother compilation based on some bug reports (particularly
+on mingw, cygwin).
 
-GNUstep Back 0.9.6 is included, which adds a few minor bug fixes.
-
-More informative checks for certain libraries are included.
-
-Preliminary (and untested) support for mingw and cygwin.
+Patch for base that works around gcc 4.0 compiler error.
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.11.0.tar.gz distribution file has been placed at
+The gnustep-startup-0.11.1.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page
