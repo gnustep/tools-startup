@@ -5701,11 +5701,11 @@ fi
 if test $ffi_ok = no; then
   echo "$as_me:$LINENO: result: none" >&5
 echo "${ECHO_T}none" >&6
-  if test $have_forward_hook = no; then
-    SETUP_ERRORS="$SETUP_ERRORS E271"
-  else
-    SETUP_ERRORS="$SETUP_ERRORS E270"
-  fi
+#  if test $have_forward_hook = no; then
+#    SETUP_ERRORS="$SETUP_ERRORS E271"
+#  else
+#    SETUP_ERRORS="$SETUP_ERRORS E270"
+#  fi
 fi
 
 if test "`echo $host_os|sed 's/[0-9].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then
