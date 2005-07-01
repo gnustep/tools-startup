@@ -1,3 +1,7 @@
+2005-06-30  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Add verbose (compile) option.
+
 2005-06-24  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.11.1

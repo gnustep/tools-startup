@@ -65,6 +65,7 @@ do
       echo "  --help	- Print help"
       echo "  --batch	- Don't ask any questions"
       echo "  --debug	- Compile packages with debug info"
+      echo "  --verbose	- Print verbose compilation information"
       echo
       echo "  --prefix={dir}	- GNUstep system root location"
       echo "  --builddir={dir}	- Location to build packages"
@@ -80,6 +81,8 @@ do
       gs_no_priv=yes;;
     --debug | -d)
       MAKEFLAGS="$MAKEFLAGS debug=yes";;
+    --verbose)
+      MAKEFLAGS="$MAKEFLAGS messages=yes";;
     --*=*)
       gs_option=`expr "x$1" : 'x\([^=]*\)='`
       gs_optarg=`expr "x$1" : 'x[^=]*=\(.*\)'`
