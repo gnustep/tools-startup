@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# Update web documentation with documentation in GNUstep core CVS:
+#   1. Runs "cvs update" on the GNUstep CVS files
+#   2. 'makes' the documentation in the core libraries Documentation dirs
+#   3. 'make installs' the documentation
+#   4. tar/copy the installed docs to the web CVS location
+#   5. commits the documentation
+#
+# This script assumes it is being run from a normal CVS checkout of the
+# gnustep directory strucuture (Only core is required).
+# This script tries to find the GNUstep CVS files, by checking in the
+# current directory, the directory ../.. from where the script was run
+# from (i.e. if this script is called from it's normal CVS location), or
+# as a last resport:
+#    $HOME/src/gnustep-'$hostname -s`
+#
+# The files are installed into 
+#    $HOME/gnustep-'$hostname -s`
+#
+# You must set the location of the web CVS files as GNUSTEP_WEB_ROOT
+#
+# NOTE: This script does not need to be run as root nor have any special
+# privleges. Since the installation is in the user's home directory, 
+# everything should work with normal privliges.
+#
+# NOTE: You must manually set the location of the gnustep-web CVS 
+# in the environment variable GNUSTEP_WEB_ROOT
+# To customize this script, you might have to change other things
+#
+# Here's an example of a cron script I use to run this script:
+#
+# CVS_RSH=ssh
+# export CVS_RSH
+# rm -f gnustep-docsrun.txt
+# $HOME/src/gstep/testing/gnustep/Startup/scripts/docs-gnustep > gnustep-docsrun.txt 2>&1
+#
+
+# NOTE: Set this to the gnustep-web CVS location
+if [ -z "$GNUSTEP_WEB_ROOT" ]; then
+  echo GNUSTEP_WEB_ROOT not set.
+  echo ABORTING
+  exit 1
+fi
+
+gs_platform()
+{
+  gs_build=`$TOPDIR/Startup/config.guess` 2>&1
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  else
+    gs_build=`$TOPDIR/Startup/config.sub $gs_build`
+  fi
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  fi
+  gs_build_cpu=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+  gs_build_vendor=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+  gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+}
+
+
+# Note: hostname -s doesn't work on every system...
+NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+
+# Figure out where the GNUstep files are
+RUNDIR=`pwd`
+SRCDIR=`dirname $0`
+# Find absolute path to SRCDIR
+SRCDIR=`cd $SRCDIR && pwd`
+if [ -d gui ]; then
+  TOPDIR=`cd ..; pwd`
+else
+  TOPDIR=$HOME/src/gnustep-$NAME
+fi
+cd $TOPDIR
+gs_platform
+
+# Update CVS
+cd $TOPDIR/core
+cvs -z3 update -P
+
+# Set the proper install directory
+. $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep-reset.sh
+. $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+
+# Make and install the documentation
+DOCS='make base gui back'
+for dir in $DOCS; do
+  cd $TOPDIR/core/$dir/Documentation
+  make clean
+  make install
+done
+
+# Copy it to the web CVS
+GSTEP_DOC=$GNUSTEP_WEB_ROOT/resources/documentation
+cd $HOME/gnustep-$NAME/System/Library/Documentation
+tar -cf - . | (cd $GSTEP_DOC; tar -xvf -)
+
+# Commit it
+cd $GSTEP_DOC
+cvs commit -m "Auto documentation update"
+
+# END
