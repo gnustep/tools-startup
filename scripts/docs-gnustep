@@ -70,6 +70,12 @@ SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR && pwd`
 if [ -d gui ]; then
   TOPDIR=`cd ..; pwd`
+elif [ -f InstallGNUstep ]; then
+  TOPDIR=`cd ..; pwd`
+elif [ -f Startup/InstallGNUstep ]; then
+  TOPDIR=$RUNDIR
+elif [ -f $SRCDIR/../InstallGNUstep ]; then
+  TOPDIR=$SRCDIR/../..
 else
   TOPDIR=$HOME/src/gnustep-$NAME
 fi
