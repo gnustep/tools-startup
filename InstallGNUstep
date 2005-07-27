@@ -745,10 +745,23 @@ else
   gs_build_package
 fi
 
+gversion=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
+if test -f $gversion ; then
+  GNUSTEP_GUI_INTERFACE=`grep GSBundleVersion $gversion | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`
+else
+  GNUSTEP_GUI_INTERFACE=
+fi
+
+if test -z "$GNUSTEP_GUI_INTERFACE"; then
+  BUNDLE_NAME=libgnustep-back
+else
+  BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
+fi
+
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle >&5 2>&1
-if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/libgnustep-back.bundle ]; then
+ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
+if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle ]; then
   gs_log_error
   exit 1
 fi

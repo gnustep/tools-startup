@@ -1,14 +1,14 @@
 
-The GNUstep Startup Package, version 0.11.1 is now available.
+The GNUstep Startup Package, version 0.12.0 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
-gnustep-make Version 1.10.0
-gnustep-base Version 1.10.3
-gnustep-gui Version 0.9.5
-gnustep-back Version 0.9.6
+gnustep-make Version 1.11.0
+gnustep-base Version 1.11.0
+gnustep-gui Version 0.10.0
+gnustep-back Version 0.10.0
 
 The main advantage of Startup is that it includes a script to
 automatically build and install the core GNUstep system.  
@@ -40,18 +40,22 @@ Note for developers and testers: You can use these scripts to build
 the libraries from CVS. Just run the install script from the Startup
 directory in CVS.
 
-Changes in version 0.11.1
+Changes in version 0.12.0
 =========================
 
-Minor changes for smoother compilation based on some bug reports (particularly
-on mingw, cygwin).
+New make, base, gui, and back packages.
 
-Patch for base that works around gcc 4.0 compiler error.
+Note that these new packages are binary incompatible with previous versions
+and therefore use a different interface version number. You can still run
+applications and tools that you have compiled before this, but they will not
+use these new libraries unless you recompile the app or tool. You MUST 
+recompile everything (libraries, frameworks) that your application or 
+tool depends on as well.
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.11.1.tar.gz distribution file has been placed at
+The gnustep-startup-0.12.0.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page

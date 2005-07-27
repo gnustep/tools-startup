@@ -1,10 +1,10 @@
 #
 #   configure.ac
 #
-#   Copyright (C) 202 Free Software Foundation, Inc.
+#   Copyright (C) 2003,2004,2005 Free Software Foundation, Inc.
 #
 #   Written: Adam Fedor <fedor@gnu.org>
-#   Date: May 2002
+#   Date: May 2003
 #
 #   This file is part of GNUstep 
 #
@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.11.0, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 0.12.0, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -780,10 +780,6 @@ if test $GNUSTEP_INSTALLED = yes; then
   fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
-  have_back=no
-  if test -f $prefix/Library/Bundles/libgnustep-back.bundle/libgnustep-back; then
-    have_back=yes
-  fi
   CPPFLAGS="$saved_CPPFLAGS"
 
 fi
@@ -822,13 +818,29 @@ if test $GNUSTEP_INSTALLED = yes; then
     gversion=$prefix/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
     if test -f $gversion ; then
       GNUSTEP_GUI_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+      GNUSTEP_GUI_INTERFACE=[`grep GSBundleVersion $gversion | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`]
     else
       GNUSTEP_GUI_VERSION=0.0.0
+      GNUSTEP_GUI_INTERFACE=
     fi
   fi
   AC_MSG_RESULT($GNUSTEP_GUI_VERSION)
 
 fi
+
+  AC_MSG_CHECKING(GNUstep Back)
+  if test -z "$GNUSTEP_GUI_INTERFACE"; then
+    BUNDLE_NAME=libgnustep-back
+  else
+    BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
+  fi
+  have_back=no
+  if test -f $prefix/Library/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
+    have_back=yes
+    AC_MSG_RESULT($BUNDLE_NAME)
+  else
+    AC_MSG_RESULT(none)
+  fi
 
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
@@ -841,6 +853,7 @@ AC_SUBST(SETUP_ERRORS)
 AC_SUBST(GNUSTEP_MAKE_VERSION)
 AC_SUBST(GNUSTEP_BASE_VERSION)
 AC_SUBST(GNUSTEP_GUI_VERSION)
+AC_SUBST(GNUSTEP_GUI_INTERFACE)
 AC_SUBST(gnustep_flattened)
 
 #--------------------------------------------------------------------

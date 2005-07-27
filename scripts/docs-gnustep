@@ -83,7 +83,6 @@ cd $TOPDIR
 gs_platform
 
 # Update CVS
-cd $TOPDIR/core
 cvs -z3 update -P
 
 # Set the proper install directory
@@ -105,6 +104,7 @@ tar -cf - . | (cd $GSTEP_DOC; tar -xvf -)
 
 # Commit it
 cd $GSTEP_DOC
+cvs update
 cvs commit -m "Auto documentation update"
 
 # END

@@ -52,6 +52,8 @@ behavior of the script.
 
 --debug	    Compile all the libraries with debugging information.
 
+--verbose   Print verbose compilation information.
+
 --prefix    To install GNUstep in a non-default location, set the directory
 	    prefix on the command line. For example:
 	       --prefix=/usr/local/GNUstep/System

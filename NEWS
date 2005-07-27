@@ -1,3 +1,16 @@
+
+Changes in version 0.12.0
+=========================
+
+New make, base, gui, and back packages.
+
+Note that these new packages are binary incompatible with previous versions
+and therefore use a different interface version number. You can still run
+applications and tools that you have compiled before this, but they will not
+use these new libraries unless you recompile the app or tool. You MUST 
+recompile everything (libraries, frameworks) that your application or 
+tool depends on as well.
+
 Changes in version 0.11.1
 =========================
 
