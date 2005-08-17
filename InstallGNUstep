@@ -609,7 +609,7 @@ PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
 fi
-PKG_PATCHES=
+PKG_PATCHES=`find $SOURCESDIR -name libobjc*patch`
 gsexitstatus=0
 if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   # Need to install our own version of libobjc
@@ -653,7 +653,7 @@ PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
 fi
-PKG_PATCHES=
+PKG_PATCHES=`find $SOURCESDIR -name make*patch`
 gsexitstatus=0
 if [ $REBUILD_MAKE = no ];then
   echo No need to update GNUstep Make >&5

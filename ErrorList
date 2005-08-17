@@ -116,11 +116,13 @@ GNUstep is not installed yet. Please proceed with installation of GNUstep
 as long as you have resolved other errors listed here.
 
 
-E270 Error
+W270 Warning
+Cannot find or link the ffcall or ffi library.
 GNUstep requires the ffcall of libffi library to do invocations and DO
 Make sure this library is installed (see installation instructions)
-Otherwise DO will not be compatible with other systems and may cause
-hard-to-trace errors. On non-ix86 it may not work at all.
+In most cases, ffcall will be installed for you by the GNUstep Startup
+package, so you don't have to worry about it. On systems, like
+Darwin/PPC (Mac OS X), you need to install the ffi library yourself.
 
 E271 Error
 You do not have a recent version of the libobjc library. Make sure

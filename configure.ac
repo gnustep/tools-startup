@@ -561,16 +561,22 @@ CPPFLAGS="$saved_CPPFLAGS"
 
 AC_MSG_CHECKING("FFI library usage")
 if test $enable_libffi = yes; then
+  saved_LIBS="$LIBS"
   LIBS="-lffi $LIBS"
   AC_TRY_LINK([#include <ffi.h>], ,ffi_ok="yes", ffi_ok="no")
   if test $ffi_ok = yes; then
     AC_MSG_RESULT(libffi)
+  else
+    LIBS="$saved_LIBS"
   fi
 elif test $enable_ffcall = yes; then
+  saved_LIBS="$LIBS"
   LIBS="-lcallback -lavcall $LIBS"
   AC_TRY_LINK([#include <callback.h>], , ffi_ok="yes", ffi_ok="no")
   if test $ffi_ok = yes; then
     AC_MSG_RESULT(ffcall)
+  else
+    LIBS="$saved_LIBS"
   fi
 else
   ffi_ok=no
@@ -578,11 +584,11 @@ fi
 
 if test $ffi_ok = no; then
   AC_MSG_RESULT(none)
-#  if test $have_forward_hook = no; then
-#    SETUP_ERRORS="$SETUP_ERRORS E271"
-#  else
-#    SETUP_ERRORS="$SETUP_ERRORS E270"
-#  fi
+  if test $have_forward_hook = no; then
+    SETUP_ERRORS="$SETUP_ERRORS E271"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W270"
+  fi
 fi
 
 if test "`echo $host_os|sed 's/[[0-9]].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then

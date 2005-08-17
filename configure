@@ -320,7 +320,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL AWK RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S WHOAMI GNUMAKE XML2_CONFIG XML_CONFIG XML_CFLAGS XML_LIBS EGREP HAVE_LIBXSLT HAVE_LIBXML GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION gnustep_flattened LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL AWK RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S WHOAMI GNUMAKE XML2_CONFIG XML_CONFIG XML_CFLAGS XML_LIBS EGREP HAVE_LIBXSLT HAVE_LIBXML GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION GNUSTEP_GUI_INTERFACE gnustep_flattened LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -5591,6 +5591,7 @@ CPPFLAGS="$saved_CPPFLAGS"
 echo "$as_me:$LINENO: checking \"FFI library usage\"" >&5
 echo $ECHO_N "checking \"FFI library usage\"... $ECHO_C" >&6
 if test $enable_libffi = yes; then
+  saved_LIBS="$LIBS"
   LIBS="-lffi $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -5641,8 +5642,11 @@ rm -f conftest.err conftest.$ac_objext \
   if test $ffi_ok = yes; then
     echo "$as_me:$LINENO: result: libffi" >&5
 echo "${ECHO_T}libffi" >&6
+  else
+    LIBS="$saved_LIBS"
   fi
 elif test $enable_ffcall = yes; then
+  saved_LIBS="$LIBS"
   LIBS="-lcallback -lavcall $LIBS"
   cat >conftest.$ac_ext <<_ACEOF
 /* confdefs.h.  */
@@ -5693,6 +5697,8 @@ rm -f conftest.err conftest.$ac_objext \
   if test $ffi_ok = yes; then
     echo "$as_me:$LINENO: result: ffcall" >&5
 echo "${ECHO_T}ffcall" >&6
+  else
+    LIBS="$saved_LIBS"
   fi
 else
   ffi_ok=no
@@ -5701,11 +5707,11 @@ fi
 if test $ffi_ok = no; then
   echo "$as_me:$LINENO: result: none" >&5
 echo "${ECHO_T}none" >&6
-#  if test $have_forward_hook = no; then
-#    SETUP_ERRORS="$SETUP_ERRORS E271"
-#  else
-#    SETUP_ERRORS="$SETUP_ERRORS E270"
-#  fi
+  if test $have_forward_hook = no; then
+    SETUP_ERRORS="$SETUP_ERRORS E271"
+  else
+    SETUP_ERRORS="$SETUP_ERRORS W270"
+  fi
 fi
 
 if test "`echo $host_os|sed 's/[0-9].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then
@@ -7268,6 +7274,7 @@ echo "${ECHO_T}none" >&6
 
 
 
+
 #--------------------------------------------------------------------
 # Produce the output files
 #--------------------------------------------------------------------
@@ -7980,6 +7987,7 @@ s,@SETUP_ERRORS@,$SETUP_ERRORS,;t t
 s,@GNUSTEP_MAKE_VERSION@,$GNUSTEP_MAKE_VERSION,;t t
 s,@GNUSTEP_BASE_VERSION@,$GNUSTEP_BASE_VERSION,;t t
 s,@GNUSTEP_GUI_VERSION@,$GNUSTEP_GUI_VERSION,;t t
+s,@GNUSTEP_GUI_INTERFACE@,$GNUSTEP_GUI_INTERFACE,;t t
 s,@gnustep_flattened@,$gnustep_flattened,;t t
 s,@LIBOBJS@,$LIBOBJS,;t t
 s,@LTLIBOBJS@,$LTLIBOBJS,;t t
