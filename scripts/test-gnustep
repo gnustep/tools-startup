@@ -35,7 +35,6 @@
 # $HOME/src/gstep/testing/gnustep/Startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
 #
 
-
 gs_platform()
 {
   gs_build=`$TOPDIR/Startup/config.guess` 2>&1
@@ -77,9 +76,33 @@ if [ \! -f Startup/InstallGNUstep ]; then
 fi
 gs_platform
 
+gs_nocvs=no
+gs_clean=no
+while test $# != 0
+do
+  case $1 in
+    --help | -h)
+      echo "$0: Script to test GNUstep core libraries"
+      echo "Options:"
+      echo "  --help	- Print help"
+      echo "  --nocvs	- don't update from cvs"
+      exit 0
+      ;;
+    --nocvs | -n)
+      gs_nocvs=yes;;
+    --clean | -c)
+      gs_clean=yes;;
+    *)
+      ;;
+  esac
+  shift
+done
+
 # Update CVS
 cd $TOPDIR
-cvs -z3 update -P
+if [ "$gs_nocvs" != yes ]; then
+  cvs -z3 update -P
+fi
 
 # Run the install
 cd $TOPDIR/Startup
@@ -90,11 +113,13 @@ gsexitstatus=$?
 rm -f $gs_build-results.txt
 rm -f $gs_build-logs.tar.gz
 GSDATE=`date`
+gs_success=no
 if [ $gsexitstatus != 0 ]; then
   mv $BUILDDIR/logs.tar.gz $gs_build-logs.tar.gz
   echo "Fail Compile $gs_build $GSDATE" > $gs_build-results.txt
 else
   echo "Success Compile $gs_build $GSDATE" > $gs_build-results.txt
+  gs_success=yes
 fi
 
 # Upload the results somewhere
@@ -106,3 +131,13 @@ binary
 put $gs_build-logs.tar.gz
 bye
 EOF
+
+DIRS=make base gui back
+if [ $gs_clean = yes ]; then
+  . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  cd $BUILDDIR
+  for d in $DIRS; do
+    cd $d; make distclean; cd ..
+  done
+  rm -rf $HOME/gnustep-$NAME
+fi
