@@ -97,6 +97,10 @@ do
   esac
   shift
 done
+gs_config_options=
+if [ -n "$GS_CONFIG_OPTIONS" ]; then
+  gs_config_options=--config-options="$GS_CONFIG_OPTIONS"
+fi
 
 # Update CVS
 cd $TOPDIR
@@ -106,7 +110,7 @@ fi
 
 # Run the install
 cd $TOPDIR/Startup
-./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
+./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv $gs_config_options
 gsexitstatus=$?
 
 # Archive the results
@@ -132,8 +136,9 @@ put $gs_build-logs.tar.gz
 bye
 EOF
 
-DIRS=make base gui back
-if [ $gs_clean = yes ]; then
+DIRS="make base gui back"
+if [ $gs_clean = yes -a -d $HOME/gnustep-$NAME ]; then
+  echo "Cleaning Up"
   . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
   cd $BUILDDIR
   for d in $DIRS; do

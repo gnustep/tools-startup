@@ -24,6 +24,7 @@ gs_platform_generic()
   GS_CPPFLAGS=
   GS_LDFLAGS=
   GS_PLATFORM_BUILD_OBJC=no
+  GS_PLATFORM_NO_ROOT=no
 }
 
 gs_platform_cygwin()
@@ -37,6 +38,7 @@ gs_platform_mingw()
 {
   gs_platform_generic
   GS_PLATFORM_BUILD_OBJC=yes
+  GS_PLATFORM_NO_ROOT=yes
   PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-xml --disable-gsnd"
 }
 

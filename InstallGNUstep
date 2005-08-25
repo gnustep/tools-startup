@@ -191,6 +191,10 @@ which sudo > /dev/null
 if [ $? = 0 ]; then
   HAVE_SUDO=yes
 fi
+if [ $GS_PLATFORM_NO_ROOT = yes ]; then
+  # Typically on mingw, cygwin
+  WHOAMI=root
+fi
 AS_ROOT=yes
 # If we are running in batch mode, just assume that the user has install
 # privileges (i.e. assume they know what they are doing).
@@ -247,14 +251,14 @@ fi
 #--------------------------------------------------------------------
 if [ -d $SOURCESDIR ]; then
   FOUND_FFCALL=yes
-  FFCALL=`find $SOURCESDIR -name ffcall-1*`
+  FFCALL=`find $SOURCESDIR -name ffcall*tar.gz`
   if [ x$FFCALL = x ]; then
     FOUND_FFCALL=no
   else
     FFCALL=`basename $FFCALL .tar.gz`
   fi
   FOUND_LIBOBJC=yes
-  LIBOBJC=`find $SOURCESDIR -name gnustep-objc*`
+  LIBOBJC=`find $SOURCESDIR -name gnustep-objc*tar.gz`
   if [ x$LIBOBJC = x ]; then
     FOUND_LIBOBJC=no
   else
