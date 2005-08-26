@@ -191,7 +191,7 @@ which sudo > /dev/null
 if [ $? = 0 ]; then
   HAVE_SUDO=yes
 fi
-if [ $GS_PLATFORM_NO_ROOT = yes ]; then
+if [ "$GS_PLATFORM_NO_ROOT" = yes ]; then
   # Typically on mingw, cygwin
   WHOAMI=root
 fi
