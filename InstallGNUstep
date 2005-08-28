@@ -54,7 +54,6 @@ gs_run_batch=no
 gs_no_priv=no
 gs_install_prefix=
 gs_system_prefix=
-PKG_EXTRA_CONFIG=
 while test $# != 0
 do
   gs_option=
@@ -97,7 +96,7 @@ do
     --builddir)
       BUILDDIR=$gs_optarg;; 
     --config-options)
-      PKG_EXTRA_CONFIG=$gs_optarg;; 
+      PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG $gs_optarg";; 
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end
@@ -397,7 +396,7 @@ fi
 
 rm -f setupvars
 echo "" >&5
-echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
+echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
 $SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
@@ -409,6 +408,7 @@ cp $SRCDIR/ErrorList.awk .
 ./setuperrors
 if [ $? != 0 ]; then
   rm -f logs.tar.gz
+  cp setupvars logs
   tar -cf logs.tar logs
   gzip logs.tar
   echo "If you don't understand something or think a test is in error,"

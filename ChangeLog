@@ -1,5 +1,11 @@
 2005-08-25  Adam Fedor  <fedor@gnu.org>
 
+	* InstallGNUstep: All extern package configuration
+	* configure.ac: Allow disable-xml, warn on missing libobjc
+	* scripts/test-gnustep: Remove GS_CONFIG_OPTIONS
+
+2005-08-25  Adam Fedor  <fedor@gnu.org>
+
 	* InstallGNUstep, scripts/platform.sh: Don't check root on mingw,
 	Fix check for gnustep-objc source.
 	* scripts/tests-gnustep: Updates

@@ -126,7 +126,11 @@ Darwin/PPC (Mac OS X), you need to install the ffi library yourself.
 
 E271 Error
 You do not have a recent version of the libobjc library. Make sure
-you either have gcc 3.x installed or install gnustep-objc.
+you have gcc installed with the objc option installed as well.
+
+W272 Warning
+You do not have a recent version of the libobjc library. Startup
+will install one.
 
 E280 Error
 I don't seem to be able to use your Objective-C compiler to produce

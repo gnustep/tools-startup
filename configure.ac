@@ -338,7 +338,10 @@ fi
 # Check recent libxml for Properytlists, GSXML, GSDoc etc.
 #--------------------------------------------------------------------
 
-enable_xml=yes
+AC_ARG_ENABLE(xml,
+  [  --disable-xml			Compile even if XML-dependencies are not met],,
+  enable_xml=yes)
+
 case $host_os in
   *mingw*)
     enable_xml=no;;
@@ -585,7 +588,8 @@ fi
 if test $ffi_ok = no; then
   AC_MSG_RESULT(none)
   if test $have_forward_hook = no; then
-    SETUP_ERRORS="$SETUP_ERRORS E271"
+    # Need the warning for MingW when libobjc is moved out of the way
+    SETUP_ERRORS="$SETUP_ERRORS W272"
   else
     SETUP_ERRORS="$SETUP_ERRORS W270"
   fi
@@ -699,7 +703,7 @@ else
   AC_MSG_RESULT(no)
   if test "$gs_cv_gcc_major_version" = 3 -a "$gs_cv_gcc_minor_version" = 0; then
     SETUP_ERRORS="$SETUP_ERRORS E280"
-  else  
+  elif test "$MINGW32" = no -a "$CYGWIN" = no; then
     SETUP_ERRORS="$SETUP_ERRORS E281"
   fi
 fi

@@ -97,10 +97,6 @@ do
   esac
   shift
 done
-gs_config_options=
-if [ -n "$GS_CONFIG_OPTIONS" ]; then
-  gs_config_options=--config-options="$GS_CONFIG_OPTIONS"
-fi
 
 # Update CVS
 cd $TOPDIR
@@ -110,7 +106,7 @@ fi
 
 # Run the install
 cd $TOPDIR/Startup
-./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv $gs_config_options
+./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
 gsexitstatus=$?
 
 # Archive the results

@@ -858,6 +858,7 @@ if test -n "$ac_init_help"; then
 Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
+  --disable-xml			Compile even if XML-dependencies are not met
   --disable-xmltest		Do not try to compile and run a test XML program
 
 Optional Packages:
@@ -3447,7 +3448,14 @@ fi
 # Check recent libxml for Properytlists, GSXML, GSDoc etc.
 #--------------------------------------------------------------------
 
-enable_xml=yes
+# Check whether --enable-xml or --disable-xml was given.
+if test "${enable_xml+set}" = set; then
+  enableval="$enable_xml"
+
+else
+  enable_xml=yes
+fi;
+
 case $host_os in
   *mingw*)
     enable_xml=no;;
@@ -5708,7 +5716,8 @@ if test $ffi_ok = no; then
   echo "$as_me:$LINENO: result: none" >&5
 echo "${ECHO_T}none" >&6
   if test $have_forward_hook = no; then
-    SETUP_ERRORS="$SETUP_ERRORS E271"
+    # Need the warning for MingW when libobjc is moved out of the way
+    SETUP_ERRORS="$SETUP_ERRORS W272"
   else
     SETUP_ERRORS="$SETUP_ERRORS W270"
   fi
@@ -6169,7 +6178,7 @@ else
 echo "${ECHO_T}no" >&6
   if test "$gs_cv_gcc_major_version" = 3 -a "$gs_cv_gcc_minor_version" = 0; then
     SETUP_ERRORS="$SETUP_ERRORS E280"
-  else
+  elif test "$MINGW32" = no -a "$CYGWIN" = no; then
     SETUP_ERRORS="$SETUP_ERRORS E281"
   fi
 fi
