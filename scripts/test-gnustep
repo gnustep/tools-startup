@@ -75,6 +75,9 @@ if [ \! -f Startup/InstallGNUstep ]; then
   exit 1
 fi
 gs_platform
+if [ x"$GS_CANONICAL" != x ]; then
+  gs_build=$GS_CANONICAL
+fi
 
 gs_nocvs=no
 gs_clean=no

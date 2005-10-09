@@ -51,7 +51,9 @@ without this support.
 
 W109 Warning 
 For security reasons, your make program will not pass LD_LIBRARY_PATH
-along. You may need to compile/install applications when you are logged in
+along. If you chose option 1 when running Startup, you'll probably need to
+start again and use 'sudo ./InstallGNUstep' or 'su root; ./InstallGNUstep'.
+You may need to compile/install applications when you are logged in
 as root, or use 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
 
 W125 Warning 

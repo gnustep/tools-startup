@@ -5,10 +5,10 @@ What is the GNUstep Startup Package?
 ====================================
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
-gnustep-make Version 1.11.0
-gnustep-base Version 1.11.0
-gnustep-gui Version 0.10.0
-gnustep-back Version 0.10.0
+gnustep-make Version 1.11.1
+gnustep-base Version 1.11.1
+gnustep-gui Version 0.10.1
+gnustep-back Version 0.10.1
 
 The main advantage of Startup is that it includes a script to
 automatically build and install the core GNUstep system.  
@@ -40,17 +40,14 @@ Note for developers and testers: You can use these scripts to build
 the libraries from CVS. Just run the install script from the Startup
 directory in CVS.
 
-Changes in version 0.12.0
+Changes in version 0.13.0
 =========================
 
-New make, base, gui, and back packages.
+Uses new releases of the core libraries with a few patches to get things
+working on MaOSX 8.X and on Cygwin. This release is binary compaticly with
+the last release.
 
-Note that these new packages are binary incompatible with previous versions
-and therefore use a different interface version number. You can still run
-applications and tools that you have compiled before this, but they will not
-use these new libraries unless you recompile the app or tool. You MUST 
-recompile everything (libraries, frameworks) that your application or 
-tool depends on as well.
+Startup script works better on MinGW.
 
 Where can you get it?  How can you compile it?
 ==============================================

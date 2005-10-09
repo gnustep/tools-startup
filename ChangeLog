@@ -1,3 +1,7 @@
+2005-10-07  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.13.0
+
 2005-08-25  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: All extern package configuration

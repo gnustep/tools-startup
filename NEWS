@@ -1,4 +1,13 @@
 
+Changes in version 0.13.0
+=========================
+
+Uses new releases of the core libraries with a few patches to get things
+working on MaOSX 8.X and on Cygwin. This release is binary compatible 
+with the last release.
+
+Startup script works better on MinGW.
+
 Changes in version 0.12.0
 =========================
 
