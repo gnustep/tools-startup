@@ -1,3 +1,10 @@
+2005-10-23  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Update to set GNUstep dirs based on config file
+	(like recent make changes). Check for X11 libraries
+	* InstallGNUstep: More consistent usage of prefix and installation
+	dirs.
+
 2005-10-07  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.13.0

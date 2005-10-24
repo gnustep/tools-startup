@@ -61,16 +61,12 @@ The OpenSSL package (libcrypto, etc) is needed to access https connections
 with NSURL and for other purposes. This package is optional so you are
 not required to install it.
 
-W130 Warning
-The SO_REUSEADDR socket option for controlling re-use of network
-sockets immediately after shutdown appears to be broken on this
-machine.  Networking code will be built without using this
-feature.
-The effect of this lack is that when a network service is shut
-down, it cannot be re-started on the same network port until
-an operating-system timeout has expired.
-For servers other than gdomap, GNUstep does not normally need
-a particular network port, so the problem is unlikely to arise.
+E127 Error
+No X11 libraries/headers were found for compiling GNUstep GUI. You may
+have X11 installed, but not the developer packages, which are required
+for compiling anything that uses X. If you are using Debian, or a similar
+packaged system, try looking for help on installing developer or -dev
+packages for the X11 system.
 
 E140 Error
 Unable to find integer of same size as void*. If you are porting GNUstep

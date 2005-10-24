@@ -53,7 +53,7 @@ gs_command_line=${@}
 gs_run_batch=no
 gs_no_priv=no
 gs_install_prefix=
-gs_system_prefix=
+gs_root_prefix=
 while test $# != 0
 do
   gs_option=
@@ -66,7 +66,7 @@ do
       echo "  --debug	- Compile packages with debug info"
       echo "  --verbose	- Print verbose compilation information"
       echo
-      echo "  --prefix={dir}	- GNUstep system root location"
+      echo "  --prefix={dir}	- GNUstep root(prefix) location"
       echo "  --builddir={dir}	- Location to build packages"
       echo "  --config-options={options}	- Extra configuration options"
       #echo "  --install-root={dir}	- Install dir prefix"
@@ -92,7 +92,7 @@ do
 
   case $gs_option in
     --prefix)
-      gs_system_prefix=$gs_optarg;; 
+      gs_root_prefix=$gs_optarg;; 
     --builddir)
       BUILDDIR=$gs_optarg;; 
     --config-options)
@@ -116,19 +116,10 @@ done
 # Also source the sub-scripts that contain functions that we need.
 #--------------------------------------------------------------------
 
-# Make sure GNUSTEP_SYSTEM_ROOT has a /System at the end
-# in case the user set it themselves.
-if test -n "$gs_system_prefix"; then
-  GNUSTEP_SYSTEM_ROOT=$gs_system_prefix
-  export GNUSTEP_SYSTEM_ROOT
-fi
-if test -n "$GNUSTEP_SYSTEM_ROOT"; then
-  if test \! "`basename $GNUSTEP_SYSTEM_ROOT`" = System; then
-    if test "x$GNUSTEP_SYSTEM_ROOT" = "x/"; then
-      GNUSTEP_SYSTEM_ROOT=/System
-    else
-      GNUSTEP_SYSTEM_ROOT="$GNUSTEP_SYSTEM_ROOT/System"
-    fi
+# If prefix wasn't set, see if something already exists
+if test -z "$gs_root_prefix"; then
+  if test -n "$GNUSTEP_SYSTEM_ROOT"; then
+    gs_root_prefix=`dirname $GNUSTEP_SYSTEM_ROOT`
   fi
 fi
 
@@ -219,12 +210,10 @@ if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
          echo Cannot find sudo program. Make sure it is in your path
          exit 1
        fi;;
-    2) GNUSTEP_SYSTEM_ROOT=$HOME/GNUstep/System
-       export GNUSTEP_SYSTEM_ROOT
+    2) gs_root_prefix=$HOME/GNUstep
        NO_PRIV=yes
        HAVE_SUDO=no;;
-    3) echo Installing as normal user in $GNUSTEP_SYSTEM_ROOT
-       NO_PRIV=yes
+    3) NO_PRIV=yes
        HAVE_SUDO=no;;
     *) exit 0;;
   esac
@@ -345,6 +334,7 @@ exec 5>logs/installgnustep.log
 echo "Install log for the InstallGNUstep script" >&5
 echo >&5
 echo "Arguments: $gs_command_line" >&5
+echo "Root Prefix: $gs_root_prefix" >&5
 echo "System Root: $GNUSTEP_SYSTEM_ROOT" >&5
 echo "Install Root: $gs_install_prefix" >&5
 echo >&5
@@ -395,9 +385,13 @@ if test -n "$GS_LDFLAGS"; then
 fi
 
 rm -f setupvars
+PREFIX=
+if [ -n "$gs_root_prefix" ]; then
+  PREFIX=--prefix=$gs_root_prefix
+fi
 echo "" >&5
-echo "$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
-$SRCDIR/configure --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
+echo "$SRCDIR/configure ${PREFIX} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
+$SRCDIR/configure ${PREFIX} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -481,12 +475,12 @@ echo "" >&5
 echo ""
 echo Building in $BUILDDIR >&5
 echo Building in $BUILDDIR
-if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
+if [ x$gs_root_prefix = x ]; then
   echo "Installing in default location (usually /usr/GNUstep)" >&5
   echo "Installing in default location (usually /usr/GNUstep)"
 else
-  echo Installing in $GNUSTEP_SYSTEM_ROOT >&5
-  echo Installing in $GNUSTEP_SYSTEM_ROOT
+  echo Installing in $gs_root_prefix >&5
+  echo Installing in $gs_root_prefix
 fi
 echo Install Prefix: $gs_install_prefix >&5
 echo Install Prefix: $gs_install_prefix
@@ -521,7 +515,7 @@ echo
 PLOG=01-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG="$PKG_EXTRA_CONFIG --with-library-combo=$LIBRARY_COMBO"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
@@ -535,9 +529,7 @@ else
   gs_build_package
 fi
 
-if [ x$GNUSTEP_SYSTEM_ROOT = x ]; then
-  GNUSTEP_SYSTEM_ROOT=$GNUSTEP_SYSTEM_ROOT_CONFIG
-fi
+GNUSTEP_SYSTEM_ROOT=$GNUSTEP_SYSTEM_ROOT_CONFIG
 
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5

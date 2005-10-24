@@ -30,44 +30,131 @@ SETUP_ERRORS=
 AC_CANONICAL_TARGET([])
 AC_CONFIG_SRCDIR([InstallGNUstep])
 
+
+
+#---------------------------------------------------------------------
+# Location of the GNUstep.conf config file (--with-config-file)
+#---------------------------------------------------------------------
+AC_MSG_CHECKING([for GNUstep configuration file to use])
+AC_ARG_WITH(config-file,
+  [--with-config-file=PATH  path to GNUstep configuration file],
+  GNUSTEP_CONFIG_FILE="$withval", 
+  [if test "$GNUSTEP_CONFIG_FILE" = ""; then
+    case "$target_os" in
+      freebsd* | openbsd* ) GNUSTEP_CONFIG_FILE=/usr/etc/GNUstep.conf ;;
+      netbsd* )             GNUSTEP_CONFIG_FILE=/usr/pkg/etc/GNUstep.conf ;;
+      *)	            GNUSTEP_CONFIG_FILE=/etc/GNUstep/GNUstep.conf;;
+    esac
+  fi])
+AC_MSG_RESULT($GNUSTEP_CONFIG_FILE)
+AC_SUBST(GNUSTEP_CONFIG_FILE)
+
+#---------------------------------------------------------------------
+# Now read/import the existing configuration file, if any
+#---------------------------------------------------------------------
+
+# Reading/importing the existing configuration file is good as a
+# default because it means that you don't have to type in your
+# GNUSTEP_SYSTEM_ROOT, GNUSTEP_LOCAL_ROOT, etc. settings every time
+# you configure gnustep-make. (please note we only read the
+# system-wide one, not the user one.  Reason being that the settings
+# we read will be used to generate the new system-wide one, while the
+# user one will be left untouched).
+
+# It can be annoying in certain cases though; this option lets you
+# turn it off
+AC_MSG_CHECKING([if we should import an existing configuration file])
+AC_ARG_ENABLE(importing-config-file, 
+[--disable-importing-config-file		Disable importing the existing GNUstep configuration file], 
+  ac_cv_importing_config_file=$enableval,
+  ac_cv_importing_config_file="yes")
+
+# If importing the file is disabled, don't import it.
+if test "$ac_cv_importing_config_file" = "no"; then
+  AC_MSG_RESULT([no: disabled from the command-line])
+else
+
+ # Check that the file exists
+ if test "x$prefix" = "xNONE"; then
+   if test ! -f "$GNUSTEP_CONFIG_FILE"; then
+    AC_MSG_RESULT([no: file "$GNUSTEP_CONFIG_FILE" does not exist])
+   else
+    AC_MSG_RESULT([yes: trying to import "$GNUSTEP_CONFIG_FILE"])
+    AC_MSG_NOTICE([If this fails, please run configure again with the --disable-importing-config-file option])
+    . "$GNUSTEP_CONFIG_FILE"
+   fi
+ else
+   AC_MSG_RESULT([no: prefix specified])
+ fi
+fi
+
 #--------------------------------------------------------------------
-# GNUstep location
+# Important - from now on, any variable that is set in the
+# configuration file (eg, GNUSTEP_SYSTEM_ROOT) could already have a
+# value that we have imported from the previous file.  ./configure
+# command line options should override those values, but otherwise we
+# should keep them!
 #
-# The user should have the GNUSTEP_SYSTEM_ROOT environment variable
-# defined, but if not then we have a global default.
-# Also test for the C: directory, which means we're on Windows
+# Those could also be env variables, which is really a backwards
+# compatibility hack that won't necessarily be kept in the future!
 #--------------------------------------------------------------------
-AC_PREFIX_DEFAULT(`if test "x$GNUSTEP_SYSTEM_ROOT" = "x"; then 
-  if test -d C: ; then
+
+
+#--------------------------------------------------------------------
+# Process --prefix
+#--------------------------------------------------------------------
+
+#
+# In practice,
+#
+# ./configure --prefix=/usr/GNUstep
+#
+# is equivalent to:
+#
+# ./configure --with-system-root=/usr/GNUstep/System
+#             --with-local-root=/usr/GNUstep/Local
+#
+# plus it has the side-effect that a config.site will be loaded by
+# ./configure from $prefix/share/config.site, if it exists.  Our
+# config.site is in $prefix/System/share/config.site though, so it
+# won't be found.  It doesn't really matter though, as the config.site
+# is irrelevant for us in this context.
+#
+
+# Please note that AC_PREFIX_DEFAULT will not appear in this position
+# in the generated configure file; it will appear at the very
+# beginning.  So we can't check for GNUSTEP_SYSTEM_ROOT or anything
+# similar in the implementation of AC_PREFIX_DEFAULT because we will
+# not have read GNUstep.conf yet ...  
+
+# PS: This is the default GNUSTEP_ROOT that is used when installing
+# GNUstep with no other indication.  Test for the C: directory, which
+# means we're on Windows
+AC_PREFIX_DEFAULT(`if test -d C: ; then
     echo C:/GNUstep;
   else
     echo /usr/GNUstep ;
-  fi
-else
-  echo "$GNUSTEP_SYSTEM_ROOT" ;
-fi`)
+  fi`)
+
+#
+# GNUSTEP_ROOT is only used to set default values for
+# GNUSTEP_SYSTEM_ROOT and GNUSTEP_LOCAL_ROOT if they are not set in
+# config file or as a command-line argument.
+#
 if test "x$prefix" = "xNONE"; then
-  prefix="$ac_default_prefix" ;
-fi
+  GNUSTEP_ROOT="$ac_default_prefix" ;
+else
+  GNUSTEP_ROOT="$prefix";
 
-AC_ARG_WITH(system-root, 
-[--without-system-root		Don't use separate system root directory], 
-  ac_cv_system_root="$withval",  
-  ac_cv_system_root=yes)
-
-GNUSTEP_ROOT="$prefix"
-root_prefix='${prefix}'
-if test $ac_cv_system_root = yes; then
-  if test "x`basename $prefix`" = xSystem; then
-    GNUSTEP_ROOT=`dirname $prefix`
-  else
-    if test "x$prefix" = "x/"; then
-      prefix=/System
-    else
-      prefix="$prefix/System"
-    fi
-  fi
-  root_prefix='${prefix}/..'
+  # Set the values for all those variables ovverriding anything read
+  # from the configuration file or inherited from the environment.
+  # The --prefix=xxx option should overwrite those.  Please notice
+  # that the --with-system-root=xxx (and similar) options are
+  # processed later as overwrite --prefix=xxx in their specific area.
+  GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";
+  GNUSTEP_LOCAL_ROOT="$GNUSTEP_ROOT/Local";
+  GNUSTEP_NETWORK_ROOT="$GNUSTEP_LOCAL_ROOT";
+  GNUSTEP_MAKEFILES="$GNUSTEP_SYSTEM_ROOT/Library/Makefiles"
 fi
 
 #--------------------------------------------------------------------
@@ -440,6 +527,15 @@ if test $ssl_ok = no; then
 fi
 
 #--------------------------------------------------------------------
+# Check for X
+#--------------------------------------------------------------------
+AC_PATH_XTRA 
+if test "x$no_x" = xyes -a $MINGW32 = no; then
+  SETUP_ERRORS="$SETUP_ERRORS E127"
+fi
+
+
+#--------------------------------------------------------------------
 # Check if Objective-C is installed
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(for Objective-C compiler)
@@ -468,12 +564,9 @@ else
   AC_MSG_RESULT(no)
 fi
 AC_MSG_CHECKING(if GNUstep directories exists)
-if test -d $prefix -a -f $prefix/Library/Makefiles/GNUstep.sh; then
+if test -d $GNUSTEP_SYSTEM_ROOT -a -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh; then
   AC_MSG_RESULT(yes)
   GNUSTEP_INSTALLED=yes
-elif test -n "$GNUSTEP_SYSTEM_ROOT" -a -d "$GNUSTEP_SYSTEM_ROOT"; then
-  AC_MSG_RESULT(not where we want them)
-  SETUP_ERRORS="$SETUP_ERRORS I190 I199"  
 else
   AC_MSG_RESULT(no)
   SETUP_ERRORS="$SETUP_ERRORS I199"  
@@ -852,6 +945,7 @@ fi
     AC_MSG_RESULT(none)
   fi
 
+AC_SUBST(GNUSTEP_SYSTEM_ROOT)
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
 AC_SUBST(ac_cv_header_callback_h)
