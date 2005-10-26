@@ -1,3 +1,8 @@
+2005-10-25  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Proper use of GNUSTEP_SYSTEM_ROOT
+	* InstallGNUstep: Don't use MAKEFLAGS when compiling libobjc
+
 2005-10-23  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Update to set GNUstep dirs based on config file

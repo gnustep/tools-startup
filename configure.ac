@@ -143,6 +143,11 @@ AC_PREFIX_DEFAULT(`if test -d C: ; then
 #
 if test "x$prefix" = "xNONE"; then
   GNUSTEP_ROOT="$ac_default_prefix" ;
+  if [ -n "$GNUSTEP_SYSTEM_ROOT" ]; then
+    # Prefix not set and not read from config file and no env variable
+    # So set it to the default
+    GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";
+  fi
 else
   GNUSTEP_ROOT="$prefix";
 
@@ -580,15 +585,15 @@ AC_SUBST(GNUSTEP_INSTALLED)
 GNUSTEP_HDIR=
 gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
-  GNUSTEP_HDIR=$prefix/Library/Headers
-  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $prefix/Library/Makefiles/GNUstep.sh | wc -l | tr -d ' '`]
+  GNUSTEP_HDIR=$GNUSTEP_SYSTEM_ROOT/Library/Headers
+  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh | wc -l | tr -d ' '`]
   if test $gnustep_flattened = 1; then
-    GNUSTEP_LDIR=$prefix/Library/Libraries
+    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries
   else
-    clean_target_os=`$prefix/Library/Makefiles/clean_os.sh $target_os`
-    clean_target_cpu=`$prefix/Library/Makefiles/clean_cpu.sh $target_cpu`
+    clean_target_os=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_os.sh $target_os`
+    clean_target_cpu=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$prefix/Library/Libraries/$obj_dir/
+    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/$obj_dir/
   fi
 fi
 
@@ -616,7 +621,7 @@ saved_CPPFLAGS="$CPPFLAGS"
 saved_LDFLAGS="$LDFLAGS"
 if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR"; then
   # The following are needed to compile the test programs
-  CPPFLAGS="$CPPFLAGS -I$prefix/Library/Headers"
+  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_ROOT/Library/Headers"
   LDFLAGS="$LDFLAGS -L$gs_cv_objc_libdir"
 
   # And the following to execute them
@@ -897,9 +902,9 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # Check the version of gnustep-make
   AC_MSG_CHECKING(GNUstep Make version)
-  gversion=$prefix/Library/Makefiles/config.make
+  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config.make
   if test $gnustep_flattened = 0; then
-    gversion=$prefix/Library/Makefiles/$clean_target_cpu/$clean_target_os/config.make
+    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/$clean_target_cpu/$clean_target_os/config.make
   fi
   # Note: we need multiple [[ to get around autoconf's m4 processing
   GNUSTEP_MAKE_VERSION=[`grep GNUSTEP_MAKE_VERSION $gversion | sed "s/.*=\([0-9.]\)/\1/"`]
@@ -907,7 +912,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Base version)
   if test $ac_cv_header_Foundation_NSObject_h = yes; then
-    gversion=$prefix/Library/Libraries/Resources/gnustep-base/Info-gnustep.plist
+    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-base/Info-gnustep.plist
     if test -f $gversion ; then
       GNUSTEP_BASE_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
     else
@@ -918,7 +923,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Gui version)
   if test $ac_cv_header_AppKit_NSApplication_h = yes; then
-    gversion=$prefix/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
+    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
     if test -f $gversion ; then
       GNUSTEP_GUI_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
       GNUSTEP_GUI_INTERFACE=[`grep GSBundleVersion $gversion | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`]
@@ -938,7 +943,7 @@ fi
     BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
   fi
   have_back=no
-  if test -f $prefix/Library/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
+  if test -f $GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
     have_back=yes
     AC_MSG_RESULT($BUNDLE_NAME)
   else
