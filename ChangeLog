@@ -1,3 +1,7 @@
+2005-10-30  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep: Set GNUSTEP_CONFIG_FILE.
+
 2005-10-25  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Proper use of GNUSTEP_SYSTEM_ROOT

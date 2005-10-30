@@ -108,6 +108,8 @@ if [ "$gs_nocvs" != yes ]; then
 fi
 
 # Run the install
+GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
+export GNUSTEP_CONFIG_FILE
 cd $TOPDIR/Startup
 ./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
 gsexitstatus=$?
