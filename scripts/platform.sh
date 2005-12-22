@@ -57,6 +57,14 @@ gs_platform_darwin()
   fi
 }
 
+gs_platform_openbsd()
+{
+  gs_platform_generic
+  if [ -d /usr/local/include/libpng ]; then
+    GS_CPPFLAGS="-I/usr/local/include/libpng"
+  fi
+}
+
 gs_platform_solaris()
 {
   gs_platform_generic
@@ -86,6 +94,7 @@ gs_flags()
     solaris*)  gs_platform_solaris ;;
     cygwin*)   gs_platform_cygwin ;;
     mingw*)    gs_platform_mingw ;;
+    openbsd*)  gs_platform_openbsd ;;
     *)         gs_platform_unknown ;;
   esac
 }

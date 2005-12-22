@@ -115,6 +115,7 @@ cd $TOPDIR/Startup
 gsexitstatus=$?
 
 # Archive the results
+echo "--- Archive Results ---"
 rm -f $gs_build-results.txt
 rm -f $gs_build-logs.tar.gz
 GSDATE=`date`
@@ -128,6 +129,7 @@ else
 fi
 
 # Upload the results somewhere
+echo "--- Upload Results ---"
 ftp -n ftp.gnustep.org << EOF
 user anonymous bug-gnustep@gnu.org
 cd pub/incoming
@@ -139,7 +141,7 @@ EOF
 
 DIRS="make base gui back"
 if [ $gs_clean = yes -a -d $HOME/gnustep-$NAME ]; then
-  echo "Cleaning Up"
+  echo "--- Cleaning Up ---"
   . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
   cd $BUILDDIR
   for d in $DIRS; do

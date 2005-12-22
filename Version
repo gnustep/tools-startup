@@ -2,7 +2,7 @@
 # Compatible with Bourne shell syntax, so it can included there too.
 
 # The version number of this release.
-GNUSTEP_START_VERSION=0.13.0
+GNUSTEP_START_VERSION=0.14.0
 
 
 
