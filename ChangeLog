@@ -1,3 +1,7 @@
+2006-01-08  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Correct location of ffcall (Fixes Bug #15389).
+
 2005-12-22  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.14.0
