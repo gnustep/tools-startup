@@ -143,7 +143,7 @@ AC_PREFIX_DEFAULT(`if test -d C: ; then
 #
 if test "x$prefix" = "xNONE"; then
   GNUSTEP_ROOT="$ac_default_prefix" ;
-  if [ -n "$GNUSTEP_SYSTEM_ROOT" ]; then
+  if [ -z "$GNUSTEP_SYSTEM_ROOT" ]; then
     # Prefix not set and not read from config file and no env variable
     # So set it to the default
     GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";

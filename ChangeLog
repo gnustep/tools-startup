@@ -1,3 +1,7 @@
+2006-02-06  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix incorrect test.
+
 2006-01-08  Adam Fedor  <fedor@gnu.org>
 
 	* InstallGNUstep: Correct location of ffcall (Fixes Bug #15389).
