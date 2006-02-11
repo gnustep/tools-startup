@@ -18,6 +18,9 @@
 include Version
 VERTAG = $(subst .,_,$(GNUSTEP_START_VERSION))
 
+SVNPREFIX=svn+ssh://svn.gna.org/svn/gnustep/tools/startup
+
+
 all:
 	InstallGNUstep
 
@@ -30,6 +33,25 @@ distclean: clean
 	if [ -f /tmp/gnustepbuild ]; then \
 	  cd /tmp; rm -rf gnustepbuild; \
 	fi
+
+svn-tag:
+	svn copy $(SVNPREFIX)/trunk $(SVNPREFIX)/tags/start-$(VERTAG) \
+	  -m "Tag version $(VERTAG)"
+
+svn-dist:
+	svn export $(SVNPREFIX)/tags/start-$(VERTAG) \
+	  gnustep-startup-$(GNUSTEP_START_VERSION)
+	cd gnustep-startup-$(GNUSTEP_START_VERSION); \
+	  if [ \! -d sources ]; then mkdir sources; fi; \
+	  if [ -d ../sources ]; then \
+	    cp ../sources/* sources; \
+	  fi; \
+	  if [ -d ../../current ]; then \
+	    cp ../../current/* sources; \
+	  fi; \
+	  cd ..
+	tar --gzip -cf gnustep-startup-$(GNUSTEP_START_VERSION).tar.gz gnustep-startup-$(GNUSTEP_START_VERSION)
+	rm -rf gnustep-startup-$(GNUSTEP_START_VERSION)
 
 cvs-tag:
 	cvs -z3 rtag start-$(VERTAG) gnustep/Startup

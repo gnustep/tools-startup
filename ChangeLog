@@ -1,3 +1,7 @@
+2006-02-10  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.14.1
+
 2006-02-06  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Fix incorrect test.
