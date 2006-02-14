@@ -1,17 +1,17 @@
 #!/bin/sh
 #
-# Update web documentation with documentation in GNUstep core CVS:
-#   1. Runs "cvs update" on the GNUstep CVS files
+# Update web documentation with documentation in GNUstep core source:
+#   1. Runs "svn update" on the GNUstep files
 #   2. 'makes' the documentation in the core libraries Documentation dirs
 #   3. 'make installs' the documentation
 #   4. tar/copy the installed docs to the web CVS location
 #   5. commits the documentation
 #
-# This script assumes it is being run from a normal CVS checkout of the
+# This script assumes it is being run from a normal CVS/SVN checkout of the
 # gnustep directory strucuture (Only core is required).
-# This script tries to find the GNUstep CVS files, by checking in the
+# This script tries to find the GNUstep files, by checking in the
 # current directory, the directory ../.. from where the script was run
-# from (i.e. if this script is called from it's normal CVS location), or
+# from, or
 # as a last resport:
 #    $HOME/src/gnustep-'$hostname -s`
 #
@@ -33,7 +33,7 @@
 # CVS_RSH=ssh
 # export CVS_RSH
 # rm -f gnustep-docsrun.txt
-# $HOME/src/gstep/testing/gnustep/Startup/scripts/docs-gnustep > gnustep-docsrun.txt 2>&1
+# $HOME/src/gstep/testing/startup/scripts/docs-gnustep > gnustep-docsrun.txt 2>&1
 #
 
 # NOTE: Set this to the gnustep-web CVS location
@@ -82,8 +82,8 @@ fi
 cd $TOPDIR
 gs_platform
 
-# Update CVS
-cvs -z3 update -P
+# Update source
+svn update
 
 # Set the proper install directory
 . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep-reset.sh

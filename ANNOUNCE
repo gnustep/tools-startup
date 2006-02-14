@@ -37,8 +37,9 @@ normal distribution system. It may be preferable to get GNUstep this
 way.
 
 Note for developers and testers: You can use these scripts to build
-the libraries from CVS. Just run the install script from the Startup
-directory in CVS.
+the libraries from SVN. Just make sure the 'core' directory is at the
+same level as the 'startup' directory, and run the InstallGNUstep script
+from startup.
 
 Changes in version 0.14.1
 =========================

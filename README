@@ -129,8 +129,8 @@ or all of the following:
 
 
 This install script can be used in two ways. First, if you have checked
-out the sources from CVS, this script expects the core directory to 
-be located on the same level as the Startup directory (e.g. ../core)
+out the sources from SVN, this script expects the core directory to 
+be located on the same level as the startup directory (e.g. ../core)
 
 If you have tar.gz files downloaded (or this comes on a CD with the
 sources). The sources should be in a directory called sources in the

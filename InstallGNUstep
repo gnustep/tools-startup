@@ -233,7 +233,7 @@ fi
 
 #--------------------------------------------------------------------
 # Find GNUstep sources. Check first if there is a 'core' directory
-# at the same level as us. If so, we are compiling from CVS sources.
+# at the same level as us. If so, we are compiling from the source repository.
 # Otherwise check in the 'sources' subdirectory for all the packages
 # we need.
 #--------------------------------------------------------------------
@@ -261,7 +261,7 @@ FFCALLSOURCESDIR=$SOURCESDIR
 FOUND_SOURCES=yes
 IS_CVS=no
 if [ -d $SRCDIR/../core ]; then
-  # Compile from CVS checkout
+  # Compile from SVN/CVS checkout
   IS_CVS=yes
   SOURCESDIR=$SRCDIR/../core
   BUILDDIR=$SOURCESDIR
@@ -269,7 +269,7 @@ if [ -d $SRCDIR/../core ]; then
   GBASE=base
   GGUI=gui
   GBACK=back
-  echo Compiling packages from CVS
+  echo Compiling packages from SVN/CVS
 else
   # Compile from tar.gz
   GMAKE=`find $SOURCESDIR -name gnustep-make*tar.gz`
@@ -339,7 +339,7 @@ echo "System Root: $GNUSTEP_SYSTEM_ROOT" >&5
 echo "Install Root: $gs_install_prefix" >&5
 echo >&5
 echo "Source files:" >&5
-echo " CVS: $IS_CVS " >&5
+echo " SVN: $IS_CVS " >&5
 echo $GMAKE >&5
 echo $GBASE >&5
 echo $GGUI >&5
@@ -414,9 +414,9 @@ fi
 # against the ones we have and ask the user if there is a discrepancy.
 . ./setupvars
 if [ $IS_CVS = yes ]; then
-  CURRENT_MAKE_VERSION=CVS
-  CURRENT_BASE_VERSION=CVS
-  CURRENT_GUI_VERSION=CVS
+  CURRENT_MAKE_VERSION=checkout
+  CURRENT_BASE_VERSION=checkout
+  CURRENT_GUI_VERSION=checkout
 else
   CURRENT_MAKE_VERSION=`echo $GMAKE | sed "s/.*-\([0-9.]\)/\1/"`
   CURRENT_BASE_VERSION=`echo $GBASE | sed "s/.*-\([0-9.]\)/\1/"`
