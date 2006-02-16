@@ -71,7 +71,7 @@ fi
 BUILDDIR=$TOPDIR/core
 cd $TOPDIR
 STARTUP=startup
-if [ \! -f Startup/InstallGNUstep ]; then
+if [ -f Startup/InstallGNUstep ]; then
   STARTUP=Startup
 fi
 if [ \! -f $STARTUP/InstallGNUstep ]; then
