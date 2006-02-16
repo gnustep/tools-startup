@@ -45,11 +45,11 @@ fi
 
 gs_platform()
 {
-  gs_build=`$TOPDIR/Startup/config.guess` 2>&1
+  gs_build=`$TOPDIR/startup/config.guess` 2>&1
   if test -z "$gs_build"; then
     gs_build=unknown
   else
-    gs_build=`$TOPDIR/Startup/config.sub $gs_build`
+    gs_build=`$TOPDIR/startup/config.sub $gs_build`
   fi
   if test -z "$gs_build"; then
     gs_build=unknown
@@ -72,7 +72,7 @@ if [ -d gui ]; then
   TOPDIR=`cd ..; pwd`
 elif [ -f InstallGNUstep ]; then
   TOPDIR=`cd ..; pwd`
-elif [ -f Startup/InstallGNUstep ]; then
+elif [ -f startup/InstallGNUstep ]; then
   TOPDIR=$RUNDIR
 elif [ -f $SRCDIR/../InstallGNUstep ]; then
   TOPDIR=$SRCDIR/../..
@@ -83,7 +83,7 @@ cd $TOPDIR
 gs_platform
 
 # Update source
-svn update
+cd core; svn update; cd ..
 
 # Set the proper install directory
 . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep-reset.sh

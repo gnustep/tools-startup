@@ -2,11 +2,11 @@
 #
 # Test the compilation and installation of GNUstep. This script does:
 #   1. Runs "svn update" on the GNUstep source files
-#   2. Runs the Startup/InstallGNUstep script
+#   2. Runs the startup/InstallGNUstep script
 #   3. Uploads the results to ftp.gnustep.org
 #
 # This script assumes it is being run from a normal source checkout of the
-# gnustep directory strucuture (only Startup and core are required).
+# gnustep directory strucuture (only startup and core are required).
 # This script tries to find the GNUstep source files, by checking in the
 # current directory, the directory ../.. from where the script was run
 # from, or
@@ -35,11 +35,11 @@
 
 gs_platform()
 {
-  gs_build=`$TOPDIR/Startup/config.guess` 2>&1
+  gs_build=`$TOPDIR/$STARTUP/config.guess` 2>&1
   if test -z "$gs_build"; then
     gs_build=unknown
   else
-    gs_build=`$TOPDIR/Startup/config.sub $gs_build`
+    gs_build=`$TOPDIR/$STARTUP/config.sub $gs_build`
   fi
   if test -z "$gs_build"; then
     gs_build=unknown
@@ -59,16 +59,22 @@ SRCDIR=`dirname $0`
 SRCDIR=`cd $SRCDIR && pwd`
 if [ -f InstallGNUstep ]; then
   TOPDIR=`cd ..; pwd`
-elif [ -f Startup/InstallGNUstep ]; then
+elif [ -f startup/InstallGNUstep ]; then
   TOPDIR=$RUNDIR
 elif [ -f $SRCDIR/../InstallGNUstep ]; then
   TOPDIR=$SRCDIR/../..
+elif [ -f Startup/InstallGNUstep ]; then
+  TOPDIR=$RUNDIR
 else
   TOPDIR=$HOME/src/gnustep-$NAME
 fi
 BUILDDIR=$TOPDIR/core
 cd $TOPDIR
+STARTUP=startup
 if [ \! -f Startup/InstallGNUstep ]; then
+  STARTUP=Startup
+fi
+if [ \! -f $STARTUP/InstallGNUstep ]; then
   echo "ERROR: Could not find GNUstep source directory"
   exit 1
 fi
@@ -102,13 +108,14 @@ done
 # Update source
 cd $TOPDIR
 if [ "$gs_nocvs" != yes ]; then
-  svn update
+  cd core; svn update; cd ..
+  cd $STARTUP; svn update; cd ..
 fi
 
 # Run the install
 GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
 export GNUSTEP_CONFIG_FILE
-cd $TOPDIR/Startup
+cd $TOPDIR/$STARTUP
 ./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
 gsexitstatus=$?
 
