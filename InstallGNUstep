@@ -48,6 +48,7 @@ SRCDIR=`dirname $0`
 # Find absolute path to SRCDIR
 SRCDIR=`cd $SRCDIR && pwd`
 SOURCESDIR=$SRCDIR/sources
+CONFIGFILE=
 
 gs_command_line=${@}
 gs_run_batch=no
@@ -211,6 +212,7 @@ if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
          exit 1
        fi;;
     2) gs_root_prefix=$HOME/GNUstep
+       CONFIGFILE=--with-config-file=$gs_root_prefix/GNUstep.conf
        NO_PRIV=yes
        HAVE_SUDO=no;;
     3) NO_PRIV=yes
@@ -390,8 +392,8 @@ if [ -n "$gs_root_prefix" ]; then
   PREFIX=--prefix=$gs_root_prefix
 fi
 echo "" >&5
-echo "$SRCDIR/configure ${PREFIX} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
-$SRCDIR/configure ${PREFIX} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
+echo "$SRCDIR/configure ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
+$SRCDIR/configure ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -515,7 +517,7 @@ echo
 PLOG=01-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} --with-library-combo=$LIBRARY_COMBO"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix

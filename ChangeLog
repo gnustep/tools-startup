@@ -1,3 +1,7 @@
+2006-03-11  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Set GNUstep.conf location for HOME install.
+
 2006-02-14  Adam Fedor  <fedor@gnu.org>
 
 	* scripts/test-gnustep, scrupts/docs-gnustep, ANNOUNCE, README, 

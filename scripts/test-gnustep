@@ -5,8 +5,9 @@
 #   2. Runs the startup/InstallGNUstep script
 #   3. Uploads the results to ftp.gnustep.org
 #
-# This script assumes it is being run from a normal source checkout of the
-# gnustep directory strucuture (only startup and core are required).
+# This script assumes it is being run from a source checkout of the
+# gnustep directory strucuture (startup and core are required at the same 
+# level).
 # This script tries to find the GNUstep source files, by checking in the
 # current directory, the directory ../.. from where the script was run
 # from, or
