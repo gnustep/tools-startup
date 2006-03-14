@@ -48,7 +48,7 @@ SRCDIR=`dirname $0`
 # Find absolute path to SRCDIR
 SRCDIR=`cd $SRCDIR && pwd`
 SOURCESDIR=$SRCDIR/sources
-CONFIGFILE=
+GSCONFIGFILE=
 
 gs_command_line=${@}
 gs_run_batch=no
@@ -70,6 +70,7 @@ do
       echo "  --prefix={dir}	- GNUstep root(prefix) location"
       echo "  --builddir={dir}	- Location to build packages"
       echo "  --config-options={options}	- Extra configuration options"
+      echo "  --config-file={dir/GNUstep.conf}	- Set location of GNUstep.conf"
       #echo "  --install-root={dir}	- Install dir prefix"
       exit 0
       ;;
@@ -98,6 +99,8 @@ do
       BUILDDIR=$gs_optarg;; 
     --config-options)
       PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG $gs_optarg";; 
+    --config-file)
+      GSCONFIGFILE=--with-config-file=$gs_optarg;; 
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end
@@ -212,7 +215,9 @@ if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
          exit 1
        fi;;
     2) gs_root_prefix=$HOME/GNUstep
-       CONFIGFILE=--with-config-file=$gs_root_prefix/GNUstep.conf
+       if [ -z "$GSCONFIGFILE" ]; then
+         GSCONFIGFILE=--with-config-file=$gs_root_prefix/GNUstep.conf
+       fi 
        NO_PRIV=yes
        HAVE_SUDO=no;;
     3) NO_PRIV=yes
@@ -392,8 +397,8 @@ if [ -n "$gs_root_prefix" ]; then
   PREFIX=--prefix=$gs_root_prefix
 fi
 echo "" >&5
-echo "$SRCDIR/configure ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
-$SRCDIR/configure ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
+echo "$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
+$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -517,7 +522,7 @@ echo
 PLOG=01-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${CONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix

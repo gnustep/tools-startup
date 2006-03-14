@@ -81,9 +81,9 @@ snapshot:
 	cd gnustep-startup-snap; \
 	  rm -f *~; rm -rf CVS scripts/CVS config/CVS autom4te.cache
 	cd gnustep-startup-snap; \
-	  mkdir sources; \
-	  if [ -d ../../../current ]; then \
-	    cp ../../../current/* sources; \
+	  if [ -d ../../current ]; then \
+	    cp ../../current/* sources; \
 	  fi; \
 	  cd ..
 	tar --gzip -cf gnustep-startup-snap.tar.gz gnustep-startup-snap
+	rm -rf gnustep-startup-snap

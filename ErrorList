@@ -93,10 +93,12 @@ You do not have the GNU Objective-C compiler installed
 Check to make sure you have a full installation of the GCC
 compiler that includes the Objective-C headers and libraries
 
-E151 Error
+W151 Error
 You do not have the GNU Objective-C headers installed.
 Check to make sure you have a full installation of the GCC
 compiler that includes the Objective-C headers and libraries.
+Ignore this warning on MingW. The Objective-C library will be insatlled
+by Startup anyway.
 
 E155 Error
 Darwin/PPC (Mac OS X) systems require libffi, but there is no libffi
