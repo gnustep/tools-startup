@@ -262,11 +262,12 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
      darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS E093"
+       SETUP_ERRORS="$SETUP_ERRORS W093"
        cc_apple=yes;;
   esac
 fi
 AC_MSG_RESULT($cc_apple)
+AC_SUBST(cc_apple)
 
 #--------------------------------------------------------------------
 # Find the binary and compile tools

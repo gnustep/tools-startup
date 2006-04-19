@@ -23,6 +23,11 @@
 #
 # To customize this script, you might have to change other things
 #
+# Here's how to check out a copy of the source from SVN for testing:
+#
+# svn co http://svn.gna.org/svn/gnustep/modules/core
+# svn co http://svn.gna.org/svn/gnustep/tools/startup/trunk startup
+#
 # Here's an example of a cron script I use to run this script every night
 # on a solaris box:
 #

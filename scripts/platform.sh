@@ -55,6 +55,10 @@ gs_platform_darwin()
     # The X11R6 gives back erronous information from FTC_SBitCache_Lookup
     PATH=/sw/lib/freetype2/bin:$PATH
   fi
+  if [ "$CC_APPLE" = yes ]; then
+    PKG_GUI_CONFIG=--disable-aspell
+    PKG_BACK_CONFIG=--disable-glx
+  fi
 }
 
 gs_platform_openbsd()

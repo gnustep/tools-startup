@@ -316,7 +316,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os GNUSTEP_CONFIG_FILE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP ac_cv_library_combo GCC_VERSION AR LD DLLTOOL AWK RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S WHOAMI GNUMAKE XML2_CONFIG XML_CONFIG XML_CFLAGS XML_LIBS EGREP HAVE_LIBXSLT HAVE_LIBXML X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SYSTEM_ROOT GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION GNUSTEP_GUI_INTERFACE gnustep_flattened LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os target target_cpu target_vendor target_os GNUSTEP_CONFIG_FILE CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT CPP ac_cv_library_combo GCC_VERSION cc_apple AR LD DLLTOOL AWK RANLIB ac_ct_RANLIB INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA LN_S WHOAMI GNUMAKE XML2_CONFIG XML_CONFIG XML_CFLAGS XML_LIBS EGREP HAVE_LIBXSLT HAVE_LIBXML X_CFLAGS X_PRE_LIBS X_LIBS X_EXTRA_LIBS GNUSTEP_INSTALLED objc_threaded ac_cv_objc_threaded GNUSTEP_SYSTEM_ROOT GNUSTEP_SOURCED GS_CUSTOM_OBJC ac_cv_header_callback_h ac_cv_header_ffi_h ac_cv_header_AppKit_NSApplication_h ac_cv_header_Foundation_NSObject_h have_back SETUP_ERRORS GNUSTEP_MAKE_VERSION GNUSTEP_BASE_VERSION GNUSTEP_GUI_VERSION GNUSTEP_GUI_INTERFACE gnustep_flattened LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -2868,12 +2868,13 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
      darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS E093"
+       SETUP_ERRORS="$SETUP_ERRORS W093"
        cc_apple=yes;;
   esac
 fi
 echo "$as_me:$LINENO: result: $cc_apple" >&5
 echo "${ECHO_T}$cc_apple" >&6
+
 
 #--------------------------------------------------------------------
 # Find the binary and compile tools
@@ -9466,6 +9467,7 @@ s,@OBJEXT@,$OBJEXT,;t t
 s,@CPP@,$CPP,;t t
 s,@ac_cv_library_combo@,$ac_cv_library_combo,;t t
 s,@GCC_VERSION@,$GCC_VERSION,;t t
+s,@cc_apple@,$cc_apple,;t t
 s,@AR@,$AR,;t t
 s,@LD@,$LD,;t t
 s,@DLLTOOL@,$DLLTOOL,;t t

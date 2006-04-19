@@ -1,3 +1,8 @@
+2006-04-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, setupvars.in: Add info about Apple compiler
+	* scripts/platform.sh: Add extra settings if Apple compiler.
+
 2006-03-14  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.15.0.

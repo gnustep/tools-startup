@@ -22,6 +22,7 @@ gnustep_flattened=@gnustep_flattened@
 
 GNUSTEP_CPPFLAGS="@CPPFLAGS@"
 GNUSTEP_LDFLAGS="@LDFLAGS@"
+CC_APPLE=@cc_apple@
 
 AWK=@AWK@
 WHOAMI=@WHOAMI@
