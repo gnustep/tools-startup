@@ -262,7 +262,7 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
      darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS W093"
+       SETUP_ERRORS="$SETUP_ERRORS E093"
        cc_apple=yes;;
   esac
 fi
@@ -605,7 +605,7 @@ GS_CUSTOM_OBJC=NONE
 AC_MSG_CHECKING(for GNUstep up-to-date objc library)
 gs_cv_objc_libdir=NONE
 if test -f "$GNUSTEP_HDIR/objc/objc.h"; then
-  if test -f "$GNUSTEP_LDIR/libobjc.a" -o -f "$GNUSTEP_LDIR/libobjc.so"; then
+  if test -f "$GNUSTEP_LDIR/libobjc.a" -o -f "$GNUSTEP_LDIR/libobjc.so" -o -f "$GNUSTEP_LDIR/libobjc-gnu.dylib"; then
     gs_cv_objc_libdir=$GNUSTEP_LDIR
   else
     gs_cv_objc_libdir=NONE

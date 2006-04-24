@@ -420,6 +420,8 @@ fi
 # Read in the current setup. Check the versions of the installed packages 
 # against the ones we have and ask the user if there is a discrepancy.
 . ./setupvars
+gs_post_flags
+
 if [ $IS_CVS = yes ]; then
   CURRENT_MAKE_VERSION=checkout
   CURRENT_BASE_VERSION=checkout

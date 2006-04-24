@@ -49,15 +49,15 @@ gs_platform_darwin()
     # Fink is installed. Make sure to use this
     GS_CPPFLAGS="-I/sw/include"
     GS_LDFLAGS="-L/sw/lib"
+    # aspell and glx sometimes link to Apple's libobjc. 
+    # Fink's jpeg conflicts with Apple's
+    PKG_GUI_CONFIG="--disable-aspell --disable-jpeg"
+    PKG_BACK_CONFIG=--disable-glx
   fi
   if [ -d /sw/lib/freetype2/bin ]; then
     # We prefer the Fink freetyp2 lib to the X11R6 one
     # The X11R6 gives back erronous information from FTC_SBitCache_Lookup
     PATH=/sw/lib/freetype2/bin:$PATH
-  fi
-  if [ "$CC_APPLE" = yes ]; then
-    PKG_GUI_CONFIG=--disable-aspell
-    PKG_BACK_CONFIG=--disable-glx
   fi
 }
 
@@ -101,4 +101,8 @@ gs_flags()
     openbsd*)  gs_platform_openbsd ;;
     *)         gs_platform_unknown ;;
   esac
+}
+
+gs_post_flags()
+{
 }

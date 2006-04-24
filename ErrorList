@@ -7,13 +7,12 @@ Your gcc version is not an official release and may be broken.
 Particularly if you are using RedHat before 7.2 or Mandrake, you should 
 upgrade gcc to a newer version.
 
-W093 Warning
+E093 Warning
 It appears you are using the Apple cc compiler. The Apple compiler does
-not compile GNUstep in versions earlier than Tiger. You need to install an 
-FSF compiler, or make sure that the FSF compiler is found first in your PATH.
-If you are using Tiger (or later), most likely GNUstep will still compile and
-run (no gaurentees) although some parts of GNUstep need to be disabled for this
-to work.
+not compile GNUstep in versions earlier than Tiger.  On Tiger (or later), 
+GNUstep will compile, but not run due to some bundle loading problems.
+You need to install an FSF compiler, or make sure that the FSF 
+compiler is found first in your PATH.
 
 E101 Error
 No ld/binutils program installed. It's likely you are missing most
