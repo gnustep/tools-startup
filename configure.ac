@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.15.0, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 0.15.1, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -262,7 +262,7 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
      darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS E093"
+       SETUP_ERRORS="$SETUP_ERRORS W093"
        cc_apple=yes;;
   esac
 fi

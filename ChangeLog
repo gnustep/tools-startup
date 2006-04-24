@@ -1,5 +1,9 @@
 2006-04-24  Adam Fedor  <fedor@gnu.org>
 
+	* Version 0.15.1
+
+2006-04-24  Adam Fedor  <fedor@gnu.org>
+
 	* scripts/platform.sh: Disable jpeg on Mac OS X
 	* configure.ac: Check for libobjc-gnu.dylib
 

@@ -1,5 +1,5 @@
 
-The GNUstep Startup Package, version 0.15.0 is now available.
+The GNUstep Startup Package, version 0.15.1 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
@@ -41,15 +41,17 @@ the libraries from SVN. Just make sure the 'core' directory is at the
 same level as the 'startup' directory, and run the InstallGNUstep script
 from startup.
 
-Changes in version 0.15.0
-========================
+Changes in version 0.15.1
+=========================
 
-Fixed for move to SVN. Fixed HOME installation.
+Some darwin improvements. 
+
+Patch for cygwin.
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.15.0.tar.gz distribution file has been placed at
+The gnustep-startup-0.15.1.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page
