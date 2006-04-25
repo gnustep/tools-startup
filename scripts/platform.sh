@@ -105,4 +105,5 @@ gs_flags()
 
 gs_post_flags()
 {
+ :
 }
