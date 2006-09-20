@@ -436,19 +436,19 @@ do_upgrade_base=no
 do_upgrade_gui=no
 if [ "$GNUSTEP_MAKE_VERSION" != 0 ]; then
   echo Current GNUstep Make version is $GNUSTEP_MAKE_VERSION
-  if [ $GNUSTEP_MAKE_VERSION != $CURRENT_MAKE_VERSION ]; then
+  if [ "$GNUSTEP_MAKE_VERSION" != "$CURRENT_MAKE_VERSION" ]; then
     do_upgrade_make=yes
   fi
 fi
-if [ $GNUSTEP_BASE_VERSION != 0 ]; then
+if [ "$GNUSTEP_BASE_VERSION" != 0 ]; then
   echo Current GNUstep Base version is $GNUSTEP_BASE_VERSION
-  if [ $GNUSTEP_BASE_VERSION != $CURRENT_BASE_VERSION ]; then
+  if [ "$GNUSTEP_BASE_VERSION" != "$CURRENT_BASE_VERSION" ]; then
     do_upgrade_base=yes
   fi
 fi
-if [ $GNUSTEP_GUI_VERSION != 0 ]; then
+if [ "$GNUSTEP_GUI_VERSION" != 0 ]; then
   echo Current GNUstep Gui version is $GNUSTEP_GUI_VERSION
-  if [ $GNUSTEP_GUI_VERSION != $CURRENT_GUI_VERSION ]; then
+  if [ "$GNUSTEP_GUI_VERSION" != "$CURRENT_GUI_VERSION" ]; then
     do_upgrade_gui=yes
   fi
 fi

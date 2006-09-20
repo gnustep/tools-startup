@@ -8716,10 +8716,7 @@ if test $GNUSTEP_INSTALLED = yes; then
   # Check the version of gnustep-make
   echo "$as_me:$LINENO: checking GNUstep Make version" >&5
 echo $ECHO_N "checking GNUstep Make version... $ECHO_C" >&6
-  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config.make
-  if test $gnustep_flattened = 0; then
-    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/$clean_target_cpu/$clean_target_os/config.make
-  fi
+  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config-noarch.make
   # Note: we need multiple [[ to get around autoconf's m4 processing
   GNUSTEP_MAKE_VERSION=`grep GNUSTEP_MAKE_VERSION $gversion | sed "s/.*=\([0-9.]\)/\1/"`
   echo "$as_me:$LINENO: result: $GNUSTEP_MAKE_VERSION" >&5

@@ -1,3 +1,8 @@
+2006-09-20  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac (GNUSTEP_MAKE_VERSION): Fix to find version in
+	recently updated gnustep-make package.
+	* InstallGNUstep: Better protection against null variables.
 
 2006-08-31  Adam Fedor  <fedor@gnu.org>
 

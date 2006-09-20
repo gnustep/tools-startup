@@ -903,10 +903,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # Check the version of gnustep-make
   AC_MSG_CHECKING(GNUstep Make version)
-  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config.make
-  if test $gnustep_flattened = 0; then
-    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/$clean_target_cpu/$clean_target_os/config.make
-  fi
+  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config-noarch.make
   # Note: we need multiple [[ to get around autoconf's m4 processing
   GNUSTEP_MAKE_VERSION=[`grep GNUSTEP_MAKE_VERSION $gversion | sed "s/.*=\([0-9.]\)/\1/"`]
   AC_MSG_RESULT($GNUSTEP_MAKE_VERSION)
