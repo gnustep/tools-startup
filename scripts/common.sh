@@ -70,7 +70,13 @@ gs_build_package()
       echo "**** Please enter password for sudo if directed: ****"
       sudo $MAKE $MAKEFLAGS $PKG_INSTALL install | tee ../logs/$PLOG-install.log
     fi
-    gsexitstatus=0
+    tail -5 ../logs/$PLOG-install.log | grep Error
+    gserrorstatus=$?
+    if [ $gserrorstatus != 0 ]; then
+      gsexitstatus=0
+    else
+      gsexitstatus=1
+    fi
   else
     gsexitstatus=1
   fi

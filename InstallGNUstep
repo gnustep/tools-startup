@@ -656,7 +656,7 @@ fi
 PLOG=03-make
 PKG=$GMAKE
 PKG_DISPLAY="GNUstep Make"
-PKG_CONFIG="$PKG_EXTRA_CONFIG --with-library-combo=$LIBRARY_COMBO"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=special_prefix=$gs_install_prefix
@@ -682,7 +682,7 @@ fi
 PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
-PKG_CONFIG=$PKG_EXTRA_CONFIG
+PKG_CONFIG=$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
@@ -742,7 +742,7 @@ fi
 PLOG=06-back
 PKG=$GBACK
 PKG_DISPLAY="GNUstep Back"
-PKG_CONFIG="$PKG_BACK_CONFIG --enable-graphics=art $PKG_EXTRA_CONFIG"
+PKG_CONFIG="$PKG_BACK_CONFIG $PKG_EXTRA_CONFIG"
 # PKG_INSTALL Keep from previous setting
 PKG_PATCHES=`find $SOURCESDIR -name back*patch`
 gsexitstatus=0

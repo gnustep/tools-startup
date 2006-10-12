@@ -1,3 +1,8 @@
+2006-10-12  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/common.sh: Check proper exit of installation
+	* InstallGNUstep: Set config-file location in both make(s) and base.
+
 2006-09-20  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac (GNUSTEP_MAKE_VERSION): Fix to find version in
