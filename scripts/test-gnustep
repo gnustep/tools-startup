@@ -10,8 +10,7 @@
 # level).
 # This script tries to find the GNUstep source files, by checking in the
 # current directory, the directory ../.. from where the script was run
-# from, or
-# as a last resport:
+# from, or as a last resort:
 #    $HOME/src/gnustep-'$hostname -s`
 #
 # The files are installed into 

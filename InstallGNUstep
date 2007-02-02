@@ -581,7 +581,7 @@ PKG_DISPLAY="ffcall"
 PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
    --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
    --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
-   --enable-shared --disable-static"
+   CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
 PKG_INSTALL=
 PKG_PATCHES=
 gsexitstatus=0
@@ -648,6 +648,19 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
     exit 1
   fi
 fi
+
+if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries/libobjc-gnu.dylib ]; then
+  # Need to make link for compiler to find library
+  pushd $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    ln -s libobjc.dylib libobjc-gnu.dylib
+  else
+    sudo ln -s libobjc.dylib libobjc-gnu.dylib
+  fi
+  popd
+
+fi
+
 
 #--------------------------------------------------------------------
 # GNUstep make

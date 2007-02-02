@@ -25,6 +25,8 @@ gs_platform_generic()
   GS_LDFLAGS=
   GS_PLATFORM_BUILD_OBJC=no
   GS_PLATFORM_NO_ROOT=no
+  # For ffcall and non-gnustep packages
+  GS_OTHER_CPPFLAGS=
 }
 
 gs_platform_cygwin()
@@ -79,6 +81,12 @@ gs_platform_solaris()
   fi
 }
 
+gs_platform_linuxgnu()
+{
+  gs_platform_generic
+  GS_OTHER_CPPFLAGS=-fPIC
+}
+
 gs_platform_unknown()
 {
   gs_platform_generic
@@ -99,11 +107,14 @@ gs_flags()
     cygwin*)   gs_platform_cygwin ;;
     mingw*)    gs_platform_mingw ;;
     openbsd*)  gs_platform_openbsd ;;
+    *gnu*)     gs_platform_linuxgnu ;;
     *)         gs_platform_unknown ;;
   esac
 }
 
 gs_post_flags()
 {
- :
+  if [ "$CC_APPLE" = yes -a "$GCC_VERSION" = 4 ]; then
+    GS_PLATFORM_BUILD_OBJC=yes
+  fi
 }
