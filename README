@@ -112,6 +112,18 @@ and installation in InstallGNUstep, this may happen. Try adding
 to your /etc/ld.so.conf file or add it to the LD_LIBRARY_PATH environment
 variable.
 
+Q5. Why doesn't my ffcall work?
+
+ffcall and libffi are two different systems which allow GNUstep to
+jump to arbitrary programmaticly define methods and functions. You
+system probably has a kernel feature callled PaX, which prohibits a
+program from making code executable, which is how ffcall does this
+jumping. libffi does not work the same way, so it should work on these
+systems. Unfortunately, libffi is only distributed with gcc, not as a
+separate package, so if it's not on your machine, you have to download
+the whole gcc package, but only compile libffi (go in to the libffi
+subdir and run configure from there).
+
 Discussion
 ==========
 

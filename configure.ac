@@ -262,7 +262,7 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
      darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS W093"
+       SETUP_ERRORS="$SETUP_ERRORS E093"
        cc_apple=yes;;
   esac
 fi
@@ -283,14 +283,9 @@ AC_PROG_INSTALL
 AC_PROG_LN_S([])
 AC_PATH_PROG(WHOAMI, whoami, echo, $PATH:/usr/ucb)
 
-GNU_MAKE=make
-case $host_os in
-     *bsd* | *BSD*)
-       GNU_MAKE=gmake;;
-esac
-AC_CHECK_PROG(GNUMAKE, $GNU_MAKE)
+AC_CHECK_PROG(GNUMAKE, gmake, make)
 AC_MSG_CHECKING(make version > 3.75)
-make_version=[`$GNU_MAKE --version | grep "[0-9]\.[0-9][0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
+make_version=[`$GNUMAKE --version | grep "[0-9]\.[0-9][0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
 if test -n "$make_version" -a "$make_version" \> 3.74; then
   AC_MSG_RESULT(yes $make_version)
 else
@@ -680,6 +675,14 @@ elif test $enable_ffcall = yes; then
   else
     LIBS="$saved_LIBS"
   fi
+  AC_MSG_CHECKING(if ffcall trampolines work)
+  AC_RUN_IFELSE([#include "$srcdir/config/config.trampoline.c"],
+	  have_working_trampoline=yes, have_working_trampoline=no, 
+	  have_working_trampoline=yes)
+  AC_MSG_RESULT($have_working_trampoline)
+  if test $have_working_trampoline = no; then
+    ffi_ok=no
+  fi
 else
   ffi_ok=no
 fi
@@ -689,6 +692,8 @@ if test $ffi_ok = no; then
   if test $have_forward_hook = no; then
     # Need the warning for MingW when libobjc is moved out of the way
     SETUP_ERRORS="$SETUP_ERRORS W272"
+  elif test "$have_working_trampoline" = no; then
+    SETUP_ERRORS="$SETUP_ERRORS E273"
   else
     SETUP_ERRORS="$SETUP_ERRORS W270"
   fi

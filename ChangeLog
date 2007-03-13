@@ -1,3 +1,9 @@
+2007-03-13  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, config/config.trampoline.ac: Add check for
+	working ffcall. Also show error if using Apple compiler.
+	* README: Updates
+
 2007-02-02  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.16.1

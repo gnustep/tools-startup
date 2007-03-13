@@ -22,7 +22,6 @@ applications.
 
 The installation scripts have been tested on:
 
-GNU-Linux/PPC (YellowDog Linux 3.0)
 Darwin/PPC 7.x
 Solaris/SPARC 2.7
 NetBSD/ix86
