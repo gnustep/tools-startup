@@ -101,10 +101,6 @@ compiler that includes the Objective-C headers and libraries.
 Ignore this warning on MingW. The Objective-C library will be insatlled
 by Startup anyway.
 
-E155 Error
-Darwin/PPC (Mac OS X) systems require libffi, but there is no libffi
-installed. Please install this before installing GNUstep
-
 I190 Information
 $GNUSTEP_SYSTEM_ROOT was set and has something installed there but
 configure's prefix was not set to this location. I'm assuming you

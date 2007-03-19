@@ -699,10 +699,6 @@ if test $ffi_ok = no; then
   fi
 fi
 
-if test "`echo $host_os|sed 's/[[0-9]].*//'`" = darwin -a $host_cpu = "powerpc" -a $ac_cv_header_ffi_h = no; then
-  SETUP_ERRORS="$SETUP_ERRORS E155"
-fi
-
 #--------------------------------------------------------------------
 # Check if libobjc was compiled with thread support. (from gnustep-make)
 #--------------------------------------------------------------------

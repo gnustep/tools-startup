@@ -1,3 +1,8 @@
+2007-03-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, config/config.trampoline.c: Fixes for ffcall
+	on Darwin (patch from Wolfgang Lux).
+
 2007-03-13  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac, config/config.trampoline.ac: Add check for
