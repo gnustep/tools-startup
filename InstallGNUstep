@@ -64,7 +64,7 @@ do
       echo "Options:"
       echo "  --help	- Print help"
       echo "  --batch	- Don't ask any questions"
-      echo "  --debug	- Compile packages with debug info"
+      echo "  --no-debug- Compile packages without debug info"
       echo "  --verbose	- Print verbose compilation information"
       echo
       echo "  --prefix={dir}	- GNUstep root(prefix) location"
@@ -80,8 +80,8 @@ do
       # Install gdomap non-suid - special option when testing GNUstep on a
       # machine without root install access.
       gs_no_priv=yes;;
-    --debug | -d)
-      MAKEFLAGS="$MAKEFLAGS debug=yes";;
+    --no-debug)
+      MAKEFLAGS="$MAKEFLAGS debug=no";;
     --verbose)
       MAKEFLAGS="$MAKEFLAGS messages=yes";;
     --*=*)

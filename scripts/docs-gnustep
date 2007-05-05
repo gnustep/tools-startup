@@ -102,6 +102,10 @@ GSTEP_DOC=$GNUSTEP_WEB_ROOT/resources/documentation
 cd $HOME/gnustep-$NAME/System/Library/Documentation
 tar -cf - . | (cd $GSTEP_DOC; tar -xvf -)
 
+# Update links
+cd $GSTEP_DOC
+HTMLLinker -PathMappings "{\"$GSTEP_DOC/Developer\"=\"../..\"}" -LinksMarker gsdoc -Warn NO  -d Developer Developer
+
 # Commit it
 cd $GSTEP_DOC
 cvs update

@@ -1,3 +1,8 @@
+2007-05-05  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/doc-gnustep: Use HTMLLinker
+	* InstallGNUstep: Switch debug arg to no-debug arg
+
 2007-03-19  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac, config/config.trampoline.c: Fixes for ffcall
