@@ -595,13 +595,13 @@ AC_MSG_RESULT($gs_cv_objc_libdir)
 
 saved_CPPFLAGS="$CPPFLAGS"
 saved_LDFLAGS="$LDFLAGS"
-if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR"; then
+if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR" -o -f "$GNUSTEP_LDIR/libavcall.la" ; then
   # The following are needed to compile the test programs
-  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_ROOT/Library/Headers"
-  LDFLAGS="$LDFLAGS -L$gs_cv_objc_libdir"
+  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR"
+  LDFLAGS="$LDFLAGS -L$GNUSTEP_LDIR"
 
   # And the following to execute them
-  LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$gs_cv_objc_libdir"
+  LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$GNUSTEP_LDIR"
   export LD_LIBRARY_PATH
 fi
 
@@ -893,25 +893,25 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Base version)
   if test $ac_cv_header_Foundation_NSObject_h = yes; then
-    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-base/Info-gnustep.plist
-    if test -f $gversion ; then
-      GNUSTEP_BASE_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
-    else
-      GNUSTEP_BASE_VERSION=0.0.0
-    fi
+    gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-base/Versions -name Info-gnustep.plist -print`
+    GNUSTEP_BASE_VERSION=0.0.0
+    # This should get the last version
+    for file in $gversion; do
+      GNUSTEP_BASE_VERSION=[`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+    done
   fi
   AC_MSG_RESULT($GNUSTEP_BASE_VERSION)
 
   AC_MSG_CHECKING(GNUstep Gui version)
   if test $ac_cv_header_AppKit_NSApplication_h = yes; then
-    gversion=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
-    if test -f $gversion ; then
-      GNUSTEP_GUI_VERSION=[`grep GSBundleShortVersionString $gversion | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
-      GNUSTEP_GUI_INTERFACE=[`grep GSBundleVersion $gversion | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`]
-    else
-      GNUSTEP_GUI_VERSION=0.0.0
-      GNUSTEP_GUI_INTERFACE=
-    fi
+    gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-gui/Versions -name Info-gnustep.plist -print`
+    GNUSTEP_GUI_VERSION=0.0.0
+    GNUSTEP_GUI_INTERFACE=
+    # This should get the last version
+    for file in $gversion; do
+      GNUSTEP_GUI_VERSION=[`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+      GNUSTEP_GUI_INTERFACE=[`grep GSBundleVersion $file | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`]
+    done
   fi
   AC_MSG_RESULT($GNUSTEP_GUI_VERSION)
 
