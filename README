@@ -50,8 +50,6 @@ behavior of the script.
 
 --batch	    Install the GNUstep system without asking any questions.
 
---debug	    Compile all the libraries with debugging information.
-
 --verbose   Print verbose compilation information.
 
 --prefix    To install GNUstep in a non-default location, set the directory
@@ -88,16 +86,6 @@ export CPPFLAGS=-I/usr/local/include
 export LDFLAGS=-L/usr/local/lib
 
 Then run InstallGNUstep again.
-
-Q3. I get an internal compiler error when running InstallGNUstep
-(gcc 4.0.0, perhaps some other versions).
-
-A3. This is a known bug in the gcc compiler. Try running InstallGNUstep
-again with optimization off:
-
-./InstallGNUstep --debug
-
-NOTE: This should be fixed in version Startup 0.11.1
 
 Q4. I installed a required library in /usr/local/{include,lib}, but
 I still get errors.

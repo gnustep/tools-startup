@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.16.1, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 0.18.0, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -65,9 +65,9 @@ AC_SUBST(GNUSTEP_CONFIG_FILE)
 # turn it off
 AC_MSG_CHECKING([if we should import an existing configuration file])
 AC_ARG_ENABLE(importing-config-file, 
-[--disable-importing-config-file		Disable importing the existing GNUstep configuration file], 
+[--enaable-importing-config-file		Enable importing the existing GNUstep configuration file], 
   ac_cv_importing_config_file=$enableval,
-  ac_cv_importing_config_file="yes")
+  ac_cv_importing_config_file="no")
 
 # If importing the file is disabled, don't import it.
 if test "$ac_cv_importing_config_file" = "no"; then
@@ -104,23 +104,6 @@ fi
 # Process --prefix
 #--------------------------------------------------------------------
 
-#
-# In practice,
-#
-# ./configure --prefix=/usr/GNUstep
-#
-# is equivalent to:
-#
-# ./configure --with-system-root=/usr/GNUstep/System
-#             --with-local-root=/usr/GNUstep/Local
-#
-# plus it has the side-effect that a config.site will be loaded by
-# ./configure from $prefix/share/config.site, if it exists.  Our
-# config.site is in $prefix/System/share/config.site though, so it
-# won't be found.  It doesn't really matter though, as the config.site
-# is irrelevant for us in this context.
-#
-
 # Please note that AC_PREFIX_DEFAULT will not appear in this position
 # in the generated configure file; it will appear at the very
 # beginning.  So we can't check for GNUSTEP_SYSTEM_ROOT or anything
@@ -138,7 +121,7 @@ AC_PREFIX_DEFAULT(`if test -d C: ; then
 
 #
 # GNUSTEP_ROOT is only used to set default values for
-# GNUSTEP_SYSTEM_ROOT and GNUSTEP_LOCAL_ROOT if they are not set in
+# GNUSTEP_SYSTEM_ROOT if they are not set in
 # config file or as a command-line argument.
 #
 if test "x$prefix" = "xNONE"; then
@@ -157,9 +140,6 @@ else
   # that the --with-system-root=xxx (and similar) options are
   # processed later as overwrite --prefix=xxx in their specific area.
   GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";
-  GNUSTEP_LOCAL_ROOT="$GNUSTEP_ROOT/Local";
-  GNUSTEP_NETWORK_ROOT="$GNUSTEP_LOCAL_ROOT";
-  GNUSTEP_MAKEFILES="$GNUSTEP_SYSTEM_ROOT/Library/Makefiles"
 fi
 
 #--------------------------------------------------------------------
