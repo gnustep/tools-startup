@@ -55,6 +55,7 @@ gs_run_batch=no
 gs_no_priv=no
 gs_install_prefix=
 gs_root_prefix=
+gs_skip_install=no
 while test $# != 0
 do
   gs_option=
@@ -66,6 +67,7 @@ do
       echo "  --batch	- Don't ask any questions"
       echo "  --no-debug- Compile packages without debug info"
       echo "  --verbose	- Print verbose compilation information"
+      #echo "  --skip-install	- Skip re-install of current versions (debug)"
       echo
       echo "  --prefix={dir}	- GNUstep root(prefix) location"
       echo "  --builddir={dir}	- Location to build packages"
@@ -84,6 +86,8 @@ do
       MAKEFLAGS="$MAKEFLAGS debug=no";;
     --verbose)
       MAKEFLAGS="$MAKEFLAGS messages=yes";;
+    --skip-install)
+      gs_skip_install=yes;;
     --*=*)
       gs_option=`expr "x$1" : 'x\([^=]*\)='`
       gs_optarg=`expr "x$1" : 'x[^=]*=\(.*\)'`
@@ -436,18 +440,27 @@ do_upgrade_base=no
 do_upgrade_gui=no
 if [ "$GNUSTEP_MAKE_VERSION" != 0 ]; then
   echo Current GNUstep Make version is $GNUSTEP_MAKE_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_make=yes
+  fi
   if [ "$GNUSTEP_MAKE_VERSION" != "$CURRENT_MAKE_VERSION" ]; then
     do_upgrade_make=yes
   fi
 fi
 if [ "$GNUSTEP_BASE_VERSION" != 0 ]; then
   echo Current GNUstep Base version is $GNUSTEP_BASE_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_base=yes
+  fi
   if [ "$GNUSTEP_BASE_VERSION" != "$CURRENT_BASE_VERSION" ]; then
     do_upgrade_base=yes
   fi
 fi
 if [ "$GNUSTEP_GUI_VERSION" != 0 ]; then
   echo Current GNUstep Gui version is $GNUSTEP_GUI_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_gui=yes
+  fi
   if [ "$GNUSTEP_GUI_VERSION" != "$CURRENT_GUI_VERSION" ]; then
     do_upgrade_gui=yes
   fi
@@ -457,8 +470,7 @@ echo "  GNUstep Make: $CURRENT_MAKE_VERSION"
 echo "  GNUstep Base: $CURRENT_BASE_VERSION"
 echo "  GNUstep Gui: $CURRENT_GUI_VERSION"
 if [ $do_upgrade_make = yes -o $do_upgrade_base = yes -o $do_upgrade_gui = yes ]; then
-  echo You have some GNUstep packages installed already which are not the
-  echo same version as the ones that we will be installing. Do you want to
+  echo You have some GNUstep packages installed already. Do you want to
   echo "upgrade your packages? (Say no if you want to keep the packages you"
   echo "currently have installed)"
   if [ $gs_run_batch = no ]; then
@@ -695,7 +707,7 @@ fi
 PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
-PKG_CONFIG=$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}
+PKG_CONFIG="$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
@@ -765,18 +777,18 @@ if [ "$GNUSTEP_BACK_INSTALLED" = yes  -a $do_upgrade_gui = no ]; then
 else
   gs_build_package
 fi
+echo 
 
-gversion=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries/Resources/gnustep-gui/Info-gnustep.plist
-if test -f $gversion ; then
-  GNUSTEP_GUI_INTERFACE=`grep GSBundleVersion $gversion | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`
-else
-  GNUSTEP_GUI_INTERFACE=
-fi
-
-if test -z "$GNUSTEP_GUI_INTERFACE"; then
-  BUNDLE_NAME=libgnustep-back
-else
+gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-gui/Versions -name Info-gnustep.plist -print`
+GNUSTEP_GUI_INTERFACE=
+# This should get the last version
+for file in $gversion; do
+  GNUSTEP_GUI_INTERFACE=`grep GSBundleVersion $file | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`
+done
+if test -n "$GNUSTEP_GUI_INTERFACE"; then
   BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
+else
+  BUNDLE_NAME=libgnustep-back
 fi
 
 echo "  Exit statis is $gsexitstatus" >&5
