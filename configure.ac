@@ -543,9 +543,10 @@ if test -n "$GNUSTEP_SYSTEM_ROOT"; then
   AC_MSG_RESULT($GNUSTEP_SYSTEM_ROOT)
 else
   AC_MSG_RESULT(no)
+  GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 fi
 AC_MSG_CHECKING(if GNUstep directories exists)
-if test -d $GNUSTEP_SYSTEM_ROOT -a -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh; then
+if test -d "$GNUSTEP_SYSTEM_ROOT" -a -f "$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"; then
   AC_MSG_RESULT(yes)
   GNUSTEP_INSTALLED=yes
 else

@@ -539,7 +539,7 @@ PKG_DISPLAY="GNUstep Make"
 PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
-  PKG_INSTALL=special_prefix=$gs_install_prefix
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
 fi
 PKG_PATCHES=`find $SOURCESDIR -name make*patch`
 gsexitstatus=0
@@ -624,7 +624,7 @@ PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
-  PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
 fi
 PKG_PATCHES=`find $SOURCESDIR -name libobjc*patch`
 gsexitstatus=0
@@ -684,7 +684,7 @@ PKG_DISPLAY="GNUstep Make"
 PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
-  PKG_INSTALL=special_prefix=$gs_install_prefix
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
 fi
 PKG_PATCHES=`find $SOURCESDIR -name make*patch`
 gsexitstatus=0
@@ -710,7 +710,7 @@ PKG_DISPLAY="GNUstep Base"
 PKG_CONFIG="$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
-  PKG_INSTALL=GNUSTEP_INSTALLATION_DIR=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
 fi
 PKG_PATCHES=`find $SOURCESDIR -name base*patch`
 if [ $NO_PRIV = yes ]; then

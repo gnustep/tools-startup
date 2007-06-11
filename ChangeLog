@@ -1,5 +1,10 @@
 2007-05-23  Adam Fedor  <fedor@gnu.org>
 
+	* Version 0.18.1
+	* Use DESTDIR and other updated paths
+
+2007-05-23  Adam Fedor  <fedor@gnu.org>
+
 	* Version 0.18.0
 	* Update finding library versions
 

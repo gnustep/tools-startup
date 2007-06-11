@@ -7207,10 +7207,11 @@ echo "${ECHO_T}$GNUSTEP_SYSTEM_ROOT" >&6; }
 else
   { echo "$as_me:$LINENO: result: no" >&5
 echo "${ECHO_T}no" >&6; }
+  GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 fi
 { echo "$as_me:$LINENO: checking if GNUstep directories exists" >&5
 echo $ECHO_N "checking if GNUstep directories exists... $ECHO_C" >&6; }
-if test -d $GNUSTEP_SYSTEM_ROOT -a -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh; then
+if test -d "$GNUSTEP_SYSTEM_ROOT" -a -f "$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"; then
   { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
   GNUSTEP_INSTALLED=yes
