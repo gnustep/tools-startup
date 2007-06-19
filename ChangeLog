@@ -1,5 +1,10 @@
 2007-05-23  Adam Fedor  <fedor@gnu.org>
 
+	* configure.ac: Fix make check bug
+	* InstallGNUstep: Clarify comments
+
+2007-05-23  Adam Fedor  <fedor@gnu.org>
+
 	* Version 0.18.1
 	* Use DESTDIR and other updated paths
 

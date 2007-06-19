@@ -468,7 +468,7 @@ fi
 echo "This package installs these versions of the GNUstep libraries:"
 echo "  GNUstep Make: $CURRENT_MAKE_VERSION"
 echo "  GNUstep Base: $CURRENT_BASE_VERSION"
-echo "  GNUstep Gui: $CURRENT_GUI_VERSION"
+echo "  GNUstep Gui/Back: $CURRENT_GUI_VERSION"
 if [ $do_upgrade_make = yes -o $do_upgrade_base = yes -o $do_upgrade_gui = yes ]; then
   echo You have some GNUstep packages installed already. Do you want to
   echo "upgrade your packages? (Say no if you want to keep the packages you"

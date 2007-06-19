@@ -17,7 +17,7 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.18.0, [bug-gnustep@gnu.org])
+AC_INIT([GNUstep Setup], 0.18.2, [bug-gnustep@gnu.org])
 AC_PREREQ(2.57)
 
 # From gnustep-base
@@ -263,7 +263,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S([])
 AC_PATH_PROG(WHOAMI, whoami, echo, $PATH:/usr/ucb)
 
-AC_CHECK_PROG(GNUMAKE, gmake, make)
+AC_CHECK_PROGS(GNUMAKE, gmake make)
 AC_MSG_CHECKING(make version > 3.75)
 make_version=[`$GNUMAKE --version | grep "[0-9]\.[0-9][0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
 if test -n "$make_version" -a "$make_version" \> 3.74; then
