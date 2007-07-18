@@ -263,7 +263,7 @@ AC_PROG_INSTALL
 AC_PROG_LN_S([])
 AC_PATH_PROG(WHOAMI, whoami, echo, $PATH:/usr/ucb)
 
-AC_CHECK_PROGS(GNUMAKE, gmake make)
+AC_CHECK_PROGS(GNUMAKE, [gmake make], make)
 AC_MSG_CHECKING(make version > 3.75)
 make_version=[`$GNUMAKE --version | grep "[0-9]\.[0-9][0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
 if test -n "$make_version" -a "$make_version" \> 3.74; then
@@ -865,7 +865,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
+  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
   if test $gnustep_flattened = 0; then
     CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
     # Also possible we are supporting multiple combos...
@@ -898,7 +898,10 @@ if test $GNUSTEP_INSTALLED = yes; then
     GNUSTEP_BASE_VERSION=0.0.0
     # This should get the last version
     for file in $gversion; do
-      GNUSTEP_BASE_VERSION=[`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+      NEW=[`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`]
+      if test -n "$NEW"; then
+        GNUSTEP_BASE_VERSION=$NEW
+      fi
     done
   fi
   AC_MSG_RESULT($GNUSTEP_BASE_VERSION)

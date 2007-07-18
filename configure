@@ -3761,6 +3761,7 @@ fi
 
   test -n "$GNUMAKE" && break
 done
+test -n "$GNUMAKE" || GNUMAKE="make"
 
 { echo "$as_me:$LINENO: checking make version > 3.75" >&5
 echo $ECHO_N "checking make version > 3.75... $ECHO_C" >&6; }
@@ -9194,7 +9195,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
+  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
   if test $gnustep_flattened = 0; then
     CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
     # Also possible we are supporting multiple combos...
@@ -9375,7 +9376,10 @@ echo $ECHO_N "checking GNUstep Base version... $ECHO_C" >&6; }
     GNUSTEP_BASE_VERSION=0.0.0
     # This should get the last version
     for file in $gversion; do
-      GNUSTEP_BASE_VERSION=`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`
+      NEW=`grep GSBundleShortVersionString $file | sed "s/.*\"\([0-9.]\)/\1/;s/\";//"`
+      if test -n "$NEW"; then
+        GNUSTEP_BASE_VERSION=$NEW
+      fi
     done
   fi
   { echo "$as_me:$LINENO: result: $GNUSTEP_BASE_VERSION" >&5

@@ -457,7 +457,7 @@ if [ "$GNUSTEP_BASE_VERSION" != 0 ]; then
   fi
 fi
 if [ "$GNUSTEP_GUI_VERSION" != 0 ]; then
-  echo Current GNUstep Gui version is $GNUSTEP_GUI_VERSION
+  echo Current GNUstep Gui/Back version is $GNUSTEP_GUI_VERSION
   if [ $gs_skip_install = yes ]; then
     do_upgrade_gui=yes
   fi
