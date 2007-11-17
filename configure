@@ -5246,7 +5246,7 @@ echo "$as_me: WARNING: Disabled support for XSLT funtionality." >&2;}
     # Restore the CFLAGS and LIBS because AM_PATH_XML messes them
     LIBS="$saved_LIBS"
     CFLAGS="$saved_CFLAGS"
-    SETUP_ERRORS="$SETUP_ERRORS E107"
+    SETUP_ERRORS="$SETUP_ERRORS W107"
   fi
 else
   { echo "$as_me:$LINENO: WARNING: Disabled support for XML funtionality." >&5

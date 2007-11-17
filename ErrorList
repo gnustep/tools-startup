@@ -40,10 +40,11 @@ You have an old or nonexistent iconv implementation. iconv is not
 required, but is needed for string and font encodings. It comes with
 glib 2.1.2 or later.
 
-E107 Error
-No XML library support was found. The GNUstep base library will not
-build without XML, unless it is specifically disabled with --disable-xml
-This is done automatically on MinGW currently.
+W107 Warning
+No XML library support was found. The GNUstep uses XML for many basic
+functions, such as reading/writing property lists. XML will automatically
+be disabled, but this is probably not what you want. If possible you should
+stop installation and install an xml library.
 
 W108 Warning
 Not XSLT library was found. GNUstep base uses this library for important
@@ -52,10 +53,11 @@ without this support.
 
 W109 Warning 
 For security reasons, your make program will not pass LD_LIBRARY_PATH
-along. If you chose option 1 when running Startup, you'll probably need to
-start again and use 'sudo ./InstallGNUstep' or 'su root; ./InstallGNUstep'.
-You may need to compile/install applications when you are logged in
-as root, or use 'make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
+along. This might not cause any problems, but if you do encounter any
+errors installing GNUstep, you may need to start again and use 
+'sudo ./InstallGNUstep' or 'su root; ./InstallGNUstep'.
+When installing other applications, you also may need to install
+as root, or use 'sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
 
 W125 Warning 
 The OpenSSL package (libcrypto, etc) is needed to access https connections
@@ -117,9 +119,8 @@ W270 Warning
 Cannot find or link the ffcall or ffi library.
 GNUstep requires the ffcall of libffi library to do invocations and DO
 Make sure this library is installed (see installation instructions)
-In most cases, ffcall will be installed for you by the GNUstep Startup
-package, so you don't have to worry about it. On systems, like
-Darwin/PPC (Mac OS X), you need to install the ffi library yourself.
+In most cases, ffcall/libffi will be installed for you by the GNUstep Startup
+package, so you don't have to worry about it. 
 
 E271 Error
 You do not have a recent version of the libobjc library. Make sure

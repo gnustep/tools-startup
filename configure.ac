@@ -461,7 +461,7 @@ if test $enable_xml = yes; then
     # Restore the CFLAGS and LIBS because AM_PATH_XML messes them
     LIBS="$saved_LIBS"
     CFLAGS="$saved_CFLAGS"
-    SETUP_ERRORS="$SETUP_ERRORS E107"
+    SETUP_ERRORS="$SETUP_ERRORS W107"
   fi
 else
   AC_MSG_WARN([Disabled support for XML funtionality.])

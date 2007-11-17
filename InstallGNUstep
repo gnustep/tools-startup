@@ -73,6 +73,7 @@ do
       echo "  --builddir={dir}	- Location to build packages"
       echo "  --config-options={options}	- Extra configuration options"
       echo "  --config-file={dir/GNUstep.conf}	- Set location of GNUstep.conf"
+      echo "  --ffi={ffcall|libffi}	- ffi package to build"
       #echo "  --install-root={dir}	- Install dir prefix"
       exit 0
       ;;
@@ -105,6 +106,8 @@ do
       PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG $gs_optarg";; 
     --config-file)
       GSCONFIGFILE=--with-config-file=$gs_optarg;; 
+    --ffi)
+      FORCEFFILIB=$gs_optarg;; 
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end
@@ -138,6 +141,10 @@ gs_platform
 
 if test -z "$LIBRARY_COMBO"; then
   LIBRARY_COMBO=gnu-gnu-gnu
+fi
+
+if test -z "$FORCEFFILIB"; then
+  GS_FFI=$FORCEFFILIB
 fi
 
 if [ -z "$MAKE" ]; then
@@ -256,6 +263,13 @@ if [ -d $SOURCESDIR ]; then
   else
     FFCALL=`basename $FFCALL .tar.gz`
   fi
+  FOUND_LIBFFI=yes
+  LIBFFI=`find $SOURCESDIR -name libffi*tar.gz`
+  if [ x$LIBFFI = x ]; then
+    FOUND_LIBFFI=no
+  else
+    LIBFFI=`basename $LIBFFI .tar.gz`
+  fi
   FOUND_LIBOBJC=yes
   LIBOBJC=`find $SOURCESDIR -name gnustep-objc*tar.gz`
   if [ x$LIBOBJC = x ]; then
@@ -265,6 +279,7 @@ if [ -d $SOURCESDIR ]; then
   fi
 else
   FOUND_FFCALL=no
+  FOUND_LIBFFI=no
   FOUND_LIBOBJC=no
 fi
 
@@ -510,10 +525,10 @@ echo Library combo: $LIBRARY_COMBO
 echo "" >&5
 echo ""
 
-if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no ]; then
+if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no ]; then
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
-  echo "which should have ffcall-1.10.tar.gz present"
+  echo "which should have ffcall-1.10.tar.gz and/or libffi present"
   echo "Download this file from ftp://ftp.gnustep.org/pub/gnustep/libs"
   echo "Source files not found. STOP" >&5
   exit 1
@@ -587,13 +602,23 @@ if [ x"$NORPM" = xyes ]; then
   HAVE_RPM=no
 fi
 
-PLOG=02-ffcall
-PKG=$FFCALL
-PKG_DISPLAY="ffcall"
-PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
-   --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
-   --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
-   CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
+if [ $GS_FFI = ffcall ]; then
+  PLOG=02-ffcall
+  PKG=$FFCALL
+  PKG_DISPLAY="ffcall"
+  PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
+     --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
+     --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
+     CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
+else
+  PLOG=02-libffi
+  PKG=$LIBFFI
+  PKG_DISPLAY="libffi"
+  PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
+     --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
+     --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
+     CFLAGS=${GS_OTHER_CPPFLAGS}"
+fi
 PKG_INSTALL=
 PKG_PATCHES=
 gsexitstatus=0
@@ -613,8 +638,8 @@ else
   gs_build_package
   SOURCESDIR=$SAVESOURCESDIR
   IS_CVS=$SAVE_IS_CVS
-  unset $SAVE_IS_CVS
-  unset $SAVESOURCESDIR
+  unset SAVE_IS_CVS
+  unset SAVESOURCESDIR
   REBUILD_MAKE=yes
 fi
 
@@ -647,8 +672,8 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   SOURCESDIR=$SAVESOURCESDIR
   MAKEFLAGS="$SAVEMAKEFLAGS"
   IS_CVS=$SAVE_IS_CVS
-  unset $SAVE_IS_CVS
-  unset $SAVESOURCESDIR
+  unset SAVE_IS_CVS
+  unset SAVESOURCESDIR
   REBUILD_MAKE=yes
   fi
   echo "  Exit statis is $gsexitstatus" >&5
@@ -708,6 +733,9 @@ PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
 PKG_CONFIG="$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
+if [ $HAVE_LIBXML = 0 ]; then
+  PKG_CONFIG="$PKG_CONFIG --disable-xml"
+fi
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=DESTDIR=$gs_install_prefix

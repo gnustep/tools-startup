@@ -1,3 +1,10 @@
+2007-11-17  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: clarify some warnings.
+	* configure.ac, scripts/platform.sh, setupvars.in, InstallGNUstep:
+	Add install of libffi on some platforms, disable xml automatically
+	if not found.
+
 2007-07-18  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Really fix make check. Fix GNUstep header check.

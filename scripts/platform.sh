@@ -25,6 +25,7 @@ gs_platform_generic()
   GS_LDFLAGS=
   GS_PLATFORM_BUILD_OBJC=no
   GS_PLATFORM_NO_ROOT=no
+  GS_FFI=ffcall
   # For ffcall and non-gnustep packages
   GS_OTHER_CPPFLAGS=
 }
@@ -41,12 +42,14 @@ gs_platform_mingw()
   gs_platform_generic
   GS_PLATFORM_BUILD_OBJC=yes
   GS_PLATFORM_NO_ROOT=yes
-  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-xml --disable-gsnd"
+  GS_FFI=libffi
+  PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-gsnd"
 }
 
 gs_platform_darwin()
 {
   gs_platform_generic
+  GS_FFI=libffi
   if [ -d /sw ]; then
     # Fink is installed. Make sure to use this
     GS_CPPFLAGS="-I/sw/include"
