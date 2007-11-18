@@ -1,14 +1,14 @@
 
-The GNUstep Startup Package, version 0.18.2 is now available.
+The GNUstep Startup Package, version 0.19.0 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
-gnustep-make Version 2.0.0
-gnustep-base Version 1.14.0
-gnustep-gui Version 0.12.0
-gnustep-back Version 0.12.0
+gnustep-make Version 2.0.2
+gnustep-base Version 1.15.1
+gnustep-gui Version 0.13.0
+gnustep-back Version 0.13.0
 
 The main advantage of Startup is that it includes a script to
 automatically build and install the core GNUstep system.  
@@ -28,9 +28,9 @@ NetBSD/ix86
 NetBSD/sparc64
 Debian Unstable/ix86
 Gentoo/ix86
+MingW/ix86
 
-NOTES: Windows uses should preferably use the Windows binary installer
-available at www.gnustep.org. Some systems (Debian, FreeBSD, Gentoo,
+NOTES: Some systems (Debian, FreeBSD, Gentoo,
 etc) have precompiled binaries of GNUstep available through their
 normal distribution system. It may be preferable to get GNUstep this
 way.
@@ -40,15 +40,16 @@ the libraries from SVN. Just make sure the 'core' directory is at the
 same level as the 'startup' directory, and run the InstallGNUstep script
 from startup.
 
-Changes in version 0.18.1
+Changes in version 0.19.0
 =========================
 
-Use DESTDIR and other updated paths.
+New base/gui library versions
+Integrated the libffi pacakge with Startup
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.18.1.tar.gz distribution file has been placed at
+The gnustep-startup-0.19.0.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page

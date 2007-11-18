@@ -107,10 +107,11 @@ jump to arbitrary programmaticly define methods and functions. You
 system probably has a kernel feature callled PaX, which prohibits a
 program from making code executable, which is how ffcall does this
 jumping. libffi does not work the same way, so it should work on these
-systems. Unfortunately, libffi is only distributed with gcc, not as a
-separate package, so if it's not on your machine, you have to download
-the whole gcc package, but only compile libffi (go in to the libffi
-subdir and run configure from there).
+systems (if it has been ported to your system). 
+
+To force Startup to use libffi instead of ffcall on your system type:
+
+./InstallGNUstep --ffi=libffi
 
 Discussion
 ==========

@@ -1,4 +1,10 @@
 
+
+Changes in version 0.19.0
+=========================
+New base/gui library versions
+Integrated the libffi pacakge with Startup
+
 Changes in version 0.18.2
 =========================
 
