@@ -50,7 +50,7 @@ gs_platform_darwin()
 {
   gs_platform_generic
   GS_FFI=libffi
-  if [ -d /sw ]; then
+  if [ -d /sw -a "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
     # Fink is installed. Make sure to use this
     GS_CPPFLAGS="-I/sw/include"
     GS_LDFLAGS="-L/sw/lib"
@@ -58,11 +58,11 @@ gs_platform_darwin()
     # Fink's jpeg conflicts with Apple's
     PKG_GUI_CONFIG="--disable-aspell --disable-jpeg"
     PKG_BACK_CONFIG=--disable-glx
-  fi
-  if [ -d /sw/lib/freetype2/bin ]; then
-    # We prefer the Fink freetyp2 lib to the X11R6 one
-    # The X11R6 gives back erronous information from FTC_SBitCache_Lookup
-    PATH=/sw/lib/freetype2/bin:$PATH
+    if [ -d /sw/lib/freetype2/bin ]; then
+      # We prefer the Fink freetyp2 lib to the X11R6 one
+      # The X11R6 gives back erronous information from FTC_SBitCache_Lookup
+      PATH=/sw/lib/freetype2/bin:$PATH
+    fi
   fi
 }
 
@@ -117,7 +117,7 @@ gs_flags()
 
 gs_post_flags()
 {
-  if [ "$CC_APPLE" = yes -a "$GCC_VERSION" = 4 ]; then
+  if [ "$CC_APPLE" = yes -a "$GCC_VERSION" = 4 -a "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
     GS_PLATFORM_BUILD_OBJC=yes
   fi
 }

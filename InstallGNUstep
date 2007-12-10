@@ -593,15 +593,6 @@ fi
 #--------------------------------------------------------------------
 # Build pre-reqs
 #--------------------------------------------------------------------
-HAVE_RPM=no
-which rpm > /dev/null
-if [ $? = 0 ]; then
-  HAVE_RPM=yes
-fi
-if [ x"$NORPM" = xyes ]; then
-  HAVE_RPM=no
-fi
-
 if [ $GS_FFI = ffcall ]; then
   PLOG=02-ffcall
   PKG=$FFCALL
@@ -624,7 +615,9 @@ PKG_PATCHES=
 gsexitstatus=0
 
 REBUILD_MAKE=no
-if [ $FFCALL_INSTALLED = yes ];then
+if [ "$LIBRARY_COMBO" = "apple-apple-apple" ]; then
+  echo
+elif [ $FFCALL_INSTALLED = yes ];then
   echo ffcall already installed >&5
   echo ffcall already installed
 elif [ $LIBFFI_INSTALLED = yes ];then
@@ -759,6 +752,19 @@ ls $HEADER_CHECK >&5 2>&1
 if [ $gsexitstatus != 0 ]; then
   gs_log_error
   exit 1
+fi
+
+if [ "$LIBRARY_COMBO" = "apple-apple-apple" ]; then
+  # We're done
+  echo "" >&5
+  echo "Instalation Finished" >&5
+  echo "---------------------------------------------------------"
+  echo
+  echo Installation Finished
+  echo
+  echo "---------------------------------------------------------"
+  echo
+  exit 0
 fi
 
 #--------------------------------------------------------------------

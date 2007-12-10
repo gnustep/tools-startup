@@ -55,7 +55,9 @@ gs_platform()
 }
 
 # Note: hostname -s doesn't work on every system...
-NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+if [ x"$NAME" = x ]; then
+  NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+fi
 
 # Figure out where the GNUstep files are
 RUNDIR=`pwd`

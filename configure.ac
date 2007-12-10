@@ -241,9 +241,11 @@ cc_result=$?
 cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
-     darwin*)
-       SETUP_ERRORS="$SETUP_ERRORS E093"
-       cc_apple=yes;;
+    darwin*)
+      if test "x$LIBRARY_COMBO" != "xapple-apple-apple"; then
+          SETUP_ERRORS="$SETUP_ERRORS E093"
+       fi
+      cc_apple=yes;;
   esac
 fi
 AC_MSG_RESULT($cc_apple)
@@ -409,13 +411,6 @@ fi
 AC_ARG_ENABLE(xml,
   [  --disable-xml			Compile even if XML-dependencies are not met],,
   enable_xml=yes)
-
-case $host_os in
-  *mingw*)
-    enable_xml=no;;
-  *)
-   ;;
-esac
 
 if test $enable_xml = yes; then
   # Save CFLAGS and LIBS as AM_PATH_XML clobbers these variables regardless
@@ -829,7 +824,7 @@ if test "$ac_cv_lib_tiff_TIFFReadScanline" = yes; then
   have_tiff_lib=yes
 fi
 
-if test "$have_tiff" = no; then
+if test "$have_tiff" = no -a "x$LIBRARY_COMBO" != "xapple-apple-apple"; then
   if test "$have_tiff_lib" = yes; then
     SETUP_ERRORS="$SETUP_ERRORS E400"
   else
