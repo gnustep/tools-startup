@@ -1,9 +1,17 @@
+2007-12-30  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.18.3
+
 2007-11-17  Adam Fedor  <fedor@gnu.org>
 
 	* ErrorList: clarify some warnings.
 	* configure.ac, scripts/platform.sh, setupvars.in, InstallGNUstep:
 	Add install of libffi on some platforms, disable xml automatically
 	if not found.
+
+2007-09-19  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.18.2
 
 2007-07-18  Adam Fedor  <fedor@gnu.org>
 
