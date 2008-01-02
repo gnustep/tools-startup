@@ -1,5 +1,6 @@
 2008-01-01  Adam Fedor  <fedor@gnu.org>
 
+	* Version 0.19.1
 	* configure.ac: Allow Apple gcc compiler.
 	* script/platforms.sh: Add flags for compiling with Apple gcc.
 
