@@ -13,10 +13,11 @@ not compile GNUstep.
 You need to install an FSF compiler, or make sure that the FSF 
 compiler is found first in your PATH.
 
-E101 Error
-No ld/binutils program installed. It's likely you are missing most
-or all programs needed for compiling. Check your operating system for
-information on installing a developer system.
+W101 Warning
+No ld/binutils program installed. Perhaps you are on some odd system
+where I cannot find this program or perhaps it's not needed on your system.
+Check your operating system for information or make sure you
+have installed a developer system.
 
 W102 Warning
 Make version is not recent enough or you are not using GNU

@@ -242,9 +242,6 @@ cc_apple=no
 if test  $cc_result = 0; then
   case $host_os in
     darwin*)
-      if test "x$LIBRARY_COMBO" != "xapple-apple-apple"; then
-          SETUP_ERRORS="$SETUP_ERRORS E093"
-       fi
       cc_apple=yes;;
   esac
 fi
@@ -313,7 +310,7 @@ if test x"$ac_cv_prog_LD" != x; then
     esac
   fi
 else
-  SETUP_ERRORS="$SETUP_ERRORS E101"
+  SETUP_ERRORS="$SETUP_ERRORS W101"
 fi
 
 AC_MSG_CHECKING(iconv version > 2.1)

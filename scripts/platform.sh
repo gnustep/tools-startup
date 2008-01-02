@@ -50,7 +50,10 @@ gs_platform_darwin()
 {
   gs_platform_generic
   GS_FFI=libffi
-  if [ -d /sw -a "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
+  if [ "$CC_APPLE" = yes -a "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
+    PKG_BASE_CONFIG="CPPFLAGS=-fnested-functions"
+    PKG_GUI_CONFIG="--disable-gsnd"
+  elif [ -d /sw -a "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
     # Fink is installed. Make sure to use this
     GS_CPPFLAGS="-I/sw/include"
     GS_LDFLAGS="-L/sw/lib"

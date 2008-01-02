@@ -301,24 +301,28 @@ else
   GMAKE=`find $SOURCESDIR -name gnustep-make*tar.gz`
   if [ x$GMAKE = x ]; then
     echo Cannot find gnustep-make distribution
+    echo Cannot find gnustep-make distribution >&5
     FOUND_SOURCES=no
   fi
   GMAKE=`basename $GMAKE .tar.gz`
   GBASE=`find $SOURCESDIR -name gnustep-base*tar.gz`
   if [ x$GBASE = x ]; then
     echo Cannot find gnustep-base distribution
+    echo Cannot find gnustep-base distribution >&5
     FOUND_SOURCES=no
   fi
   GBASE=`basename $GBASE .tar.gz`
   GGUI=`find $SOURCESDIR -name gnustep-gui*tar.gz`
   if [ x$GGUI = x ]; then
     echo Cannot find gnustep-gui distribution
+    echo Cannot find gnustep-gui distribution >&5
     FOUND_SOURCES=no
   fi
   GGUI=`basename $GGUI .tar.gz`
   GBACK=`find $SOURCESDIR -name gnustep-back*tar.gz`
   if [ x$GBACK = x ]; then
     echo Cannot find gnustep-back distribution
+    echo Cannot find gnustep-back distribution >&5
     FOUND_SOURCES=no
   fi
   GBACK=`basename $GBACK .tar.gz`
@@ -525,7 +529,7 @@ echo Library combo: $LIBRARY_COMBO
 echo "" >&5
 echo ""
 
-if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no ]; then
+if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
   echo "which should have ffcall-1.10.tar.gz and/or libffi present"
@@ -725,7 +729,7 @@ fi
 PLOG=04-base
 PKG=$GBASE
 PKG_DISPLAY="GNUstep Base"
-PKG_CONFIG="$PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
+PKG_CONFIG="$PKG_BASE_CONFIG $PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
 if [ $HAVE_LIBXML = 0 ]; then
   PKG_CONFIG="$PKG_CONFIG --disable-xml"
 fi
