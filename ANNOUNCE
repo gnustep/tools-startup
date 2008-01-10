@@ -1,11 +1,11 @@
 
-The GNUstep Startup Package, version 0.18.3 is now available.
+The GNUstep Startup Package, version 0.18.4 is now available.
 
 What is the GNUstep Startup Package?
 ====================================
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
-gnustep-make Version 2.0.2
+gnustep-make Version 2.0.4
 gnustep-base Version 1.14.2
 gnustep-gui Version 0.12.1
 gnustep-back Version 0.12.1
@@ -40,15 +40,15 @@ the libraries from SVN. Just make sure the 'core' directory is at the
 same level as the 'startup' directory, and run the InstallGNUstep script
 from startup.
 
-Changes in version 0.18.3
+Changes in version 0.18.4
 =========================
 
-Updated stable library releases
+Updated makefile package
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-The gnustep-startup-0.18.3.tar.gz distribution file has been placed at
+The gnustep-startup-0.18.4.tar.gz distribution file has been placed at
 <http://ftp.gnustep.org/pub/gnustep/core>
 
 Please log bug reports on the GNUstep project page
