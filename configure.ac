@@ -55,8 +55,7 @@ AC_SUBST(GNUSTEP_CONFIG_FILE)
 
 # Reading/importing the existing configuration file is good as a
 # default because it means that you don't have to type in your
-# GNUSTEP_SYSTEM_ROOT, GNUSTEP_LOCAL_ROOT, etc. settings every time
-# you configure gnustep-make. (please note we only read the
+# settings every time you configure gnustep-make. (please note we only read the
 # system-wide one, not the user one.  Reason being that the settings
 # we read will be used to generate the new system-wide one, while the
 # user one will be left untouched).
@@ -90,7 +89,7 @@ fi
 
 #--------------------------------------------------------------------
 # Important - from now on, any variable that is set in the
-# configuration file (eg, GNUSTEP_SYSTEM_ROOT) could already have a
+# configuration file could already have a
 # value that we have imported from the previous file.  ./configure
 # command line options should override those values, but otherwise we
 # should keep them!
@@ -98,55 +97,6 @@ fi
 # Those could also be env variables, which is really a backwards
 # compatibility hack that won't necessarily be kept in the future!
 #--------------------------------------------------------------------
-
-
-#--------------------------------------------------------------------
-# Process --prefix
-#--------------------------------------------------------------------
-
-# Please note that AC_PREFIX_DEFAULT will not appear in this position
-# in the generated configure file; it will appear at the very
-# beginning.  So we can't check for GNUSTEP_SYSTEM_ROOT or anything
-# similar in the implementation of AC_PREFIX_DEFAULT because we will
-# not have read GNUstep.conf yet ...  
-
-# PS: This is the default GNUSTEP_ROOT that is used when installing
-# GNUstep with no other indication.  Test for the C: directory, which
-# means we're on Windows
-AC_PREFIX_DEFAULT(`if test -d C: ; then
-    echo C:/GNUstep;
-  else
-    echo /usr/GNUstep ;
-  fi`)
-
-#
-# GNUSTEP_ROOT is only used to set default values for
-# GNUSTEP_SYSTEM_ROOT if they are not set in
-# config file or as a command-line argument.
-#
-if test "x$prefix" = "xNONE"; then
-  GNUSTEP_ROOT="$ac_default_prefix" ;
-  if [ -z "$GNUSTEP_SYSTEM_ROOT" ]; then
-    # Prefix not set and not read from config file and no env variable
-    # So set it to the default
-    GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";
-  fi
-else
-  GNUSTEP_ROOT="$prefix";
-
-  # Set the values for all those variables ovverriding anything read
-  # from the configuration file or inherited from the environment.
-  # The --prefix=xxx option should overwrite those.  Please notice
-  # that the --with-system-root=xxx (and similar) options are
-  # processed later as overwrite --prefix=xxx in their specific area.
-  GNUSTEP_SYSTEM_ROOT="$GNUSTEP_ROOT/System";
-fi
-
-#--------------------------------------------------------------------
-# Host, compiler checks
-#--------------------------------------------------------------------
-AC_PROG_CC
-AC_PROG_CPP
 
 AC_MSG_CHECKING(for library combo)
 AC_ARG_WITH(library-combo,[
@@ -172,6 +122,52 @@ esac
 
 AC_SUBST(ac_cv_library_combo)
 AC_MSG_RESULT($ac_cv_library_combo)
+
+#--------------------------------------------------------------------
+# Process --prefix
+#--------------------------------------------------------------------
+
+# Please note that AC_PREFIX_DEFAULT will not appear in this position
+# in the generated configure file; it will appear at the very
+# beginning.  So we can't check for GNUSTEP_PREFIX or anything
+# similar in the implementation of AC_PREFIX_DEFAULT because we will
+# not have read GNUstep.conf yet ...  
+case "$ac_cv_library_combo" in
+  apple-apple-apple) GNUSTEP_DEFAULT_PREFIX=/;;
+  *)   GNUSTEP_DEFAULT_PREFIX=/usr/GNUstep;;
+esac
+
+AC_PREFIX_DEFAULT(NONE)
+
+AC_MSG_CHECKING([for prefix])
+if test "x$prefix" = "xNONE"; then
+  # Use the default prefix for this filesystem layout
+  GNUSTEP_PREFIX="$GNUSTEP_DEFAULT_PREFIX";
+else
+  # Use the prefix that the user specified
+  GNUSTEP_PREFIX="$prefix";
+fi
+GNUSTEP_PREFIX=`echo "$GNUSTEP_PREFIX" | sed 's%/*$%%'`
+case "$ac_cv_library_combo" in
+  apple-apple-apple) 
+       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Library/GNUstep/Makefiles"
+       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Library"
+       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/usr/local/include"
+       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
+       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
+  *)   
+       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/System/Library/Makefiles"
+       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/System/Library"
+       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/System/Library/Headers"
+       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/System/Library/Libraries"
+       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/System/Tools";;
+esac
+
+#--------------------------------------------------------------------
+# Host, compiler checks
+#--------------------------------------------------------------------
+AC_PROG_CC
+AC_PROG_CPP
 
 #--------------------------------------------------------------------
 # specific target_os options
@@ -507,6 +503,10 @@ if test "x$no_x" = xyes -a $MINGW32 = no; then
   SETUP_ERRORS="$SETUP_ERRORS E127"
 fi
 
+AC_CHECK_HEADER(X11/Intrinsic.h)
+if test "$ac_cv_header_X11_Intrinsic_h" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W128"
+fi
 
 #--------------------------------------------------------------------
 # Check if Objective-C is installed
@@ -531,14 +531,13 @@ fi
 #-------------------------------------------------------------------
 GNUSTEP_INSTALLED=no
 AC_MSG_CHECKING(if GNUstep environment exists)
-if test -n "$GNUSTEP_SYSTEM_ROOT"; then
-  AC_MSG_RESULT($GNUSTEP_SYSTEM_ROOT)
+if test -d "$GNUSTEP_MAKEFILES"; then
+  AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)
-  GNUSTEP_SYSTEM_ROOT=/usr/GNUstep/System
 fi
 AC_MSG_CHECKING(if GNUstep directories exists)
-if test -d "$GNUSTEP_SYSTEM_ROOT" -a -f "$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"; then
+if test -f "$GNUSTEP_MAKEFILES/GNUstep.sh"; then
   AC_MSG_RESULT(yes)
   GNUSTEP_INSTALLED=yes
 else
@@ -551,28 +550,26 @@ AC_SUBST(GNUSTEP_INSTALLED)
 # Miscellaneous flags
 #--------------------------------------------------------------------
 # Set location of GNUstep dirs for later use
-GNUSTEP_HDIR=
 gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
-  GNUSTEP_HDIR=$GNUSTEP_SYSTEM_ROOT/Library/Headers
-  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh | wc -l | tr -d ' '`]
+  gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $GNUSTEP_MAKEFILES/GNUstep.sh | wc -l | tr -d ' '`]
   if test $gnustep_flattened = 1; then
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries
+    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES
   else
-    clean_target_os=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_os.sh $target_os`
-    clean_target_cpu=`$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/clean_cpu.sh $target_cpu`
+    clean_target_os=`$GNUSTEP_MAKEFILES/clean_os.sh $target_os`
+    clean_target_cpu=`$GNUSTEP_MAKEFILES/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_ROOT/Library/Libraries/$obj_dir/
+    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES/$obj_dir/
   fi
 fi
 
-# Check to see if the libobjc library is in our GNUSTEP_SYSTEM_ROOT.
+# Check to see if the libobjc library is in our GNUSTEP_SYSTEM_LIBRARIES.
 # If so, there are probably other libraries that we want there also, so
 # leave the proper includes in CPPFLAGS and LDFLAGS
 GS_CUSTOM_OBJC=NONE
 AC_MSG_CHECKING(for GNUstep up-to-date objc library)
 gs_cv_objc_libdir=NONE
-if test -f "$GNUSTEP_HDIR/objc/objc.h"; then
+if test -f "$GNUSTEP_SYSTEM_HEADERS/objc/objc.h"; then
   if test -f "$GNUSTEP_LDIR/libobjc.a" -o -f "$GNUSTEP_LDIR/libobjc.so" -o -f "$GNUSTEP_LDIR/libobjc-gnu.dylib"; then
     gs_cv_objc_libdir=$GNUSTEP_LDIR
   else
@@ -590,7 +587,7 @@ saved_CPPFLAGS="$CPPFLAGS"
 saved_LDFLAGS="$LDFLAGS"
 if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR" -o -f "$GNUSTEP_LDIR/libavcall.la" ; then
   # The following are needed to compile the test programs
-  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR"
+  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS"
   LDFLAGS="$LDFLAGS -L$GNUSTEP_LDIR"
 
   # And the following to execute them
@@ -857,11 +854,11 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_HDIR -I$GNUSTEP_HDIR/gnustep"
+  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_SYSTEM_HEADERS -I$GNUSTEP_SYSTEM_HEADERS/gnustep"
   if test $gnustep_flattened = 0; then
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$clean_target_cpu/$clean_target_os"
     # Also possible we are supporting multiple combos...
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HDIR/$ac_cv_library_combo  -I$GNUSTEP_HDIR/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo  -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
   fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
@@ -879,14 +876,14 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # Check the version of gnustep-make
   AC_MSG_CHECKING(GNUstep Make version)
-  gversion=$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/config-noarch.make
+  gversion=$GNUSTEP_MAKEFILES/config-noarch.make
   # Note: we need multiple [[ to get around autoconf's m4 processing
   GNUSTEP_MAKE_VERSION=[`grep GNUSTEP_MAKE_VERSION $gversion | sed "s/.*=\([0-9.]\)/\1/"`]
   AC_MSG_RESULT($GNUSTEP_MAKE_VERSION)
 
   AC_MSG_CHECKING(GNUstep Base version)
   if test $ac_cv_header_Foundation_NSObject_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-base/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-base/Versions -name Info-gnustep.plist -print`
     GNUSTEP_BASE_VERSION=0.0.0
     # This should get the last version
     for file in $gversion; do
@@ -900,7 +897,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Gui version)
   if test $ac_cv_header_AppKit_NSApplication_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-gui/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
     GNUSTEP_GUI_VERSION=0.0.0
     GNUSTEP_GUI_INTERFACE=
     # This should get the last version
@@ -920,14 +917,19 @@ fi
     BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
   fi
   have_back=no
-  if test -f $GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
+  if test -f $GNUSTEP_SYSTEM_LIBRARY/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
     have_back=yes
     AC_MSG_RESULT($BUNDLE_NAME)
   else
     AC_MSG_RESULT(none)
   fi
 
-AC_SUBST(GNUSTEP_SYSTEM_ROOT)
+AC_SUBST(GNUSTEP_PREFIX)
+AC_SUBST(GNUSTEP_MAKEFILES)
+AC_SUBST(GNUSTEP_SYSTEM_LIBRARY)
+AC_SUBST(GNUSTEP_SYSTEM_HEADERS)
+AC_SUBST(GNUSTEP_SYSTEM_LIBRARIES)
+AC_SUBST(GNUSTEP_SYSTEM_TOOLS)
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
 AC_SUBST(ac_cv_header_callback_h)

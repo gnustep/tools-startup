@@ -69,12 +69,12 @@ do
       echo "  --verbose	- Print verbose compilation information"
       #echo "  --skip-install	- Skip re-install of current versions (debug)"
       echo
-      echo "  --prefix={dir}	- GNUstep root(prefix) location"
+      echo "  --prefix={dir}	- Alternate root(prefix) location"
       echo "  --builddir={dir}	- Location to build packages"
+      #echo "  --install-root={dir}	- Install dir prefix"
       echo "  --config-options={options}	- Extra configuration options"
       echo "  --config-file={dir/GNUstep.conf}	- Set location of GNUstep.conf"
       echo "  --ffi={ffcall|libffi}	- ffi package to build"
-      #echo "  --install-root={dir}	- Install dir prefix"
       exit 0
       ;;
     --batch | -b)
@@ -129,8 +129,8 @@ done
 
 # If prefix wasn't set, see if something already exists
 if test -z "$gs_root_prefix"; then
-  if test -n "$GNUSTEP_SYSTEM_ROOT"; then
-    gs_root_prefix=`dirname $GNUSTEP_SYSTEM_ROOT`
+  if test -n "$GNUSTEP_PREFIX"; then
+    gs_root_prefix=$GNUSTEP_PREFIX
   fi
 fi
 
@@ -365,7 +365,6 @@ echo "Install log for the InstallGNUstep script" >&5
 echo >&5
 echo "Arguments: $gs_command_line" >&5
 echo "Root Prefix: $gs_root_prefix" >&5
-echo "System Root: $GNUSTEP_SYSTEM_ROOT" >&5
 echo "Install Root: $gs_install_prefix" >&5
 echo >&5
 echo "Source files:" >&5
@@ -422,6 +421,17 @@ fi
 echo "" >&5
 echo "$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
 $SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
+
+# Reset the environment, just to make sure it's clean.
+if [ -n "$GNUSTEP_MAKEFILES" ]; then
+    case "$gs_build_os" in
+      # Solaris 2.7 freaks out about this, for some reason.
+      solaris*)  ;;
+	     *) 
+        . $GNUSTEP_MAKEFILES/GNUstep-reset.sh
+	;;
+    esac
+fi
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -527,7 +537,6 @@ echo Install Prefix: $gs_install_prefix
 echo Library combo: $LIBRARY_COMBO >&5
 echo Library combo: $LIBRARY_COMBO
 echo "" >&5
-echo ""
 
 if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
   echo "******** Source files not found **********"
@@ -568,30 +577,18 @@ else
   gs_build_package
 fi
 
-GNUSTEP_SYSTEM_ROOT=$GNUSTEP_SYSTEM_ROOT_CONFIG
-
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh >&5 2>&1
+ls $gs_install_prefix$GNUSTEP_MAKEFILES/GNUstep.sh >&5 2>&1
 if [ $gsexitstatus != 0 ]; then
   gs_log_error
   exit 1
 fi
 
-# Reset the environment, just to make sure it's clean.
-if [ -f $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh ]; then
-    gs_save=$GNUSTEP_SYSTEM_ROOT
-    case "$gs_build_os" in
-      # Solaris 2.7 freaks out about this, for some reason.
-      solaris*)  ;;
-	     *) 
-        . $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep-reset.sh
-	;;
-    esac
-    GNUSTEP_SYSTEM_ROOT=$gs_save
-    unset gs_save
-fi
-. $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh
+# Setup the environment (GNUstep.sh unsets things we need to get them back).
+. $gs_install_prefix$GNUSTEP_MAKEFILES/GNUstep.sh
+. ./setupvars
+GNUSTEP_MAKEFILES=$gs_install_prefix$GNUSTEP_MAKEFILES
 
 #--------------------------------------------------------------------
 # Build pre-reqs
@@ -600,20 +597,19 @@ if [ $GS_FFI = ffcall ]; then
   PLOG=02-ffcall
   PKG=$FFCALL
   PKG_DISPLAY="ffcall"
-  PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
-     --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
-     --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
+  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
+     --libdir=$GNUSTEP_SYSTEM_LIBRARIES \
+     --includedir=$GNUSTEP_SYSTEM_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
 else
   PLOG=02-libffi
   PKG=$LIBFFI
   PKG_DISPLAY="libffi"
-  PKG_CONFIG="--prefix=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT \
-     --libdir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries \
-     --includedir=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers\
+  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
+     --libdir=$GNUSTEP_SYSTEM_LIBRARIES \
+     --includedir=$GNUSTEP_SYSTEM_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS}"
 fi
-PKG_INSTALL=
 PKG_PATCHES=
 gsexitstatus=0
 
@@ -643,10 +639,6 @@ PLOG=02-libobjc
 PKG=$LIBOBJC
 PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
-PKG_INSTALL=
-if [ -n "$gs_install_prefix" ]; then
-  PKG_INSTALL=DESTDIR=$gs_install_prefix
-fi
 PKG_PATCHES=`find $SOURCESDIR -name libobjc*patch`
 gsexitstatus=0
 if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
@@ -674,7 +666,7 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   fi
   echo "  Exit statis is $gsexitstatus" >&5
   echo "  Install Check:" >&5
-  ls $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/objc/Object.h >&5 2>&1
+  ls $gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/objc/Object.h >&5 2>&1
   # Need to check if libobjc and ffcall got installed...
   if [ $gsexitstatus != 0 ]; then
     gs_log_error
@@ -682,9 +674,9 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   fi
 fi
 
-if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries/libobjc-gnu.dylib ]; then
+if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARIES/libobjc-gnu.dylib ]; then
   # Need to make link for compiler to find library
-  pushd $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Libraries
+  pushd $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARIES
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
     ln -s libobjc.dylib libobjc-gnu.dylib
   else
@@ -716,7 +708,7 @@ else
   gs_build_package
 fi
 
-if [ $gsexitstatus != 0 -o \! -f $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh ]; then
+if [ $gsexitstatus != 0 -o \! -f $GNUSTEP_MAKEFILES/GNUstep.sh ]; then
   gs_log_error
   exit 1
 fi
@@ -748,7 +740,7 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/Foundation/NSObject.h
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/Foundation/NSObject.h
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
 ls $HEADER_CHECK >&5 2>&1
@@ -788,7 +780,7 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Headers/AppKit/NSApplication.h
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/AppKit/NSApplication.h
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
 ls $HEADER_CHECK >&5 2>&1
@@ -816,7 +808,7 @@ else
 fi
 echo 
 
-gversion=`find $GNUSTEP_SYSTEM_ROOT/Library/Libraries/gnustep-gui/Versions -name Info-gnustep.plist -print`
+gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
 GNUSTEP_GUI_INTERFACE=
 # This should get the last version
 for file in $gversion; do
@@ -830,7 +822,7 @@ fi
 
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls  $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
+ls  $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARY/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
 if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle ]; then
   gs_log_error
   exit 1
@@ -851,7 +843,7 @@ echo
 echo "Now run the GNUstep initialization script (put this in your"
 echo ".bashrc or other type of startup script). Note the '.' at the"
 echo "beginning of the line."
-echo ". $GNUSTEP_SYSTEM_ROOT/Library/Makefiles/GNUstep.sh"
+echo ". $GNUSTEP_MAKEFILES/GNUstep.sh"
 echo
 echo "Now you can install some applications and start using GNUstep"
 echo "Look for a few applications in the AppSources directory. The"

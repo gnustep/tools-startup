@@ -72,6 +72,11 @@ for compiling anything that uses X. If you are using Debian, or a similar
 packaged system, try looking for help on installing developer or -dev
 packages for the X11 system.
 
+W128 Warining
+The Xt developer headers were not found. On Debian this may mean that
+you have not installed the libxt-dev package (Debain also needs 
+xserve-xorg-dev). Please install this before proceeding.
+
 E140 Error
 Unable to find integer of same size as void*. If you are porting GNUstep
 to a new machine please ask for help at bug-gnustep@gnu.org
