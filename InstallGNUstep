@@ -533,7 +533,6 @@ if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = n
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
   echo "which should have ffcall-1.10.tar.gz and/or libffi present"
-  echo "Download this file from ftp://ftp.gnustep.org/pub/gnustep/libs"
   echo "Source files not found. STOP" >&5
   exit 1
 fi
