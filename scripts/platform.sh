@@ -123,7 +123,9 @@ gs_flags()
 gs_post_flags()
 {
   if [ "$CC_APPLE" = yes ]; then
-    GS_PLATFORM_BUILD_OBJC=yes
+    if [ "x$LIBRARY_COMBO" != "xapple-apple-apple" ]; then
+      GS_PLATFORM_BUILD_OBJC=yes
+    fi
     PKG_BASE_CONFIG="CPPFLAGS=-fnested-functions"
     PKG_GUI_CONFIG="--disable-gsnd"
   fi
