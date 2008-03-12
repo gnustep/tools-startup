@@ -593,6 +593,7 @@ GNUSTEP_MAKEFILES=$gs_install_prefix$GNUSTEP_MAKEFILES
 #--------------------------------------------------------------------
 # Build pre-reqs
 #--------------------------------------------------------------------
+PKG_PATCHES=
 if [ $GS_FFI = ffcall ]; then
   PLOG=02-ffcall
   PKG=$FFCALL
@@ -605,12 +606,13 @@ else
   PLOG=02-libffi
   PKG=$LIBFFI
   PKG_DISPLAY="libffi"
+  # libffi 3.0.1 uses includesdir?
+  PKG_PATCHES=`find $FFCALLSOURCESDIR -name libffi*patch`
   PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
      --libdir=$GNUSTEP_SYSTEM_LIBRARIES \
      --includedir=$GNUSTEP_SYSTEM_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS}"
 fi
-PKG_PATCHES=
 gsexitstatus=0
 
 REBUILD_MAKE=no

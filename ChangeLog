@@ -3,7 +3,7 @@
 	* configure.ac: Add check for xt-dev package (fixes bug #22445)
 	* InstallGNUstep: Avoid _ROOT variables, use new make v2 options.
 
-	* Update to new libffi package
+	* Update to new libffi package.  Add patch to get it to install correctly.
 
 2008-01-10  Adam Fedor  <fedor@gnu.org>
 
