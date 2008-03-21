@@ -638,7 +638,7 @@ PLOG=02-libobjc
 PKG=$LIBOBJC
 PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
-PKG_PATCHES=`find $SOURCESDIR -name libobjc*patch`
+PKG_PATCHES=`find $FFCALLSOURCESDIR -name gnustep-objc*patch`
 gsexitstatus=0
 if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   # Need to install our own version of libobjc

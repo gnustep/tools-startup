@@ -1,4 +1,10 @@
 
+Changes in version 0.19.3
+=========================
+Updated core packages
+
+Updated Install script to for GNUstep Make v2.
+
 Changes in version 0.19.2
 =========================
 Updated Makefile package
