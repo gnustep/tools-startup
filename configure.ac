@@ -174,7 +174,7 @@ AC_PROG_CPP
 #--------------------------------------------------------------------
 case "$target_os" in
   freebsd* | openbsd* )	
-	        CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+	        CPPFLAGS="$CPPFLAGS -I/usr/local/include -I/usr/X11R6/include"
 		LDFLAGS="$LDFLAGS -L/usr/local/lib";;
   netbsd*)	CPPFLAGS="$CPPFLAGS -I/usr/pkg/include"
 		LDFLAGS="$LDFLAGS -Wl,-R/usr/pkg/lib -L/usr/pkg/lib";;
@@ -261,7 +261,7 @@ AC_PATH_PROG(WHOAMI, whoami, echo, $PATH:/usr/ucb)
 AC_CHECK_PROGS(GNUMAKE, [gmake make], make)
 AC_MSG_CHECKING(make version > 3.75)
 make_version=[`$GNUMAKE --version | grep "[0-9]\.[0-9][0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
-if test -n "$make_version" -a "$make_version" \> 3.74; then
+if test -n "$make_version" -a "$make_version" > 3.74; then
   AC_MSG_RESULT(yes $make_version)
 else
   AC_MSG_RESULT(no $make_version)
@@ -288,7 +288,7 @@ if test x"$ac_cv_prog_LD" != x; then
   AC_MSG_CHECKING(binutils version > 2.9)
   ld_version=[`ld --version 2>/dev/null | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/" 2>/dev/null`]
   ld_minor_version=`echo $ld_version | tr '.' ' ' | awk '{print $2}'`
-  if test -n "$ld_version" -a "$ld_minor_version" \> 1; then
+  if test -n "$ld_version" -a "$ld_minor_version" > 1; then
     AC_MSG_RESULT(yes $ld_version)
   else
     AC_MSG_RESULT(no $ld_version)
@@ -311,7 +311,7 @@ fi
 
 AC_MSG_CHECKING(iconv version > 2.1)
 iconv_version=[`iconv -V 2>/dev/null | grep "[0-9]\.[0-9]" | sed "s/\(^[^0-9]*\)\([0-9]\.[0-9][0-9]*\)\([^0-9].*\)/\2/"`]
-if test -n "$iconv_version" -a "$iconv_version" \> 2.1; then
+if test -n "$iconv_version" -a "$iconv_version" > 2.1; then
   AC_MSG_RESULT(yes $iconv_version)
 else
   AC_MSG_RESULT(no $iconv_version)
