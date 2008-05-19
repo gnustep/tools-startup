@@ -107,7 +107,8 @@ do
     --config-file)
       GSCONFIGFILE=--with-config-file=$gs_optarg;; 
     --ffi)
-      FORCEFFILIB=$gs_optarg;; 
+      FORCEFFILIB=$gs_optarg
+      PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --enable-$gs_optarg";; 
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end

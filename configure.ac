@@ -598,8 +598,13 @@ fi
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
 #--------------------------------------------------------------------
-enable_ffcall=yes
-enable_libffi=no
+AC_ARG_ENABLE(libffi,
+  [  --enable-libffi            Enable use of libffi library],,
+    enable_libffi=no)
+
+AC_ARG_ENABLE(ffcall,
+  [  --enable-ffcall            Enable use of ffcall library],,
+    enable_ffcall=yes)
 AC_CHECK_HEADER(ffi.h, have_libffi=yes, have_libffi=no)
 AC_CHECK_HEADERS(callback.h, have_ffcall=yes, have_ffcall=no)
 if test $have_ffcall = no; then

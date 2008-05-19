@@ -1318,6 +1318,8 @@ Optional Features:
 --enaable-importing-config-file		Enable importing the existing GNUstep configuration file
   --disable-xml			Compile even if XML-dependencies are not met
   --disable-xmltest		Do not try to compile and run a test XML program
+  --enable-libffi            Enable use of libffi library
+  --enable-ffcall            Enable use of ffcall library
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -7410,8 +7412,21 @@ fi
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
 #--------------------------------------------------------------------
-enable_ffcall=yes
-enable_libffi=no
+# Check whether --enable-libffi was given.
+if test "${enable_libffi+set}" = set; then
+  enableval=$enable_libffi;
+else
+  enable_libffi=no
+fi
+
+
+# Check whether --enable-ffcall was given.
+if test "${enable_ffcall+set}" = set; then
+  enableval=$enable_ffcall;
+else
+  enable_ffcall=yes
+fi
+
 if test "${ac_cv_header_ffi_h+set}" = set; then
   { echo "$as_me:$LINENO: checking for ffi.h" >&5
 echo $ECHO_N "checking for ffi.h... $ECHO_C" >&6; }
