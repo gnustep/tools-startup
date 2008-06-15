@@ -1,3 +1,7 @@
+2008-06-15  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.20.0
+
 2008-05-19  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Fixes for OpenBSD (Bug #23282)
