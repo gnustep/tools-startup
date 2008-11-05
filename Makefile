@@ -22,7 +22,7 @@ SVNPREFIX=svn+ssh://svn.gna.org/svn/gnustep/tools/startup
 
 
 all:
-	InstallGNUstep
+	./InstallGNUstep
 
 clean:
 	rm -f *~

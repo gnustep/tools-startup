@@ -144,7 +144,7 @@ if test -z "$LIBRARY_COMBO"; then
   LIBRARY_COMBO=gnu-gnu-gnu
 fi
 
-if test -z "$FORCEFFILIB"; then
+if test -n "$FORCEFFILIB"; then
   GS_FFI=$FORCEFFILIB
 fi
 

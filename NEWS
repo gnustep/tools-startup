@@ -1,4 +1,8 @@
 
+Changes in version 0.20.1
+=========================
+FFI bug fixes
+
 Changes in version 0.20.0
 =========================
 Updated core packages to new stable branch
