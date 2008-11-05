@@ -6,7 +6,7 @@ What is the GNUstep Startup Package?
 
 GNUstep Startup is a compilation of the following core GNUstep packages:
 gnustep-make Version 2.0.6
-gnustep-base Version 1.60.0
+gnustep-base Version 1.16.3
 gnustep-gui Version 0.14.0
 gnustep-back Version 0.14.0
 
@@ -45,6 +45,7 @@ Changes in version 0.20.1
 =========================
 
 FFI bug fixes
+Upgrade base to 1.16.3
 
 Where can you get it?  How can you compile it?
 ==============================================
