@@ -706,10 +706,10 @@ objc_threaded
 ac_cv_objc_threaded
 GNUSTEP_PREFIX
 GNUSTEP_MAKEFILES
-GNUSTEP_SYSTEM_LIBRARY
-GNUSTEP_SYSTEM_HEADERS
-GNUSTEP_SYSTEM_LIBRARIES
-GNUSTEP_SYSTEM_TOOLS
+GNUSTEP_LIBRARY
+GNUSTEP_HEADERS
+GNUSTEP_LIBRARIES
+GNUSTEP_TOOLS
 GNUSTEP_SOURCED
 GS_CUSTOM_OBJC
 ac_cv_header_callback_h
@@ -2087,16 +2087,16 @@ GNUSTEP_PREFIX=`echo "$GNUSTEP_PREFIX" | sed 's%/*$%%'`
 case "$ac_cv_library_combo" in
   apple-apple-apple)
        GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Library/GNUstep/Makefiles"
-       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Library"
-       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/usr/local/include"
-       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
-       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
+       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/Library"
+       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/usr/local/include"
+       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
+       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
   *)
-       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Local/Library/Makefiles"
-       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
-       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
-       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
-       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
+       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/System/Library/Makefiles"
+       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
+       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
+       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
+       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
 esac
 
 #--------------------------------------------------------------------
@@ -7366,23 +7366,23 @@ gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
   gnustep_flattened=`grep GNUSTEP_FLATTENED=yes $GNUSTEP_MAKEFILES/GNUstep.sh | wc -l | tr -d ' '`
   if test $gnustep_flattened = 1; then
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES
+    GNUSTEP_LDIR=$GNUSTEP_LIBRARIES
   else
     clean_target_os=`$GNUSTEP_MAKEFILES/clean_os.sh $target_os`
     clean_target_cpu=`$GNUSTEP_MAKEFILES/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES/$obj_dir/
+    GNUSTEP_LDIR=$GNUSTEP_LIBRARIES/$obj_dir/
   fi
 fi
 
-# Check to see if the libobjc library is in our GNUSTEP_SYSTEM_LIBRARIES.
+# Check to see if the libobjc library is in our GNUSTEP_LIBRARIES.
 # If so, there are probably other libraries that we want there also, so
 # leave the proper includes in CPPFLAGS and LDFLAGS
 GS_CUSTOM_OBJC=NONE
 { echo "$as_me:$LINENO: checking for GNUstep up-to-date objc library" >&5
 echo $ECHO_N "checking for GNUstep up-to-date objc library... $ECHO_C" >&6; }
 gs_cv_objc_libdir=NONE
-if test -f "$GNUSTEP_SYSTEM_HEADERS/objc/objc.h"; then
+if test -f "$GNUSTEP_HEADERS/objc/objc.h"; then
   if test -f "$GNUSTEP_LDIR/libobjc.a" -o -f "$GNUSTEP_LDIR/libobjc.so" -o -f "$GNUSTEP_LDIR/libobjc-gnu.dylib"; then
     gs_cv_objc_libdir=$GNUSTEP_LDIR
   else
@@ -7401,7 +7401,7 @@ saved_CPPFLAGS="$CPPFLAGS"
 saved_LDFLAGS="$LDFLAGS"
 if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR" -o -f "$GNUSTEP_LDIR/libavcall.la" ; then
   # The following are needed to compile the test programs
-  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS"
+  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS"
   LDFLAGS="$LDFLAGS -L$GNUSTEP_LDIR"
 
   # And the following to execute them
@@ -9336,11 +9336,11 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_SYSTEM_HEADERS -I$GNUSTEP_SYSTEM_HEADERS/gnustep"
+  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_HEADERS -I$GNUSTEP_HEADERS/gnustep"
   if test $gnustep_flattened = 0; then
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS/$clean_target_cpu/$clean_target_os"
     # Also possible we are supporting multiple combos...
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo  -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS/$ac_cv_library_combo  -I$GNUSTEP_HEADERS/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
   fi
 
 
@@ -9513,7 +9513,7 @@ echo "${ECHO_T}$GNUSTEP_MAKE_VERSION" >&6; }
   { echo "$as_me:$LINENO: checking GNUstep Base version" >&5
 echo $ECHO_N "checking GNUstep Base version... $ECHO_C" >&6; }
   if test $ac_cv_header_Foundation_NSObject_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-base/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_LIBRARIES/gnustep-base/Versions -name Info-gnustep.plist -print`
     GNUSTEP_BASE_VERSION=0.0.0
     # This should get the last version
     for file in $gversion; do
@@ -9529,7 +9529,7 @@ echo "${ECHO_T}$GNUSTEP_BASE_VERSION" >&6; }
   { echo "$as_me:$LINENO: checking GNUstep Gui version" >&5
 echo $ECHO_N "checking GNUstep Gui version... $ECHO_C" >&6; }
   if test $ac_cv_header_AppKit_NSApplication_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
     GNUSTEP_GUI_VERSION=0.0.0
     GNUSTEP_GUI_INTERFACE=
     # This should get the last version
@@ -9551,7 +9551,7 @@ echo $ECHO_N "checking GNUstep Back... $ECHO_C" >&6; }
     BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
   fi
   have_back=no
-  if test -f $GNUSTEP_SYSTEM_LIBRARY/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
+  if test -f $GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
     have_back=yes
     { echo "$as_me:$LINENO: result: $BUNDLE_NAME" >&5
 echo "${ECHO_T}$BUNDLE_NAME" >&6; }
@@ -10320,10 +10320,10 @@ objc_threaded!$objc_threaded$ac_delim
 ac_cv_objc_threaded!$ac_cv_objc_threaded$ac_delim
 GNUSTEP_PREFIX!$GNUSTEP_PREFIX$ac_delim
 GNUSTEP_MAKEFILES!$GNUSTEP_MAKEFILES$ac_delim
-GNUSTEP_SYSTEM_LIBRARY!$GNUSTEP_SYSTEM_LIBRARY$ac_delim
-GNUSTEP_SYSTEM_HEADERS!$GNUSTEP_SYSTEM_HEADERS$ac_delim
-GNUSTEP_SYSTEM_LIBRARIES!$GNUSTEP_SYSTEM_LIBRARIES$ac_delim
-GNUSTEP_SYSTEM_TOOLS!$GNUSTEP_SYSTEM_TOOLS$ac_delim
+GNUSTEP_LIBRARY!$GNUSTEP_LIBRARY$ac_delim
+GNUSTEP_HEADERS!$GNUSTEP_HEADERS$ac_delim
+GNUSTEP_LIBRARIES!$GNUSTEP_LIBRARIES$ac_delim
+GNUSTEP_TOOLS!$GNUSTEP_TOOLS$ac_delim
 GNUSTEP_SOURCED!$GNUSTEP_SOURCED$ac_delim
 GS_CUSTOM_OBJC!$GS_CUSTOM_OBJC$ac_delim
 ac_cv_header_callback_h!$ac_cv_header_callback_h$ac_delim

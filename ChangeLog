@@ -2,6 +2,8 @@
 
 	* configure.ac: Check/Install files in Local domain
 	* scripts/test-gnustep: Remove old install before trying again
+	* InstallGNUstep: Fixes for installing in Local domain and setting
+	CPPFLAGS
 
 2008-11-05  Adam Fedor  <fedor@gnu.org>
 

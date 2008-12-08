@@ -401,26 +401,16 @@ echo "******** Checking system for installation issues **********"
 echo "Configuring for $gs_build" >&5
 echo "Configuring for $gs_build"
 gs_flags
-PKG_CPPFLAGS=
-PKG_LDFLAGS=
-echo "CPPFLAGS: $CPPFLAGS" >&5
-echo "LDFLAGS: $LDFLAGS" >&5
 if test -n "$GS_CPPFLAGS"; then
-  if test -n "$CPPFLAGS"; then
-    CPPFLAGS="$CPPFLAGS $GS_CPPFLAGS"
-  else
-    PKG_CPPFLAGS=CPPFLAGS=$GS_CPPFLAGS
-    echo $PKG_CPPFLAGS >&5
-  fi
+  CPPFLAGS="$CPPFLAGS $GS_CPPFLAGS"
+  export CPPFLAGS
 fi
 if test -n "$GS_LDFLAGS"; then
-  if test -n "$LDFLAGS"; then
-    LDFLAGS="$LDFLAGS $GS_LDFLAGS"
-  else
-    PKG_LDFLAGS=LDFLAGS=$GS_LDFLAGS
-    echo $PKG_LDFLAGS >&5
-  fi
+  LDFLAGS="$LDFLAGS $GS_LDFLAGS"
+  export LDFLAGS
 fi
+echo "CPPFLAGS: $CPPFLAGS" >&5
+echo "LDFLAGS: $LDFLAGS" >&5
 
 rm -f setupvars
 PREFIX=
@@ -428,8 +418,8 @@ if [ -n "$gs_root_prefix" ]; then
   PREFIX=--prefix=$gs_root_prefix
 fi
 echo "" >&5
-echo "$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS}" >&5
-$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} ${PKG_CPPFLAGS} ${PKG_LDFLAGS} 2>&1 | tee logs/00-config-output.log
+echo "$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} " >&5
+$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} 2>&1 | tee logs/00-config-output.log
 
 # Now print out a report for the user describing any problems with their
 # system that we found.
@@ -597,8 +587,8 @@ if [ $GS_FFI = ffcall ]; then
   PKG=$FFCALL
   PKG_DISPLAY="ffcall"
   PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
-     --libdir=$GNUSTEP_SYSTEM_LIBRARIES \
-     --includedir=$GNUSTEP_SYSTEM_HEADERS \
+     --libdir=$GNUSTEP_LIBRARIES \
+     --includedir=$GNUSTEP_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
 else
   PLOG=02-libffi
@@ -607,8 +597,8 @@ else
   # libffi 3.0.1 uses includesdir?
   PKG_PATCHES=`find $FFCALLSOURCESDIR -name libffi*patch`
   PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
-     --libdir=$GNUSTEP_SYSTEM_LIBRARIES \
-     --includedir=$GNUSTEP_SYSTEM_HEADERS \
+     --libdir=$GNUSTEP_LIBRARIES \
+     --includedir=$GNUSTEP_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS}"
 fi
 gsexitstatus=0
@@ -655,7 +645,7 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   SAVESOURCESDIR=$SOURCESDIR
   SOURCESDIR=$FFCALLSOURCESDIR
   SAVEMAKEFLAGS="$MAKEFLAGS"
-  MAKEFLAGS=
+  MAKEFLAGS=GNUSTEP_INSTALLATION_DOMAIN=LOCAL
   gs_build_package
   SOURCESDIR=$SAVESOURCESDIR
   MAKEFLAGS="$SAVEMAKEFLAGS"
@@ -666,7 +656,7 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   fi
   echo "  Exit statis is $gsexitstatus" >&5
   echo "  Install Check:" >&5
-  ls $gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/objc/Object.h >&5 2>&1
+  ls $gs_install_prefix$GNUSTEP_HEADERS/objc/Object.h >&5 2>&1
   # Need to check if libobjc and ffcall got installed...
   if [ $gsexitstatus != 0 ]; then
     gs_log_error
@@ -674,9 +664,9 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   fi
 fi
 
-if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARIES/libobjc-gnu.dylib ]; then
+if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_LIBRARIES/libobjc-gnu.dylib ]; then
   # Need to make link for compiler to find library
-  pushd $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARIES
+  pushd $gs_install_prefix$GNUSTEP_LIBRARIES
   if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
     ln -s libobjc.dylib libobjc-gnu.dylib
   else
@@ -740,7 +730,7 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/Foundation/NSObject.h
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_HEADERS/Foundation/NSObject.h
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
 ls $HEADER_CHECK >&5 2>&1
@@ -780,7 +770,7 @@ else
   gs_build_package
 fi
 
-HEADER_CHECK=$gs_install_prefix$GNUSTEP_SYSTEM_HEADERS/AppKit/NSApplication.h
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_HEADERS/AppKit/NSApplication.h
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
 ls $HEADER_CHECK >&5 2>&1
@@ -808,7 +798,7 @@ else
 fi
 echo 
 
-gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
+gversion=`find $GNUSTEP_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
 GNUSTEP_GUI_INTERFACE=
 # This should get the last version
 for file in $gversion; do
@@ -822,8 +812,8 @@ fi
 
 echo "  Exit statis is $gsexitstatus" >&5
 echo "  Install Check:" >&5
-ls  $gs_install_prefix$GNUSTEP_SYSTEM_LIBRARY/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
-if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_SYSTEM_ROOT/Library/Bundles/$BUNDLE_NAME.bundle ]; then
+ls  $gs_install_prefix$GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
+if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle ]; then
   gs_log_error
   exit 1
 fi

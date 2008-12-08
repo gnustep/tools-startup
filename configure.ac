@@ -151,16 +151,16 @@ GNUSTEP_PREFIX=`echo "$GNUSTEP_PREFIX" | sed 's%/*$%%'`
 case "$ac_cv_library_combo" in
   apple-apple-apple) 
        GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Library/GNUstep/Makefiles"
-       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Library"
-       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/usr/local/include"
-       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
-       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
+       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/Library"
+       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/usr/local/include"
+       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
+       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
   *)   
-       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Local/Library/Makefiles"
-       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
-       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
-       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
-       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
+       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/System/Library/Makefiles"
+       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
+       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
+       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
+       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
 esac
 
 #--------------------------------------------------------------------
@@ -554,22 +554,22 @@ gnustep_flattened=1
 if test $GNUSTEP_INSTALLED = yes; then
   gnustep_flattened=[`grep GNUSTEP_FLATTENED=yes $GNUSTEP_MAKEFILES/GNUstep.sh | wc -l | tr -d ' '`]
   if test $gnustep_flattened = 1; then
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES
+    GNUSTEP_LDIR=$GNUSTEP_LIBRARIES
   else
     clean_target_os=`$GNUSTEP_MAKEFILES/clean_os.sh $target_os`
     clean_target_cpu=`$GNUSTEP_MAKEFILES/clean_cpu.sh $target_cpu`
     obj_dir=$clean_target_cpu/$clean_target_os
-    GNUSTEP_LDIR=$GNUSTEP_SYSTEM_LIBRARIES/$obj_dir/
+    GNUSTEP_LDIR=$GNUSTEP_LIBRARIES/$obj_dir/
   fi
 fi
 
-# Check to see if the libobjc library is in our GNUSTEP_SYSTEM_LIBRARIES.
+# Check to see if the libobjc library is in our GNUSTEP_LIBRARIES.
 # If so, there are probably other libraries that we want there also, so
 # leave the proper includes in CPPFLAGS and LDFLAGS
 GS_CUSTOM_OBJC=NONE
 AC_MSG_CHECKING(for GNUstep up-to-date objc library)
 gs_cv_objc_libdir=NONE
-if test -f "$GNUSTEP_SYSTEM_HEADERS/objc/objc.h"; then
+if test -f "$GNUSTEP_HEADERS/objc/objc.h"; then
   if test -f "$GNUSTEP_LDIR/libobjc.a" -o -f "$GNUSTEP_LDIR/libobjc.so" -o -f "$GNUSTEP_LDIR/libobjc-gnu.dylib"; then
     gs_cv_objc_libdir=$GNUSTEP_LDIR
   else
@@ -587,7 +587,7 @@ saved_CPPFLAGS="$CPPFLAGS"
 saved_LDFLAGS="$LDFLAGS"
 if test "$gs_cv_objc_libdir" = "$GNUSTEP_LDIR" -o -f "$GNUSTEP_LDIR/libavcall.la" ; then
   # The following are needed to compile the test programs
-  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS"
+  CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS"
   LDFLAGS="$LDFLAGS -L$GNUSTEP_LDIR"
 
   # And the following to execute them
@@ -859,11 +859,11 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   # gnustep libraries installed?
   saved_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_SYSTEM_HEADERS -I$GNUSTEP_SYSTEM_HEADERS/gnustep"
+  CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c -I$GNUSTEP_HEADERS -I$GNUSTEP_HEADERS/gnustep"
   if test $gnustep_flattened = 0; then
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS/$clean_target_cpu/$clean_target_os"
     # Also possible we are supporting multiple combos...
-    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo  -I$GNUSTEP_SYSTEM_HEADERS/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
+    CPPFLAGS="$CPPFLAGS -I$GNUSTEP_HEADERS/$ac_cv_library_combo  -I$GNUSTEP_HEADERS/$ac_cv_library_combo/$clean_target_cpu/$clean_target_os"
   fi
   AC_CHECK_HEADERS([Foundation/NSObject.h AppKit/NSApplication.h]) 
 
@@ -888,7 +888,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Base version)
   if test $ac_cv_header_Foundation_NSObject_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-base/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_LIBRARIES/gnustep-base/Versions -name Info-gnustep.plist -print`
     GNUSTEP_BASE_VERSION=0.0.0
     # This should get the last version
     for file in $gversion; do
@@ -902,7 +902,7 @@ if test $GNUSTEP_INSTALLED = yes; then
 
   AC_MSG_CHECKING(GNUstep Gui version)
   if test $ac_cv_header_AppKit_NSApplication_h = yes; then
-    gversion=`find $GNUSTEP_SYSTEM_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
+    gversion=`find $GNUSTEP_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
     GNUSTEP_GUI_VERSION=0.0.0
     GNUSTEP_GUI_INTERFACE=
     # This should get the last version
@@ -922,7 +922,7 @@ fi
     BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
   fi
   have_back=no
-  if test -f $GNUSTEP_SYSTEM_LIBRARY/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
+  if test -f $GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle/$BUNDLE_NAME; then
     have_back=yes
     AC_MSG_RESULT($BUNDLE_NAME)
   else
@@ -931,10 +931,10 @@ fi
 
 AC_SUBST(GNUSTEP_PREFIX)
 AC_SUBST(GNUSTEP_MAKEFILES)
-AC_SUBST(GNUSTEP_SYSTEM_LIBRARY)
-AC_SUBST(GNUSTEP_SYSTEM_HEADERS)
-AC_SUBST(GNUSTEP_SYSTEM_LIBRARIES)
-AC_SUBST(GNUSTEP_SYSTEM_TOOLS)
+AC_SUBST(GNUSTEP_LIBRARY)
+AC_SUBST(GNUSTEP_HEADERS)
+AC_SUBST(GNUSTEP_LIBRARIES)
+AC_SUBST(GNUSTEP_TOOLS)
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
 AC_SUBST(ac_cv_header_callback_h)
