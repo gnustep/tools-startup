@@ -119,6 +119,9 @@ if [ "$gs_nocvs" != yes ]; then
   cd $STARTUP; svn update; cd ..
 fi
 
+# Remove the old files
+rm -rf HOME/gnustep-$NAME/*
+
 # Run the install
 GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
 export GNUSTEP_CONFIG_FILE

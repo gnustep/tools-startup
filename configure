@@ -2092,11 +2092,11 @@ case "$ac_cv_library_combo" in
        GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/usr/local/lib"
        GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
   *)
-       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/System/Library/Makefiles"
-       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/System/Library"
-       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/System/Library/Headers"
-       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/System/Library/Libraries"
-       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/System/Tools";;
+       GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/Local/Library/Makefiles"
+       GNUSTEP_SYSTEM_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
+       GNUSTEP_SYSTEM_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
+       GNUSTEP_SYSTEM_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
+       GNUSTEP_SYSTEM_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
 esac
 
 #--------------------------------------------------------------------

@@ -1,5 +1,10 @@
 2008-11-05  Adam Fedor  <fedor@gnu.org>
 
+	* configure.ac: Check/Install files in Local domain
+	* scripts/test-gnustep: Remove old install before trying again
+
+2008-11-05  Adam Fedor  <fedor@gnu.org>
+
 	* Version 0.20.1
 
 2008-08-21  Adam Fedor  <fedor@gnu.org>

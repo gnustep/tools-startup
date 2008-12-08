@@ -54,7 +54,7 @@ behavior of the script.
 
 --prefix    To install GNUstep in a non-default location, set the directory
 	    prefix on the command line. For example:
-	       --prefix=/usr/local/GNUstep/System
+	       --prefix=/usr/local/GNUstep
 
 --builddir  Set the directory to build the packages. Normally this is
 	    {pwd}/build, where {pwd} is the current working directory.
