@@ -1,0 +1,8 @@
+# This file is included in various Makefile's to get version information.
+# Compatible with Bourne shell syntax, so it can included there too.
+
+# The version number of this release.
+GNUSTEP_START_VERSION=0.22.0
+
+
+

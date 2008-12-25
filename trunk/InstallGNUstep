@@ -1,0 +1,849 @@
+#! /bin/sh
+#
+#  Copyright (C) 2005 Free Software Foundation, Inc.
+#
+#  Written by:	Adam Fedor <fedor@gnu.org>
+#
+#  This package is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU General Public License as
+#  published by the Free Software Foundation; either version 2 of the
+#  License, or (at your option) any later version.
+#
+#  This package is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
+#  General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public
+#  License along with this package; if not, write to the Free
+#  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
+#
+#--------------------------------------------------------------------
+#
+# This is a simple script used to setup and compile the GNUstep core
+# packages. It runs a configure script to check the system and then
+# compiles and installs the packages if all the prerequisites are 
+# satisfied. To run this script, at the command line, type
+#
+# ./InstallGNUstep
+
+#--------------------------------------------------------------------
+# Check the shell. Do a few checks on how the shell behaves, so that we
+# can run and display things properly.
+#--------------------------------------------------------------------
+case `echo "testing\c"; echo 1,2,3`,`echo -n testing; echo 1,2,3` in
+  *c*,-n*) ECHO_N= ECHO_C='
+' ECHO_T='      ' ;;
+  *c*,*  ) ECHO_N=-n ECHO_C= ECHO_T= ;;
+  *)       ECHO_N= ECHO_C='\c' ECHO_T= ;;
+esac
+
+
+#--------------------------------------------------------------------
+# Check command line arguments
+#--------------------------------------------------------------------
+RUNDIR=`pwd`
+BUILDDIR=$RUNDIR/build
+SRCDIR=`dirname $0`
+# Find absolute path to SRCDIR
+SRCDIR=`cd $SRCDIR && pwd`
+SOURCESDIR=$SRCDIR/sources
+GSCONFIGFILE=
+
+gs_command_line=${@}
+gs_run_batch=no
+gs_no_priv=no
+gs_install_prefix=
+gs_root_prefix=
+gs_skip_install=no
+while test $# != 0
+do
+  gs_option=
+  case $1 in
+    --help | -h)
+      echo "$0: Script to install GNUstep core libraries"
+      echo "Options:"
+      echo "  --help	- Print help"
+      echo "  --batch	- Don't ask any questions"
+      echo "  --no-debug- Compile packages without debug info"
+      echo "  --verbose	- Print verbose compilation information"
+      #echo "  --skip-install	- Skip re-install of current versions (debug)"
+      echo
+      echo "  --prefix={dir}	- Alternate root(prefix) location"
+      echo "  --builddir={dir}	- Location to build packages"
+      #echo "  --install-root={dir}	- Install dir prefix"
+      echo "  --config-options={options}	- Extra configuration options"
+      echo "  --config-file={dir/GNUstep.conf}	- Set location of GNUstep.conf"
+      echo "  --ffi={ffcall|libffi}	- ffi package to build"
+      exit 0
+      ;;
+    --batch | -b)
+      gs_run_batch=yes;;
+    --nopriv)
+      # Install gdomap non-suid - special option when testing GNUstep on a
+      # machine without root install access.
+      gs_no_priv=yes;;
+    --no-debug)
+      MAKEFLAGS="$MAKEFLAGS debug=no";;
+    --verbose)
+      MAKEFLAGS="$MAKEFLAGS messages=yes";;
+    --skip-install)
+      gs_skip_install=yes;;
+    --*=*)
+      gs_option=`expr "x$1" : 'x\([^=]*\)='`
+      gs_optarg=`expr "x$1" : 'x[^=]*=\(.*\)'`
+      ;;
+    *)
+      ;;
+  esac
+
+  case $gs_option in
+    --prefix)
+      gs_root_prefix=$gs_optarg;; 
+    --builddir)
+      BUILDDIR=$gs_optarg;; 
+    --config-options)
+      PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG $gs_optarg";; 
+    --config-file)
+      GSCONFIGFILE=--with-config-file=$gs_optarg;; 
+    --ffi)
+      FORCEFFILIB=$gs_optarg
+      PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --enable-$gs_optarg";; 
+    --install-root)
+      gs_install_prefix=$gs_optarg
+      # Make sure it has a slash at the end
+      case $gs_install_prefix in
+        *\/) ;;
+        *) gs_install_prefix=$gs_install_prefix/
+      esac
+      ;;
+    *)
+      ;;
+  esac
+  shift
+done
+
+#--------------------------------------------------------------------
+# Misc setup. Set the default source, build, and install directories.
+# Also source the sub-scripts that contain functions that we need.
+#--------------------------------------------------------------------
+
+# If prefix wasn't set, see if something already exists
+if test -z "$gs_root_prefix"; then
+  if test -n "$GNUSTEP_PREFIX"; then
+    gs_root_prefix=$GNUSTEP_PREFIX
+  fi
+fi
+
+. scripts/common.sh
+. scripts/platform.sh
+
+gs_platform
+
+if test -z "$LIBRARY_COMBO"; then
+  LIBRARY_COMBO=gnu-gnu-gnu
+fi
+
+if test -n "$FORCEFFILIB"; then
+  GS_FFI=$FORCEFFILIB
+fi
+
+if [ -z "$MAKE" ]; then
+  if gmake -v >/dev/null 2>&1
+  then
+    MAKE=gmake
+  else
+    MAKE=make
+  fi
+fi
+
+#--------------------------------------------------------------------
+# Welcome
+#--------------------------------------------------------------------
+clear
+echo
+echo
+echo
+echo "                          GNUstep Installation"
+echo
+echo
+echo "     This is an automatic installation script for GNUstep."
+echo 
+echo "This script tries to build and install the core libraries for"
+echo "GNUstep. Log files of the build process are kept so that if some"
+echo "part of the build does not work, you can send the log files to"
+echo "our attention (at bug-gnustep@gnu.org). From these we can try to"
+echo "determine what the problem is."
+echo
+# Is GNUstep already installed somewhere?
+if [ -n "$GNUSTEP_MAKEFILES" ]; then
+  echo "Warning: It appears GNUstep may already be installed on your"
+  echo "system.  If you are trying to install into a different place"
+  echo "you should run the GNUstep-reset.sh script to unset any variables"
+  echo "that might interfere with this install"
+  echo
+fi
+echo
+
+#--------------------------------------------------------------------
+# Check how we can install. If we are running as root, just go
+# ahead. Otherwise ask the user if they can install via sudo or if
+# they just want to try it in their home directory.
+#--------------------------------------------------------------------
+HAVE_SUDO=no
+NO_PRIV=$gs_no_priv
+WHOAMI=none
+which whoami 2>&1 > /dev/null
+if [ $? = 0 ]; then
+  WHOAMI=`whoami`
+elif [ -f /usr/ucb/whoami ]; then
+  WHOAMI=`/usr/ucb/whoami`
+else
+  WHOAMI=`who am i | awk '{print $1}'`
+fi
+which sudo > /dev/null
+if [ $? = 0 ]; then
+  HAVE_SUDO=yes
+fi
+if [ "$GS_PLATFORM_NO_ROOT" = yes ]; then
+  # Typically on mingw, cygwin
+  WHOAMI=root
+fi
+AS_ROOT=yes
+# If we are running in batch mode, just assume that the user has install
+# privileges (i.e. assume they know what they are doing).
+if [ "$WHOAMI" != root -a $gs_run_batch = no ]; then
+  AS_ROOT=no
+  echo WARNING: You are not logged in as root
+  echo
+  echo GNUstep needs to be installed with root privileges. If you
+  echo do not have root privileges, you can also install GNUstep if
+  echo you have sudo access or you can install it in your home
+  echo directory. If you have no idea what any of this means, you
+  echo "should choose option two (2) below (or quit (option 9) and read "
+  echo "your computer manual on installing programs as root)."
+  echo
+  echo "1) I have sudo access in order to install GNUstep"
+  echo "2) I want to install GNUstep in my home directory"
+  echo "3) I know what I'm doing and I don't need special permissions"
+  echo "q) I want to quit and start over."
+  echo $ECHO_N "Enter a number: $ECHO_C"
+  read user_option
+  case "$user_option" in
+    1) if [ $HAVE_SUDO = no ]; then
+         echo Cannot find sudo program. Make sure it is in your path
+         exit 1
+       fi;;
+    2) gs_root_prefix=$HOME/GNUstep
+       if [ -z "$GSCONFIGFILE" ]; then
+         GSCONFIGFILE=--with-config-file=$gs_root_prefix/GNUstep.conf
+       fi 
+       NO_PRIV=yes
+       HAVE_SUDO=no;;
+    3) NO_PRIV=yes
+       HAVE_SUDO=no;;
+    *) exit 0;;
+  esac
+else
+  if [ $gs_run_batch = no ]; then
+    echo $ECHO_N "Press the Return key to begin continue: $ECHO_C"
+    read user_enter
+    if [ "$user_enter" = q ]; then
+      exit 0
+    fi
+  fi
+fi
+
+if [ $AS_ROOT = no -a $HAVE_SUDO = yes ]; then
+  echo "***You will be prompted for a sudo password during installation ***"
+fi
+
+#--------------------------------------------------------------------
+# Find GNUstep sources. Check first if there is a 'core' directory
+# at the same level as us. If so, we are compiling from the source repository.
+# Otherwise check in the 'sources' subdirectory for all the packages
+# we need.
+#--------------------------------------------------------------------
+if [ -d $SOURCESDIR ]; then
+  FOUND_FFCALL=yes
+  FFCALL=`find $SOURCESDIR -name ffcall*tar.gz`
+  if [ x$FFCALL = x ]; then
+    FOUND_FFCALL=no
+  else
+    FFCALL=`basename $FFCALL .tar.gz`
+  fi
+  FOUND_LIBFFI=yes
+  LIBFFI=`find $SOURCESDIR -name libffi*tar.gz`
+  if [ x$LIBFFI = x ]; then
+    FOUND_LIBFFI=no
+  else
+    LIBFFI=`basename $LIBFFI .tar.gz`
+  fi
+  FOUND_LIBOBJC=yes
+  LIBOBJC=`find $SOURCESDIR -name gnustep-objc*tar.gz`
+  if [ x$LIBOBJC = x ]; then
+    FOUND_LIBOBJC=no
+  else
+    LIBOBJC=`basename $LIBOBJC .tar.gz`
+  fi
+else
+  FOUND_FFCALL=no
+  FOUND_LIBFFI=no
+  FOUND_LIBOBJC=no
+fi
+
+FFCALLSOURCESDIR=$SOURCESDIR
+FOUND_SOURCES=yes
+IS_CVS=no
+if [ -d $SRCDIR/../core ]; then
+  # Compile from SVN/CVS checkout
+  IS_CVS=yes
+  SOURCESDIR=$SRCDIR/../core
+  BUILDDIR=$SOURCESDIR
+  GMAKE=make
+  GBASE=base
+  GGUI=gui
+  GBACK=back
+  echo Compiling packages from SVN/CVS
+else
+  # Compile from tar.gz
+  GMAKE=`find $SOURCESDIR -name gnustep-make*tar.gz`
+  if [ x$GMAKE = x ]; then
+    echo Cannot find gnustep-make distribution
+    echo Cannot find gnustep-make distribution >&5
+    FOUND_SOURCES=no
+  fi
+  GMAKE=`basename $GMAKE .tar.gz`
+  GBASE=`find $SOURCESDIR -name gnustep-base*tar.gz`
+  if [ x$GBASE = x ]; then
+    echo Cannot find gnustep-base distribution
+    echo Cannot find gnustep-base distribution >&5
+    FOUND_SOURCES=no
+  fi
+  GBASE=`basename $GBASE .tar.gz`
+  GGUI=`find $SOURCESDIR -name gnustep-gui*tar.gz`
+  if [ x$GGUI = x ]; then
+    echo Cannot find gnustep-gui distribution
+    echo Cannot find gnustep-gui distribution >&5
+    FOUND_SOURCES=no
+  fi
+  GGUI=`basename $GGUI .tar.gz`
+  GBACK=`find $SOURCESDIR -name gnustep-back*tar.gz`
+  if [ x$GBACK = x ]; then
+    echo Cannot find gnustep-back distribution
+    echo Cannot find gnustep-back distribution >&5
+    FOUND_SOURCES=no
+  fi
+  GBACK=`basename $GBACK .tar.gz`
+fi
+
+#--------------------------------------------------------------------
+# Create the build directory if it does not already
+# exist.
+#--------------------------------------------------------------------
+if [ \! -d $BUILDDIR ]; then
+  mkdir $BUILDDIR
+fi
+if [ \! -d $BUILDDIR ]; then
+  echo "************************************************************"
+  echo "Cannot create the build directory $BUILDDIR."
+  echo "trying to build in /tmp/gnustep-build"
+  BUILDDIR=/tmp/gnustep-build
+  mkdir $BUILDDIR
+fi
+if [ \! -d $BUILDDIR ]; then
+  echo "************************************************************"
+  echo "Cannot create the build directory $BUILDDIR."
+  echo "trying to build in your home directory...."
+  BUILDDIR=$HOME/gnustep-build
+  mkdir $BUILDDIR
+  if [ ! -d $BUILDDIR ]; then
+    echo "No. that doesn't work either. Contact bug-gnustep@gnu.org for help"
+    exit 1
+  fi
+fi
+  
+cd $BUILDDIR
+rm -rf logs
+if [ \! -d logs ]; then
+  mkdir logs
+fi
+rm -f logs.tar.gz
+exec 5>logs/installgnustep.log
+echo "Install log for the InstallGNUstep script" >&5
+echo >&5
+echo "Arguments: $gs_command_line" >&5
+echo "Root Prefix: $gs_root_prefix" >&5
+echo "Install Root: $gs_install_prefix" >&5
+echo >&5
+echo "Source files:" >&5
+echo " SVN: $IS_CVS " >&5
+echo $GMAKE >&5
+echo $GBASE >&5
+echo $GGUI >&5
+echo $GBACK >&5
+echo "" >&5
+
+if [ $FOUND_SOURCES = no ]; then
+  echo "******** Source files not found **********"
+  echo "The sources directory in this package had no source packages"
+  echo "which should have all the proper gnustep tar.gz files"
+  echo "(e.g. gnustep-make-x.x.x.tar.gz)"
+  echo "Contact bug-gnustep@gnu.org for help"
+  echo "Source files not found. STOP" >&5
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# Configure. Run the configure script which checks the system out.
+#--------------------------------------------------------------------
+echo "******** Checking system for installation issues **********"
+echo "Configuring for $gs_build" >&5
+echo "Configuring for $gs_build"
+gs_flags
+if test -n "$GS_CPPFLAGS"; then
+  CPPFLAGS="$CPPFLAGS $GS_CPPFLAGS"
+  export CPPFLAGS
+fi
+if test -n "$GS_LDFLAGS"; then
+  LDFLAGS="$LDFLAGS $GS_LDFLAGS"
+  export LDFLAGS
+fi
+echo "CPPFLAGS: $CPPFLAGS" >&5
+echo "LDFLAGS: $LDFLAGS" >&5
+
+rm -f setupvars
+PREFIX=
+if [ -n "$gs_root_prefix" ]; then
+  PREFIX=--prefix=$gs_root_prefix
+fi
+echo "" >&5
+echo "$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} " >&5
+$SRCDIR/configure ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO ${PKG_EXTRA_CONFIG} 2>&1 | tee logs/00-config-output.log
+
+# Now print out a report for the user describing any problems with their
+# system that we found.
+cp config.log logs/00-config.log
+cp $SRCDIR/setuperrors .
+cp $SRCDIR/ErrorList .
+cp $SRCDIR/ErrorList.awk .
+./setuperrors
+if [ $? != 0 ]; then
+  rm -f logs.tar.gz
+  cp setupvars logs
+  tar -cf logs.tar logs
+  gzip logs.tar
+  echo "If you don't understand something or think a test is in error,"
+  echo "please email bug-gnustep@gnu.org and send the $BUILDDIR/logs.tar.gz file"
+  exit 1
+fi
+
+# Read in the current setup. Check the versions of the installed packages 
+# against the ones we have and ask the user if there is a discrepancy.
+. ./setupvars
+gs_post_flags
+
+if [ $IS_CVS = yes ]; then
+  CURRENT_MAKE_VERSION=checkout
+  CURRENT_BASE_VERSION=checkout
+  CURRENT_GUI_VERSION=checkout
+else
+  CURRENT_MAKE_VERSION=`echo $GMAKE | sed "s/.*-\([0-9.]\)/\1/"`
+  CURRENT_BASE_VERSION=`echo $GBASE | sed "s/.*-\([0-9.]\)/\1/"`
+  CURRENT_GUI_VERSION=`echo $GGUI | sed "s/.*-\([0-9.]\)/\1/"`
+fi
+do_upgrade_make=no
+do_upgrade_base=no
+do_upgrade_gui=no
+if [ "$GNUSTEP_MAKE_VERSION" != 0 ]; then
+  echo Current GNUstep Make version is $GNUSTEP_MAKE_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_make=yes
+  fi
+  if [ "$GNUSTEP_MAKE_VERSION" != "$CURRENT_MAKE_VERSION" ]; then
+    do_upgrade_make=yes
+  fi
+fi
+if [ "$GNUSTEP_BASE_VERSION" != 0 ]; then
+  echo Current GNUstep Base version is $GNUSTEP_BASE_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_base=yes
+  fi
+  if [ "$GNUSTEP_BASE_VERSION" != "$CURRENT_BASE_VERSION" ]; then
+    do_upgrade_base=yes
+  fi
+fi
+if [ "$GNUSTEP_GUI_VERSION" != 0 ]; then
+  echo Current GNUstep Gui/Back version is $GNUSTEP_GUI_VERSION
+  if [ $gs_skip_install = yes ]; then
+    do_upgrade_gui=yes
+  fi
+  if [ "$GNUSTEP_GUI_VERSION" != "$CURRENT_GUI_VERSION" ]; then
+    do_upgrade_gui=yes
+  fi
+fi
+echo "This package installs these versions of the GNUstep libraries:"
+echo "  GNUstep Make: $CURRENT_MAKE_VERSION"
+echo "  GNUstep Base: $CURRENT_BASE_VERSION"
+echo "  GNUstep Gui/Back: $CURRENT_GUI_VERSION"
+if [ $do_upgrade_make = yes -o $do_upgrade_base = yes -o $do_upgrade_gui = yes ]; then
+  echo You have some GNUstep packages installed already. Do you want to
+  echo "upgrade your packages? (Say no if you want to keep the packages you"
+  echo "currently have installed)"
+  if [ $gs_run_batch = no ]; then
+    echo $ECHO_N "Install new versions? (y or n): $ECHO_C"
+    read user_option
+  else
+    echo In batch mode. Will upgrade to new versions
+    user_option=y
+  fi
+  if [ "$user_option" = n -o  "$user_option" = N -o "$user_option" = no -o "$user_option" = NO -o "$user_option" = No ]; then
+    do_upgrade_make=no
+    do_upgrade_base=no
+    do_upgrade_gui=no
+  fi
+fi
+
+echo "Upgrade options:" >&5
+echo " make $do_upgrade_make" >&5
+echo " base $do_upgrade_base" >&5
+echo " gui  $do_upgrade_gui" >&5
+
+echo "" >&5
+echo ""
+echo Building in $BUILDDIR >&5
+echo Building in $BUILDDIR
+if [ x$gs_root_prefix = x ]; then
+  echo "Installing in default location (usually /usr/GNUstep)" >&5
+  echo "Installing in default location (usually /usr/GNUstep)"
+else
+  echo Installing in $gs_root_prefix >&5
+  echo Installing in $gs_root_prefix
+fi
+echo Install Prefix: $gs_install_prefix >&5
+echo Install Prefix: $gs_install_prefix
+echo Library combo: $LIBRARY_COMBO >&5
+echo Library combo: $LIBRARY_COMBO
+echo "" >&5
+
+if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
+  echo "******** Source files not found **********"
+  echo "The sources directory in this package had no source packages"
+  echo "which should have ffcall-1.10.tar.gz and/or libffi present"
+  echo "Source files not found. STOP" >&5
+  exit 1
+fi
+
+if [ $gs_run_batch = no ]; then
+  echo $ECHO_N "Press the Return key to begin building GNUstep: $ECHO_C"
+  read user_enter
+  if [ "$user_enter" = q ]; then
+    echo "User Stop " >&5
+    exit 0
+  fi
+fi
+echo
+
+#--------------------------------------------------------------------
+# GNUstep make
+#--------------------------------------------------------------------
+
+PLOG=01-make
+PKG=$GMAKE
+PKG_DISPLAY="GNUstep Make"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
+fi
+PKG_PATCHES=`find $SOURCESDIR -name make*patch`
+gsexitstatus=0
+if [ $GNUSTEP_INSTALLED = yes -a $do_upgrade_make = no ]; then
+  echo GNUstep Make already installed >&5
+  echo GNUstep Make already installed
+else
+  gs_build_package
+fi
+
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $gs_install_prefix$GNUSTEP_MAKEFILES/GNUstep.sh >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
+  gs_log_error
+  exit 1
+fi
+
+# Setup the environment (GNUstep.sh unsets things we need to get them back).
+. $gs_install_prefix$GNUSTEP_MAKEFILES/GNUstep.sh
+. ./setupvars
+GNUSTEP_MAKEFILES=$gs_install_prefix$GNUSTEP_MAKEFILES
+
+#--------------------------------------------------------------------
+# Build pre-reqs
+#--------------------------------------------------------------------
+PKG_PATCHES=
+if [ $GS_FFI = ffcall ]; then
+  PLOG=02-ffcall
+  PKG=$FFCALL
+  PKG_DISPLAY="ffcall"
+  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
+     --libdir=$GNUSTEP_LIBRARIES \
+     --includedir=$GNUSTEP_HEADERS \
+     CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
+else
+  PLOG=02-libffi
+  PKG=$LIBFFI
+  PKG_DISPLAY="libffi"
+  # libffi 3.0.1 uses includesdir?
+  PKG_PATCHES=`find $FFCALLSOURCESDIR -name libffi*patch`
+  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
+     --libdir=$GNUSTEP_LIBRARIES \
+     --includedir=$GNUSTEP_HEADERS \
+     CFLAGS=${GS_OTHER_CPPFLAGS}"
+fi
+gsexitstatus=0
+
+REBUILD_MAKE=no
+if [ "$LIBRARY_COMBO" = "apple-apple-apple" ]; then
+  echo
+elif [ $FFCALL_INSTALLED = yes ];then
+  echo ffcall already installed >&5
+  echo ffcall already installed
+elif [ $LIBFFI_INSTALLED = yes ];then
+  echo libffi already installed >&5
+  echo libffi already installed
+else
+  SAVE_IS_CVS=$IS_CVS
+  IS_CVS=no
+  SAVESOURCESDIR=$SOURCESDIR
+  SOURCESDIR=$FFCALLSOURCESDIR
+  gs_build_package
+  SOURCESDIR=$SAVESOURCESDIR
+  IS_CVS=$SAVE_IS_CVS
+  unset SAVE_IS_CVS
+  unset SAVESOURCESDIR
+  REBUILD_MAKE=yes
+fi
+
+PLOG=02-libobjc
+PKG=$LIBOBJC
+PKG_DISPLAY="libobjc"
+PKG_CONFIG=NO
+PKG_PATCHES=`find $FFCALLSOURCESDIR -name gnustep-objc*patch`
+gsexitstatus=0
+if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
+  # Need to install our own version of libobjc
+  if [ $GNUSTEP_CUSTOM_LIBOBJC != "NONE" ]; then
+    echo Custom libobjc already installed >&5
+    echo Custom libobjc already installed
+  elif [ $FOUND_LIBOBJC = no ]; then
+    echo Warning: Could not find gnustep-objc sources to install >&5
+    echo Warning: Could not find gnustep-objc sources to install
+  else
+  SAVE_IS_CVS=$IS_CVS
+  IS_CVS=no
+  SAVESOURCESDIR=$SOURCESDIR
+  SOURCESDIR=$FFCALLSOURCESDIR
+  SAVEMAKEFLAGS="$MAKEFLAGS"
+  MAKEFLAGS=GNUSTEP_INSTALLATION_DOMAIN=LOCAL
+  gs_build_package
+  SOURCESDIR=$SAVESOURCESDIR
+  MAKEFLAGS="$SAVEMAKEFLAGS"
+  IS_CVS=$SAVE_IS_CVS
+  unset SAVE_IS_CVS
+  unset SAVESOURCESDIR
+  REBUILD_MAKE=yes
+  fi
+  echo "  Exit statis is $gsexitstatus" >&5
+  echo "  Install Check:" >&5
+  ls $gs_install_prefix$GNUSTEP_HEADERS/objc/Object.h >&5 2>&1
+  # Need to check if libobjc and ffcall got installed...
+  if [ $gsexitstatus != 0 ]; then
+    gs_log_error
+    exit 1
+  fi
+fi
+
+if [ "$GCC_VERSION" = 4 -a "$CC_APPLE" = yes -a \! -r $gs_install_prefix$GNUSTEP_LIBRARIES/libobjc-gnu.dylib ]; then
+  # Need to make link for compiler to find library
+  pushd $gs_install_prefix$GNUSTEP_LIBRARIES
+  if [ $AS_ROOT = yes -o $HAVE_SUDO = no ]; then
+    ln -s libobjc.dylib libobjc-gnu.dylib
+  else
+    sudo ln -s libobjc.dylib libobjc-gnu.dylib
+  fi
+  popd
+
+fi
+
+
+#--------------------------------------------------------------------
+# GNUstep make
+#--------------------------------------------------------------------
+
+PLOG=03-make
+PKG=$GMAKE
+PKG_DISPLAY="GNUstep Make"
+PKG_CONFIG="$PKG_EXTRA_CONFIG ${PREFIX} ${GSCONFIGFILE} --with-library-combo=$LIBRARY_COMBO"
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
+fi
+PKG_PATCHES=`find $SOURCESDIR -name make*patch`
+gsexitstatus=0
+if [ $REBUILD_MAKE = no ];then
+  echo No need to update GNUstep Make >&5
+  echo No need to update GNUstep Make
+else
+  gs_build_package
+fi
+
+if [ $gsexitstatus != 0 -o \! -f $GNUSTEP_MAKEFILES/GNUstep.sh ]; then
+  gs_log_error
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# GNUstep base
+#--------------------------------------------------------------------
+
+PLOG=04-base
+PKG=$GBASE
+PKG_DISPLAY="GNUstep Base"
+PKG_CONFIG="$PKG_BASE_CONFIG $PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
+if [ $HAVE_LIBXML = 0 ]; then
+  PKG_CONFIG="$PKG_CONFIG --disable-xml"
+fi
+PKG_INSTALL=
+if [ -n "$gs_install_prefix" ]; then
+  PKG_INSTALL=DESTDIR=$gs_install_prefix
+fi
+PKG_PATCHES=`find $SOURCESDIR -name base*patch`
+if [ $NO_PRIV = yes ]; then
+  PKG_PATCHES="$PKG_PATCHES $SRCDIR/home-gdomap.patch"
+fi
+gsexitstatus=0
+if [ "$GNUSTEP_BASE_INSTALLED" = yes -a $do_upgrade_base = no ]; then
+  echo $PKG_DISPLAY already installed >&5
+  echo $PKG_DISPLAY already installed
+else
+  gs_build_package
+fi
+
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_HEADERS/Foundation/NSObject.h
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $HEADER_CHECK >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
+  gs_log_error
+  exit 1
+fi
+
+if [ "$LIBRARY_COMBO" = "apple-apple-apple" ]; then
+  # We're done
+  echo "" >&5
+  echo "Instalation Finished" >&5
+  echo "---------------------------------------------------------"
+  echo
+  echo Installation Finished
+  echo
+  echo "---------------------------------------------------------"
+  echo
+  exit 0
+fi
+
+#--------------------------------------------------------------------
+# GNUstep gui
+#--------------------------------------------------------------------
+
+PLOG=05-gui
+PKG=$GGUI
+PKG_DISPLAY="GNUstep Gui"
+PKG_CONFIG="$PKG_GUI_CONFIG $PKG_EXTRA_CONFIG"
+# PKG_INSTALL Keep from previous setting
+PKG_PATCHES=`find $SOURCESDIR -name gui*patch`
+gsexitstatus=0
+if [ "$GNUSTEP_GUI_INSTALLED" = yes -a $do_upgrade_gui = no ]; then
+  echo $PKG_DISPLAY already installed >&5
+  echo $PKG_DISPLAY already installed
+else
+  gs_build_package
+fi
+
+HEADER_CHECK=$gs_install_prefix$GNUSTEP_HEADERS/AppKit/NSApplication.h
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls $HEADER_CHECK >&5 2>&1
+if [ $gsexitstatus != 0 ]; then
+  gs_log_error
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# GNUstep back
+#--------------------------------------------------------------------
+
+PLOG=06-back
+PKG=$GBACK
+PKG_DISPLAY="GNUstep Back"
+PKG_CONFIG="$PKG_BACK_CONFIG $PKG_EXTRA_CONFIG"
+# PKG_INSTALL Keep from previous setting
+PKG_PATCHES=`find $SOURCESDIR -name back*patch`
+gsexitstatus=0
+if [ "$GNUSTEP_BACK_INSTALLED" = yes  -a $do_upgrade_gui = no ]; then
+  echo $PKG_DISPLAY already installed >&5
+  echo $PKG_DISPLAY already installed
+else
+  gs_build_package
+fi
+echo 
+
+gversion=`find $GNUSTEP_LIBRARIES/gnustep-gui/Versions -name Info-gnustep.plist -print`
+GNUSTEP_GUI_INTERFACE=
+# This should get the last version
+for file in $gversion; do
+  GNUSTEP_GUI_INTERFACE=`grep GSBundleVersion $file | sed "s/.*= \([0-9]\)/\1/;s/.[0-9];//"`
+done
+if test -n "$GNUSTEP_GUI_INTERFACE"; then
+  BUNDLE_NAME=libgnustep-back-$GNUSTEP_GUI_INTERFACE
+else
+  BUNDLE_NAME=libgnustep-back
+fi
+
+echo "  Exit statis is $gsexitstatus" >&5
+echo "  Install Check:" >&5
+ls  $gs_install_prefix$GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle >&5 2>&1
+if [ $gsexitstatus != 0 -o \! -d $gs_install_prefix$GNUSTEP_LIBRARY/Bundles/$BUNDLE_NAME.bundle ]; then
+  gs_log_error
+  exit 1
+fi
+
+#--------------------------------------------------------------------
+# Finish 
+#--------------------------------------------------------------------
+
+echo "" >&5
+echo "Instalation Finished" >&5
+echo "---------------------------------------------------------"
+echo
+echo Installation Finished
+echo
+echo "---------------------------------------------------------"
+echo
+echo "Now run the GNUstep initialization script (put this in your"
+echo ".bashrc or other type of startup script). Note the '.' at the"
+echo "beginning of the line."
+echo ". $GNUSTEP_MAKEFILES/GNUstep.sh"
+echo
+echo "Now you can install some applications and start using GNUstep"
+echo "Look for a few applications in the AppSources directory. The"
+echo "typical way to install an application is:"
+echo "  tar -zxf MyApplication.tar.gz"
+echo "  cd MyApplication"
+echo "  make"
+echo "  make install (as root, unless GNUstep is in your home dir)"
+echo ""
+echo "Then start the application:"
+echo "  openapp MyApplication.app"
+echo ""
+
