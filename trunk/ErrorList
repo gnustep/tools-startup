@@ -1,0 +1,193 @@
+
+E090 Error
+You need the GNU cc compiler to compile GNUstep
+
+W092 Warning
+Your gcc version is not an official release and may be broken.
+Particularly if you are using RedHat before 7.2 or Mandrake, you should 
+upgrade gcc to a newer version.
+
+E093 Error
+It appears you are using the Apple cc compiler. The Apple compiler does
+not compile GNUstep.
+You need to install an FSF compiler, or make sure that the FSF 
+compiler is found first in your PATH.
+
+W101 Warning
+No ld/binutils program installed. Perhaps you are on some odd system
+where I cannot find this program or perhaps it's not needed on your system.
+Check your operating system for information or make sure you
+have installed a developer system.
+
+W102 Warning
+Make version is not recent enough or you are not using GNU
+make. You may have many problems compiling and/or running GNUstep.
+
+W103 Warning
+ld/binutils version is not recent enough, on Solaris 8 or greater you
+need a recent version of GNU binutils to compile GNUstep. The Solaris
+ld program isn't good enough. On Solaris < 2.8 you can ignore this warning.
+
+W104 Warning
+ld/binutils version is not recent enough. Try to get a binutils version
+more recent that 2.9.6
+
+I105 Information
+Could not determine binutils version. Perhaps you are working on a
+system that doesn't include this information. It's probably OK to continue.
+
+I106 Information
+You have an old or nonexistent iconv implementation. iconv is not
+required, but is needed for string and font encodings. It comes with
+glib 2.1.2 or later.
+
+W107 Warning
+No XML library support was found. The GNUstep uses XML for many basic
+functions, such as reading/writing property lists. XML will automatically
+be disabled, but this is probably not what you want. If possible you should
+stop installation and install an xml library.
+
+W108 Warning
+Not XSLT library was found. GNUstep base uses this library for important
+functions. It is not required, however, so you can continue building 
+without this support.
+
+W109 Warning 
+For security reasons, your make program will not pass LD_LIBRARY_PATH
+along. This might not cause any problems, but if you do encounter any
+errors installing GNUstep, you may need to start again and use 
+'sudo ./InstallGNUstep' or 'su root; ./InstallGNUstep'.
+When installing other applications, you also may need to install
+as root, or use 'sudo make LD_LIBRARY_PATH=$LD_LIBRARY_PATH install'.
+
+W125 Warning 
+The OpenSSL package (libcrypto, etc) is needed to access https connections
+with NSURL and for other purposes. This package is optional so you are
+not required to install it.
+
+E127 Error
+No X11 libraries/headers were found for compiling GNUstep GUI. You may
+have X11 installed, but not the developer packages, which are required
+for compiling anything that uses X. If you are using Debian, or a similar
+packaged system, try looking for help on installing developer or -dev
+packages for the X11 system.
+
+W128 Warining
+The Xt developer headers were not found. On Debian this may mean that
+you have not installed the libxt-dev package (Debain also needs 
+xserve-xorg-dev). Please install this before proceeding.
+
+E140 Error
+Unable to find integer of same size as void*. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E141 Error
+Unable to determine type for 16-bit integer. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E142 Error
+Unable to determine type for 32-bit integer. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E144 Error
+Unable to determine type for 32-bit float. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E144 Error
+Unable to determine type for 64-bit float. If you are porting GNUstep
+to a new machine please ask for help at bug-gnustep@gnu.org
+
+E150 Error
+You do not have the GNU Objective-C compiler installed
+Check to make sure you have a full installation of the GCC
+compiler that includes the Objective-C headers and libraries
+
+W151 Error
+You do not have the GNU Objective-C headers installed.
+Check to make sure you have a full installation of the GCC
+compiler that includes the Objective-C headers and libraries.
+Ignore this warning on MingW. The Objective-C library will be insatlled
+by Startup anyway.
+
+I190 Information
+$GNUSTEP_SYSTEM_ROOT was set and has something installed there but
+configure's prefix was not set to this location. I'm assuming you
+want to install GNUstep somewhere else than where it is currently
+installed. If not, when you run configure, set the prefix by typing
+--prefix=$GNUSTEP_SYSTEM_ROOT
+
+I199 Information
+GNUstep is not installed yet. Please proceed with installation of GNUstep
+as long as you have resolved other errors listed here.
+
+
+W270 Warning
+Cannot find or link the ffcall or ffi library.
+GNUstep requires the ffcall of libffi library to do invocations and DO
+Make sure this library is installed (see installation instructions)
+In most cases, ffcall/libffi will be installed for you by the GNUstep Startup
+package, so you don't have to worry about it. 
+
+E271 Error
+You do not have a recent version of the libobjc library. Make sure
+you have gcc installed with the objc option installed as well.
+
+W272 Warning
+You do not have a recent version of the libobjc library. Startup
+will install one.
+
+E273 Error
+You have the ffcall library but it does not work properly. Probably
+because you systems's security prohibits parts of ffcall from working.
+We recommend you install libffi instead. See the README for more help.
+
+E280 Error
+I don't seem to be able to use your Objective-C compiler to produce
+working binaries!  Please check your Objective-C compiler installation.
+Either the Objective-C compiler part of gcc is not installed or the 
+Objective-C library is not installed.
+
+E281 Error
+I don't seem to be able to use your Objective-C compiler to produce
+working binaries!  Please check your Objective-C compiler installation.
+For gcc-3.0.x make sure that your compiler's libgcc_s and libobjc
+can be found by the dynamic linker - usually that requires you to add
+the directory given by gcc -print-file-name=libobjc.so to your
+LD_LIBRARY_PATH or /etc/ld.so.conf.
+Please refer to your compiler installation instructions for more help.
+
+W300 Warning
+You seem to have installed gnustep-make, but have not sourced the
+GNUstep script. Please type "source $GNUSTEP_SYSTEM_ROOT/Makefiles/GNUstep.sh"
+or use GNUstep.csh on csh shells. Ignore this if you are still installing
+GNUstep. 
+
+E400 Error
+Found the tiff library but not the tiff header files. Perhaps you need
+to install the tiff-devel package? tiff is required to load images with 
+the GNUstep gui.
+
+E401 Error
+You need to install the TIFF library (libtiff and libtiff-devel) in order
+to use the GNUstep gui.
+
+W402 Warning
+Found the jpeg library but not the jpeg header files. Perhaps you need
+to install the jpeg-devel package? jpeg is required to load JPEG images with 
+the GNUstep gui.
+
+W403 Warning
+You need to install the JPEG library (libjpeg)) in order to load JPEG
+images with the GNUstep gui.
+
+W408 Warning
+Found the png library but not the png header files. Perhaps you need
+to install the png-devel package? png is used to load PNG images with 
+the GNUstep gui.
+
+W409 Warning
+You need to install the PNG library (libpng) in order to load PNG
+images with the GNUstep gui.
+
+I999
+End of info messages.

@@ -1,0 +1,407 @@
+2008-12-22  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.22.0
+
+2008-11-05  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Check/Install files in Local domain
+	* scripts/test-gnustep: Remove old install before trying again
+	* InstallGNUstep: Fixes for installing in Local domain and setting
+	CPPFLAGS
+
+2008-11-05  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.20.1
+
+2008-08-21  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNustep: Reverse sense of test for ffi
+	* Makefile: Use ./ for path to InstallGNUstep
+
+2008-06-15  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.20.0
+
+2008-05-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fixes for OpenBSD (Bug #23282)
+
+2008-05-18  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Pass ffi choice to configure
+	* configure.ac: Use it.
+
+2008-03-21  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.19.3
+
+2008-03-11  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Add check for xt-dev package (fixes bug #22445)
+	* InstallGNUstep: Avoid _ROOT variables, use new make v2 options.
+
+	* Update to new libffi package.  Add patch to get it to install correctly.
+
+2008-01-10  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.19.2
+
+2008-01-01  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.19.1
+	* configure.ac: Allow Apple gcc compiler.
+	* script/platforms.sh: Add flags for compiling with Apple gcc.
+
+2007-12-10  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, InstallGNUstep, scripts/platforms.sh,
+	scripts/test-gnustep: Allow apple-apple-apple setup
+
+2007-11-17  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: clarify some warnings.
+	* configure.ac, scripts/platform.sh, setupvars.in, InstallGNUstep:
+	Add install of libffi on some platforms, disable xml automatically
+	if not found.
+
+2007-07-18  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Really fix make check. Fix GNUstep header check.
+
+2007-06-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix make check bug
+	* InstallGNUstep: Clarify comments
+
+2007-06-11  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.18.1
+	* Use DESTDIR and other updated paths
+
+2007-05-23  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.18.0
+	* Update finding library versions
+
+2007-05-05  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/doc-gnustep: Use HTMLLinker
+	* InstallGNUstep: Switch debug arg to no-debug arg
+
+2007-03-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, config/config.trampoline.c: Fixes for ffcall
+	on Darwin (patch from Wolfgang Lux).
+
+2007-03-13  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, config/config.trampoline.ac: Add check for
+	working ffcall. Also show error if using Apple compiler.
+	* README: Updates
+
+2007-02-02  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.16.1
+
+	* Changes to build GNU ObjC library on Apple with Apple compiler
+
+2006-10-12  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/common.sh: Check proper exit of installation
+	* InstallGNUstep: Set config-file location in both make(s) and base.
+
+2006-09-20  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac (GNUSTEP_MAKE_VERSION): Fix to find version in
+	recently updated gnustep-make package.
+	* InstallGNUstep: Better protection against null variables.
+
+2006-08-31  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.16.0
+
+2006-04-24  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.15.1
+
+2006-04-24  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/platform.sh: Disable jpeg on Mac OS X
+	* configure.ac: Check for libobjc-gnu.dylib
+
+2006-04-19  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac, setupvars.in: Add info about Apple compiler
+	* scripts/platform.sh: Add extra settings if Apple compiler.
+
+2006-03-14  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.15.0.
+	* InstallGNUstep: Add arg to set GNUstep.conf location
+	* configure.ac: Don't error if no libobjc found
+
+2006-03-11  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Set GNUstep.conf location for HOME install.
+
+2006-02-14  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep, scrupts/docs-gnustep, ANNOUNCE, README, 
+	InstallGNUstep: Change to use SVN.
+
+2006-02-10  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.14.1
+
+2006-02-06  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix incorrect test.
+
+2006-01-08  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Correct location of ffcall (Fixes Bug #15389).
+
+2005-12-22  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.14.0
+
+	* scripts/platform.sh: Add openbsd
+
+2005-10-30  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep: Set GNUSTEP_CONFIG_FILE.
+
+2005-10-25  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Proper use of GNUSTEP_SYSTEM_ROOT
+	* InstallGNUstep: Don't use MAKEFLAGS when compiling libobjc
+
+2005-10-23  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Update to set GNUstep dirs based on config file
+	(like recent make changes). Check for X11 libraries
+	* InstallGNUstep: More consistent usage of prefix and installation
+	dirs.
+
+2005-10-07  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.13.0
+
+2005-08-25  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: All extern package configuration
+	* configure.ac: Allow disable-xml, warn on missing libobjc
+	* scripts/test-gnustep: Remove GS_CONFIG_OPTIONS
+
+2005-08-25  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep, scripts/platform.sh: Don't check root on mingw,
+	Fix check for gnustep-objc source.
+	* scripts/tests-gnustep: Updates
+
+2005-08-19  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep: Add args for cvs and cleanup
+
+2005-08-17  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Add patching for libobjc and second make
+	* ErrorList: Make missing ffi/ffcall a warning
+	* configure.ac: Re-enable messages for ffi.
+
+2005-07-26  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.12.0
+
+	* configure.ac, setupvars.in, InstallGNUstep: 
+	Update to find new backend bundle.
+
+2005-06-30  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Add verbose (compile) option.
+
+2005-06-24  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.11.1
+
+2005-06-24  Adam Fedor  <fedor@gnu.org>
+
+	* Makefile (cvs-dist): Copy standard sources from local sources dir
+	* README: Updates.
+	* configure.ac: More complete ffi check (from gnustep-base)
+	* scripts/platform.sh (gs_platform_cygwin, gs_platform_mings):
+	Disable gsnd.
+
+2005-05-10  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.11.0
+
+2005-05-06  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Log the configure output
+
+2005-05-03  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Minor cleanup
+	* configure.ac: Check for xml, xslt. Better check for iconv
+	Check for user and developer packages for jpeg, tiff, png
+	* scripts/test-gnustep: cvs update -P
+
+12005-04-22  Adam Fedor  <fedor@gnu.org>
+
+	* missing: Update to latest version.
+
+2005-04-18  Adam Fedor  <fedor@gnu.org>
+
+	* CheckGNUstep: Better check of gdomap
+	* InstallGNUstep: Configure ffcall libs shared.
+	* configure.ac: Minor fixes.
+	* scripts/programs.sh (gs_check_tool): New function.
+
+2005-04-13  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/platform.sh (gs_platform_mingw): Add --disable-xml flag
+	* scripts/test-gnustep: Rename from run-gnustep
+
+2005-04-13  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Add check for platform install of objc
+	* scripts/platform.sh: Add cygwin and mingw, and set flag to
+	compile objc on these.
+	* scripts/run-gnustep: Check for GNUstep CVS using path to script.
+
+2005-04-08  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.10.2
+
+2005-04-07  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix apple compiler check.
+	* ErrorList: Minor fix.
+	* InstallGNUstep: Print CPPFLAGS, etc.
+	* README: Update.
+
+	* CheckGNUstep: New checking script
+	* scripts/program.sh: New file.
+
+2005-04-06  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.10.1
+	
+	* configure.ac: Check for Apple cc
+	* ErrorList: Add error for Apple cc.
+
+2005-04-05  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Set variables so libobjc is found when compiling 
+	from CVS.
+	* scripts/common.sh (gs_build_package): Revert previous patch.
+	* scripts/run-gnustep: More general hostname check.
+
+2005-04-05  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Don't add slash after $gnustep_install_prefix
+	* scripts/common.sh (gs_patch_package): Assume unreversed patch.
+	(gs_build_package) Don't configure if compiling from CVS and we 
+	already configured.
+	* scripts/run-gnustep: Several fixes.
+
+2005-04-04  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Handle setting CPPFLAGS/LDFLAGS better.
+	Enable art backend.
+	* scripts/run-gnustep: Testing script.
+
+2005-04-01  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Allow install as normal user if in batch mode.
+	* configure.ac: Fix flags for netbsd/freebsd.
+
+2005-03-31  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.10.0
+
+	* InstallGNUstep: Don't set CPPFLAGS/LDFLAGS if they're empty.
+
+2005-03-21  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Get absolute path for SRCDIR and always look for
+	ffcall in sources dir. Specify . path for scripts. Fixes bug #12219.
+	* setuperrors: Specify . path for scripts.
+
+2005-03-16  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Added --builddir and --config-options arguments.
+	* configure.ac: Fix version
+
+2005-03-02  Adam Fedor  <fedor@gnu.org>
+
+	* Version: 0.9.2
+	* ANNOUNCE, NEWS: Updates.
+
+2005-03-02  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Minor fixes
+	* scripts/platform.sh: Use config.guess to get os/cpu.
+
+2005-03-01  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: Add libffi error message.
+	* INSTALL, README: Updates.
+	* InstallGNUstep: Add arg processing, batch mode, preliminary 
+	packaging support, better error checking, patch support
+	* scripts/common.sh: Patch support.
+	* Makefile (snapshot): Testing target.
+	* configure.ac: Minor fixes.
+
+2005-02-19  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.9.1
+	* InstallGNUstep: Add logging output to file. Check for previous
+	versions and allow upgrading (or not). A little better documentation.
+	* configure.ac: Remove some unneeded checks. Check currently
+	installed versions. Set prefix correctly.
+	* scripts/common.sh: Don't distclean if we are making from CVS.
+
+2005-02-15  Adam Fedor  <fedor@gnu.org>
+
+	* Version: 0.9.0
+	* ANNOUNCE: Add package versions
+
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
+	* ANNOUNCE: New file
+	* Makefile: Fix version.
+
+2005-02-11  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix some flags
+	* scripts/platforms.sh: Add solaris support
+	* Makefile: Simple dist creation
+
+2005-02-06  Adam Fedor  <fedor@gnu.org>
+
+	* Refactor scripts. More robust. Update documentation and
+	configuration.	
+
+2004-02-18  Adam Fedor  <fedor@gnu.org>
+
+	* ErrorList: More warnings.
+	* InstallGNustep: Better check for ffcall, libffi.
+	* configure.in: Check for opensll, jpeg, tiff, png.
+
+2003-11-26  Adam Fedor  <fedor@gnu.org>
+
+	* home-gdomap.patch: New file
+	* InstallGNUstep: Use it. Use $MAKE.
+
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* InstallGNUstep: Better error checking
+	* configure.ac: Script fixes. Darwin support
+	* ErrorList: More warnings.
+
+2003-11-14  Adam Fedor  <fedor@gnu.org>
+
+	* Initial import.
+

@@ -1,0 +1,166 @@
+#!/bin/sh
+#
+# Test the compilation and installation of GNUstep. This script does:
+#   1. Runs "svn update" on the GNUstep source files
+#   2. Runs the startup/InstallGNUstep script
+#   3. Uploads the results to ftp.gnustep.org
+#
+# This script assumes it is being run from a source checkout of the
+# gnustep directory strucuture (startup and core are required at the same 
+# level).
+# This script tries to find the GNUstep source files, by checking in the
+# current directory, the directory ../.. from where the script was run
+# from, or as a last resort:
+#    $HOME/src/gnustep-'$hostname -s`
+#
+# The files are installed into 
+#    $HOME/gnustep-'$hostname -s`
+#
+# NOTE: This script does not need to be run as root nor have any special
+# privleges. Since the installation is in the user's home directory, 
+# everything should work with normal privliges.
+#
+# To customize this script, you might have to change other things
+#
+# Here's how to check out a copy of the source from SVN for testing:
+#
+# svn co http://svn.gna.org/svn/gnustep/modules/core
+# svn co http://svn.gna.org/svn/gnustep/tools/startup/trunk startup
+#
+# Here's an example of a cron script I use to run this script every night
+# on a solaris box:
+#
+# PATH=/usr/local/bin:/usr/ccs/bin:$PATH
+# export PATH
+# LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+# export LD_LIBRARY_PATH
+# rm -f gnustep-testrun.txt
+# $HOME/src/gstep/testing/startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
+#
+
+gs_platform()
+{
+  gs_build=`$TOPDIR/$STARTUP/config.guess` 2>&1
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  else
+    gs_build=`$TOPDIR/$STARTUP/config.sub $gs_build`
+  fi
+  if test -z "$gs_build"; then
+    gs_build=unknown
+  fi
+  gs_build_cpu=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\1/'`
+  gs_build_vendor=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\2/'`
+  gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
+}
+
+# Note: hostname -s doesn't work on every system...
+if [ x"$NAME" = x ]; then
+  NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+fi
+
+# Figure out where the GNUstep files are
+RUNDIR=`pwd`
+SRCDIR=`dirname $0`
+# Find absolute path to SRCDIR
+SRCDIR=`cd $SRCDIR && pwd`
+if [ -f InstallGNUstep ]; then
+  TOPDIR=`cd ..; pwd`
+elif [ -f startup/InstallGNUstep ]; then
+  TOPDIR=$RUNDIR
+elif [ -f $SRCDIR/../InstallGNUstep ]; then
+  TOPDIR=$SRCDIR/../..
+elif [ -f Startup/InstallGNUstep ]; then
+  TOPDIR=$RUNDIR
+else
+  TOPDIR=$HOME/src/gnustep-$NAME
+fi
+BUILDDIR=$TOPDIR/core
+cd $TOPDIR
+STARTUP=startup
+if [ -f Startup/InstallGNUstep ]; then
+  STARTUP=Startup
+fi
+if [ \! -f $STARTUP/InstallGNUstep ]; then
+  echo "ERROR: Could not find GNUstep source directory"
+  exit 1
+fi
+gs_platform
+if [ x"$GS_CANONICAL" != x ]; then
+  gs_build=$GS_CANONICAL
+fi
+
+gs_nocvs=no
+gs_clean=no
+while test $# != 0
+do
+  case $1 in
+    --help | -h)
+      echo "$0: Script to test GNUstep core libraries"
+      echo "Options:"
+      echo "  --help	- Print help"
+      echo "  --nocvs	- don't update from cvs"
+      exit 0
+      ;;
+    --nocvs | -n)
+      gs_nocvs=yes;;
+    --clean | -c)
+      gs_clean=yes;;
+    *)
+      ;;
+  esac
+  shift
+done
+
+# Update source
+cd $TOPDIR
+if [ "$gs_nocvs" != yes ]; then
+  cd core; svn update; cd ..
+  cd $STARTUP; svn update; cd ..
+fi
+
+# Remove the old files
+rm -rf HOME/gnustep-$NAME/*
+
+# Run the install
+GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
+export GNUSTEP_CONFIG_FILE
+cd $TOPDIR/$STARTUP
+./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
+gsexitstatus=$?
+
+# Archive the results
+echo "--- Archive Results ---"
+rm -f $gs_build-results.txt
+rm -f $gs_build-logs.tar.gz
+GSDATE=`date`
+gs_success=no
+if [ $gsexitstatus != 0 ]; then
+  mv $BUILDDIR/logs.tar.gz $gs_build-logs.tar.gz
+  echo "Fail Compile $gs_build $GSDATE" > $gs_build-results.txt
+else
+  echo "Success Compile $gs_build $GSDATE" > $gs_build-results.txt
+  gs_success=yes
+fi
+
+# Upload the results somewhere
+echo "--- Upload Results ---"
+ftp -n ftp.gnustep.org << EOF
+user anonymous bug-gnustep@gnu.org
+cd pub/incoming
+put $gs_build-results.txt
+binary
+put $gs_build-logs.tar.gz
+bye
+EOF
+
+DIRS="make base gui back"
+if [ $gs_clean = yes -a -d $HOME/gnustep-$NAME ]; then
+  echo "--- Cleaning Up ---"
+  . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  cd $BUILDDIR
+  for d in $DIRS; do
+    cd $d; make distclean; cd ..
+  done
+  rm -rf $HOME/gnustep-$NAME
+fi
