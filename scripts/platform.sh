@@ -55,6 +55,14 @@ gs_platform_darwin()
     cc_dir=`which $CC`
   fi
   cc_dir=`dirname $cc_dir`
+  if [ "$cc_dir" = "/opt/local/bin" ]; then
+    # Use macports if available
+    GS_CPPFLAGS="-I/opt/local/include"
+    GS_LDFLAGS="-L/opt/local/lib"
+    if [ \! -x /opt/local/bin/cups-config ]; then
+    # 10.5 has cups in /usr/bin, which we don't want
+    PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --disable-cups"
+  fi
   if [ "$cc_dir" = "/sw/bin" ]; then
     # Fink is installed. Make sure to use this
     GS_CPPFLAGS="-I/sw/include"

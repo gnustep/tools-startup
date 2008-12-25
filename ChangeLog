@@ -1,3 +1,7 @@
+2008-12-22  Adam Fedor  <fedor@gnu.org>
+
+	* Version 0.22.0
+
 2008-11-05  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Check/Install files in Local domain
