@@ -25,7 +25,7 @@ gs_platform_generic()
   GS_LDFLAGS=
   GS_PLATFORM_BUILD_OBJC=no
   GS_PLATFORM_NO_ROOT=no
-  GS_FFI=ffcall
+  GS_FFI=libffi
   # For ffcall and non-gnustep packages
   GS_OTHER_CPPFLAGS=
 }

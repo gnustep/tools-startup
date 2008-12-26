@@ -1,6 +1,7 @@
 2008-12-22  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.22.0
+	* scripts/platform.sh: Make libffi the default
 
 2008-11-05  Adam Fedor  <fedor@gnu.org>
 
