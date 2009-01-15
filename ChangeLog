@@ -1,3 +1,7 @@
+2009-01-15  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep: Add testsuite run
+
 2008-12-22  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.22.0

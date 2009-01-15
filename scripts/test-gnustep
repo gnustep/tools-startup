@@ -40,11 +40,11 @@
 
 gs_platform()
 {
-  gs_build=`$TOPDIR/$STARTUP/config.guess` 2>&1
+  gs_build=`$STARTUP/config.guess` 2>&1
   if test -z "$gs_build"; then
     gs_build=unknown
   else
-    gs_build=`$TOPDIR/$STARTUP/config.sub $gs_build`
+    gs_build=`$STARTUP/config.sub $gs_build`
   fi
   if test -z "$gs_build"; then
     gs_build=unknown
@@ -75,12 +75,26 @@ elif [ -f Startup/InstallGNUstep ]; then
 else
   TOPDIR=$HOME/src/gnustep-$NAME
 fi
+# Where is core?
 BUILDDIR=$TOPDIR/core
-cd $TOPDIR
-STARTUP=startup
-if [ -f Startup/InstallGNUstep ]; then
-  STARTUP=Startup
+if [ -f $TOPDIR/modules/core ]; then
+  BUILDDIR=$TOPDIR/modules/core
 fi
+# Where is the testsuite
+TESTDIR=
+if [ -f $TOPDIR/testsuite ]; then
+  TESTDIR=$TOPDIR/testsuite
+elif [ -f $TOPDIR/modules/tests/testsuite ]; then
+  TESTDIR=$TOPDIR/modules/tests/testsuite
+fi
+# Name of startup
+cd $TOPDIR
+STARTUP=$TOPDIR/startup
+if [ -f Startup/InstallGNUstep ]; then
+  STARTUP=$TOPDIR/Startup
+fi
+
+# OK, now start
 if [ \! -f $STARTUP/InstallGNUstep ]; then
   echo "ERROR: Could not find GNUstep source directory"
   exit 1
@@ -113,9 +127,8 @@ do
 done
 
 # Update source
-cd $TOPDIR
 if [ "$gs_nocvs" != yes ]; then
-  cd core; svn update; cd ..
+  cd $BUILDDIR; svn update; cd ..
   cd $STARTUP; svn update; cd ..
 fi
 
@@ -125,9 +138,23 @@ rm -rf HOME/gnustep-$NAME/*
 # Run the install
 GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
 export GNUSTEP_CONFIG_FILE
-cd $TOPDIR/$STARTUP
+cd $STARTUP
 ./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
 gsexitstatus=$?
+
+# Run the testsuite
+if [ $gsexitstatus = 0  -a -n $TESTDIR ]; then
+  . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  cd $TESTDIR
+  echo
+  echo "--------------------------------------------------------------"
+  echo Running Base Testsuite
+  echo "--------------------------------------------------------------"
+  rm -f testsuite.log
+  ./runtests.sh base | tee testsuite.log
+  rm -f $STARTUP/$gs_build-testsuite.log
+  mv testsuite.log $STARTUP/$gs_build-testsuite.log
+fi
 
 # Archive the results
 echo "--- Archive Results ---"
@@ -151,6 +178,7 @@ cd pub/incoming
 put $gs_build-results.txt
 binary
 put $gs_build-logs.tar.gz
+put $gs_build-testsuite.tar.gz
 bye
 EOF
 
