@@ -1,5 +1,11 @@
 2009-01-15  Adam Fedor  <fedor@gnu.org>
 
+	* configure.ac: Use libffi by default
+
+	* scripts/test-gnustep: Fix finding testsuite dir
+
+2009-01-15  Adam Fedor  <fedor@gnu.org>
+
 	* scripts/test-gnustep: Add testsuite run
 
 2008-12-22  Adam Fedor  <fedor@gnu.org>

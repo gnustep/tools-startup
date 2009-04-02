@@ -77,14 +77,14 @@ else
 fi
 # Where is core?
 BUILDDIR=$TOPDIR/core
-if [ -f $TOPDIR/modules/core ]; then
+if [ -d $TOPDIR/modules/core ]; then
   BUILDDIR=$TOPDIR/modules/core
 fi
 # Where is the testsuite
 TESTDIR=
-if [ -f $TOPDIR/testsuite ]; then
+if [ -d $TOPDIR/testsuite ]; then
   TESTDIR=$TOPDIR/testsuite
-elif [ -f $TOPDIR/modules/tests/testsuite ]; then
+elif [ -d $TOPDIR/modules/tests/testsuite ]; then
   TESTDIR=$TOPDIR/modules/tests/testsuite
 fi
 # Name of startup

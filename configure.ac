@@ -597,16 +597,51 @@ fi
 
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
+# We enable ffi by default now, as it's fixed for some previouly bad
+# platforms, and it has the advantage over ffcall that it does not
+# mess up the stack, so stacktraces and native exception handling
+# work better with it.
 #--------------------------------------------------------------------
+do_broken_libffi=no
+do_broken_libffcall=no
+do_enable_libffi=yes
+do_enable_libffcall=no
+case "$target_cpu" in
+  sparc64*)
+    case "$target_os" in
+      solaris*)
+        do_broken_libffcall=yes;
+        do_enable_libffi=yes;
+        do_enable_libffcall=no;;
+      *) ;;
+    esac ;;
+  *) ;;
+esac
+
+if test "$exceptions" = "yes"; then
+  # ffcall will mess up native exceptions, so we must disable it.
+  do_broken_libffcall=yes
+  do_enable_libffcall=no
+fi
+
 AC_ARG_ENABLE(libffi,
-  [  --enable-libffi            Enable use of libffi library],,
-    enable_libffi=no)
+  [  --enable-libffi  		Enable use of libffi library],,
+  enable_libffi=$do_enable_libffi)
 
 AC_ARG_ENABLE(ffcall,
-  [  --enable-ffcall            Enable use of ffcall library],,
-    enable_ffcall=yes)
-AC_CHECK_HEADER(ffi.h, have_libffi=yes, have_libffi=no)
-AC_CHECK_HEADERS(callback.h, have_ffcall=yes, have_ffcall=no)
+  [  --enable-ffcall  		Enable use of ffcall library],,
+  enable_ffcall=$do_enable_libffcall)
+
+if test "$do_broken_libffi" = "no"; then
+  AC_CHECK_HEADER(ffi.h, have_libffi=yes, have_libffi=no)
+else
+  have_libffi=no
+fi
+if test "$do_broken_libffcall" = "no"; then
+  AC_CHECK_HEADERS(callback.h, have_ffcall=yes, have_ffcall=no)
+else
+  have_ffcall=no
+fi
 if test $have_ffcall = no; then
   enable_ffcall=no
   # If we don't have ffcall but do have libffi, use libffi
@@ -616,6 +651,10 @@ if test $have_ffcall = no; then
 fi
 if test $have_libffi = no; then
   enable_libffi=no
+  # If we don't have libffi but do have ffcall, use ffcall
+  if test $have_ffcall = yes; then
+    enable_ffcall=yes
+  fi
 fi
 
 have_forward_hook=yes
@@ -655,9 +694,10 @@ elif test $enable_ffcall = yes; then
 	  have_working_trampoline=yes, have_working_trampoline=no, 
 	  have_working_trampoline=yes)
   AC_MSG_RESULT($have_working_trampoline)
-  if test $have_working_trampoline = no; then
-    ffi_ok=no
-  fi
+  # Don't enforce this. Sometimes things work fine anyway...
+  #if test $have_working_trampoline = no; then
+  #  ffi_ok=no
+  #fi
 else
   ffi_ok=no
 fi

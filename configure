@@ -1318,8 +1318,8 @@ Optional Features:
 --enaable-importing-config-file		Enable importing the existing GNUstep configuration file
   --disable-xml			Compile even if XML-dependencies are not met
   --disable-xmltest		Do not try to compile and run a test XML program
-  --enable-libffi            Enable use of libffi library
-  --enable-ffcall            Enable use of ffcall library
+  --enable-libffi  		Enable use of libffi library
+  --enable-ffcall  		Enable use of ffcall library
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -7411,12 +7411,38 @@ fi
 
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
+# We enable ffi by default now, as it's fixed for some previouly bad
+# platforms, and it has the advantage over ffcall that it does not
+# mess up the stack, so stacktraces and native exception handling
+# work better with it.
 #--------------------------------------------------------------------
+do_broken_libffi=no
+do_broken_libffcall=no
+do_enable_libffi=yes
+do_enable_libffcall=no
+case "$target_cpu" in
+  sparc64*)
+    case "$target_os" in
+      solaris*)
+        do_broken_libffcall=yes;
+        do_enable_libffi=yes;
+        do_enable_libffcall=no;;
+      *) ;;
+    esac ;;
+  *) ;;
+esac
+
+if test "$exceptions" = "yes"; then
+  # ffcall will mess up native exceptions, so we must disable it.
+  do_broken_libffcall=yes
+  do_enable_libffcall=no
+fi
+
 # Check whether --enable-libffi was given.
 if test "${enable_libffi+set}" = set; then
   enableval=$enable_libffi;
 else
-  enable_libffi=no
+  enable_libffi=$do_enable_libffi
 fi
 
 
@@ -7424,10 +7450,12 @@ fi
 if test "${enable_ffcall+set}" = set; then
   enableval=$enable_ffcall;
 else
-  enable_ffcall=yes
+  enable_ffcall=$do_enable_libffcall
 fi
 
-if test "${ac_cv_header_ffi_h+set}" = set; then
+
+if test "$do_broken_libffi" = "no"; then
+  if test "${ac_cv_header_ffi_h+set}" = set; then
   { echo "$as_me:$LINENO: checking for ffi.h" >&5
 echo $ECHO_N "checking for ffi.h... $ECHO_C" >&6; }
 if test "${ac_cv_header_ffi_h+set}" = set; then
@@ -7564,6 +7592,10 @@ else
 fi
 
 
+else
+  have_libffi=no
+fi
+if test "$do_broken_libffcall" = "no"; then
 
 for ac_header in callback.h
 do
@@ -7711,6 +7743,9 @@ fi
 
 done
 
+else
+  have_ffcall=no
+fi
 if test $have_ffcall = no; then
   enable_ffcall=no
   # If we don't have ffcall but do have libffi, use libffi
@@ -7720,6 +7755,10 @@ if test $have_ffcall = no; then
 fi
 if test $have_libffi = no; then
   enable_libffi=no
+  # If we don't have libffi but do have ffcall, use ffcall
+  if test $have_ffcall = yes; then
+    enable_ffcall=yes
+  fi
 fi
 
 have_forward_hook=yes
@@ -7913,9 +7952,10 @@ fi
 
   { echo "$as_me:$LINENO: result: $have_working_trampoline" >&5
 echo "${ECHO_T}$have_working_trampoline" >&6; }
-  if test $have_working_trampoline = no; then
-    ffi_ok=no
-  fi
+  # Don't enforce this. Sometimes things work fine anyway...
+  #if test $have_working_trampoline = no; then
+  #  ffi_ok=no
+  #fi
 else
   ffi_ok=no
 fi
