@@ -3,29 +3,18 @@
 # Test the compilation and installation of GNUstep. This script does:
 #   1. Runs "svn update" on the GNUstep source files
 #   2. Runs the startup/InstallGNUstep script
-#   3. Uploads the results to ftp.gnustep.org
+#   3. Runs the testsuite if available
+#   4. Uploads the results to ftp.gnustep.org
 #
-# This script assumes it is being run from a source checkout of the
-# gnustep directory strucuture (startup and core are required at the same 
-# level).
-# This script tries to find the GNUstep source files, by checking in the
-# current directory, the directory ../.. from where the script was run
-# from, or as a last resort:
-#    $HOME/src/gnustep-'$hostname -s`
+# Here's how to check out a copy of the source from SVN for testing:
+#   svn co http://svn.gna.org/svn/gnustep/autotest
 #
-# The files are installed into 
-#    $HOME/gnustep-'$hostname -s`
+# Then setup a crontab and/or batch file to run the script:
+#   autotest/startup/scripts/test-gnustep
 #
 # NOTE: This script does not need to be run as root nor have any special
 # privleges. Since the installation is in the user's home directory, 
 # everything should work with normal privliges.
-#
-# To customize this script, you might have to change other things
-#
-# Here's how to check out a copy of the source from SVN for testing:
-#
-# svn co http://svn.gna.org/svn/gnustep/modules/core
-# svn co http://svn.gna.org/svn/gnustep/tools/startup/trunk startup
 #
 # Here's an example of a cron script I use to run this script every night
 # on a solaris box:
@@ -35,7 +24,20 @@
 # LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 # export LD_LIBRARY_PATH
 # rm -f gnustep-testrun.txt
-# $HOME/src/gstep/testing/startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
+# $HOME/src/gstep/autotest/startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
+#
+# Additional documentation:
+#   This script assumes it is being run from a source checkout of the
+# gnustep directory strucuture (startup and core are required at the same 
+# level).  It tries to find the GNUstep source files, by checking in the
+# current directory, the directory ../.. from where the script was run
+# from, or as a last resort:
+#    $HOME/src/gnustep-'$hostname -s`
+#
+# The files are installed into 
+#    $HOME/gnustep-'$hostname -s`
+#
+# To customize this script, you might have to change other things
 #
 
 gs_platform()
@@ -178,7 +180,7 @@ cd pub/incoming
 put $gs_build-results.txt
 binary
 put $gs_build-logs.tar.gz
-put $gs_build-testsuite.tar.gz
+put $gs_build-testsuite.log
 bye
 EOF
 
