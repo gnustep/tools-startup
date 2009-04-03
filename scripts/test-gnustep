@@ -160,6 +160,7 @@ fi
 
 # Archive the results
 echo "--- Archive Results ---"
+cd $STARTUP
 rm -f $gs_build-results.txt
 rm -f $gs_build-logs.tar.gz
 GSDATE=`date`
