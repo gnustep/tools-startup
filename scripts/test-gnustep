@@ -86,6 +86,8 @@ fi
 TESTDIR=
 if [ -d $TOPDIR/testsuite ]; then
   TESTDIR=$TOPDIR/testsuite
+elif [ -d $TOPDIR/tests/testsuite ]; then
+  TESTDIR=$TOPDIR/tests/testsuite
 elif [ -d $TOPDIR/modules/tests/testsuite ]; then
   TESTDIR=$TOPDIR/modules/tests/testsuite
 fi
