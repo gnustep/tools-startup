@@ -156,22 +156,22 @@ if [ $gsexitstatus = 0  -a -n "$TESTDIR" ]; then
   echo "--------------------------------------------------------------"
   rm -f testsuite.log
   ./runtests.sh base | tee testsuite.log
-  rm -f $STARTUP/$gs_build-testsuite.log
-  mv testsuite.log $STARTUP/$gs_build-testsuite.log
+  rm -f $STARTUP/$NAME-$gs_build-testsuite.log
+  mv testsuite.log $STARTUP/$NAME-$gs_build-testsuite.log
 fi
 
 # Archive the results
 echo "--- Archive Results ---"
 cd $STARTUP
-rm -f $gs_build-results.txt
-rm -f $gs_build-logs.tar.gz
+rm -f $NAME-$gs_build-results.txt
+rm -f $NAME-$gs_build-logs.tar.gz
 GSDATE=`date`
 gs_success=no
 if [ $gsexitstatus != 0 ]; then
-  mv $BUILDDIR/logs.tar.gz $gs_build-logs.tar.gz
-  echo "Fail Compile $gs_build $GSDATE" > $gs_build-results.txt
+  mv $BUILDDIR/logs.tar.gz $NAME-$gs_build-logs.tar.gz
+  echo "$NAME Fail Compile $gs_build $GSDATE" > $NAME-$gs_build-results.txt
 else
-  echo "Success Compile $gs_build $GSDATE" > $gs_build-results.txt
+  echo "$NAME Success Compile $gs_build $GSDATE" > $NAME-$gs_build-results.txt
   gs_success=yes
 fi
 
@@ -180,10 +180,10 @@ echo "--- Upload Results ---"
 ftp -n ftp.gnustep.org << EOF
 user anonymous bug-gnustep@gnu.org
 cd pub/incoming
-put $gs_build-results.txt
+put $NAME-$gs_build-results.txt
 binary
-put $gs_build-logs.tar.gz
-put $gs_build-testsuite.log
+put $NAME-$gs_build-logs.tar.gz
+put $NAME-$gs_build-testsuite.log
 bye
 EOF
 
