@@ -23,6 +23,7 @@
 # export PATH
 # LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 # export LD_LIBRARY_PATH
+# cd $HOME/src/gstep/autotest/
 # rm -f gnustep-testrun.txt
 # $HOME/src/gstep/autotest/startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
 #
@@ -148,7 +149,11 @@ gsexitstatus=$?
 
 # Run the testsuite
 if [ $gsexitstatus = 0  -a -n "$TESTDIR" ]; then
-  . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  if [ x$LIBRARY_COMBO = xapple-apple-apple ]; then
+    . $HOME/gnustep-$NAME/Library/GNUstep/Makefiles/GNUstep.sh
+  else
+    . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  fi
   cd $TESTDIR
   echo
   echo "--------------------------------------------------------------"
