@@ -135,6 +135,7 @@ done
 if [ "$gs_nocvs" != yes ]; then
   cd $BUILDDIR; svn update; cd ..
   cd $STARTUP; svn update; cd ..
+  cd $TESTDIR; svn update; cd ..
 fi
 
 # Remove the old files

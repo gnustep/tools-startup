@@ -1,3 +1,7 @@
+2009-10-03  Adam Fedor  <fedor@gnu.org>
+
+	* scripts/test-gnustep: Update svn for the testsuite
+
 2009-05-10  Adam Fedor  <fedor@gnu.org>
 
 	* Version 0.23.0
