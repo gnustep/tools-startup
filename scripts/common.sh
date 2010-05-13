@@ -43,7 +43,7 @@ gs_build_package()
   fi
   # Clean the project, unless we are making from CVS
   if [ -f config.log -a $IS_CVS = no ]; then
-    make distclean
+    $MAKE distclean
   fi
   gsexitstatus=0
   if [ x"$PKG_CONFIG" != xNO ]; then

@@ -59,6 +59,14 @@ gs_platform()
   gs_build_os=`echo $gs_build | sed 's/^\([^-]*\)-\([^-]*\)-\(.*\)$/\3/'`
 }
 
+if [ -z "$MAKE" ]; then
+  if gmake -v >/dev/null 2>&1
+  then
+    MAKE=gmake
+  else
+    MAKE=make
+  fi
+fi
 
 # Note: hostname -s doesn't work on every system...
 NAME=`hostname | tr '.' ' ' | awk '{print $1}'`

@@ -1,39 +1,27 @@
-diff -ur include/Makefile.am libffi-3.0.1/include/Makefile.am
---- include/Makefile.am	2008-02-14 08:30:53.000000000 -0700
-+++ include/Makefile.am	2008-03-11 09:19:39.000000000 -0600
-@@ -5,5 +5,4 @@
- DISTCLEANFILES=ffitarget.h
- EXTRA_DIST=ffi.h.in ffi_common.h
- 
--includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
- nodist_includes_HEADERS = ffi.h ffitarget.h 
-diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
---- include/Makefile.in	2008-02-15 17:59:42.000000000 -0700
-+++ include/Makefile.in	2008-03-11 09:20:04.000000000 -0600
-@@ -52,9 +52,9 @@
-     *) f=$$p;; \
-   esac;
- am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+diff -ur include/Makefile.in libffi-3.0.9/include/Makefile.in
+--- include/Makefile.in	2009-12-31 05:41:01.000000000 -0700
++++ include/Makefile.in	2010-04-09 21:24:26.000000000 -0600
+@@ -70,8 +70,8 @@
+ am__base_list = \
+   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
+   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
 -am__installdirs = "$(DESTDIR)$(includesdir)"
--nodist_includesHEADERS_INSTALL = $(INSTALL_HEADER)
 -HEADERS = $(nodist_includes_HEADERS)
 +am__installdirs = "$(DESTDIR)$(includedir)"
-+nodist_includeHEADERS_INSTALL = $(INSTALL_HEADER)
 +HEADERS = $(nodist_include_HEADERS)
  ETAGS = etags
  CTAGS = ctags
  DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-@@ -182,8 +182,7 @@
- AUTOMAKE_OPTIONS = foreign
+@@ -204,7 +204,7 @@
  DISTCLEANFILES = ffitarget.h
  EXTRA_DIST = ffi.h.in ffi_common.h
--includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
--nodist_includes_HEADERS = ffi.h ffitarget.h 
-+nodist_include_HEADERS = ffi.h ffitarget.h 
+ includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
+-nodist_includes_HEADERS = ffi.h ffitarget.h
++nodist_include_HEADERS = ffi.h ffitarget.h
  all: all-am
  
  .SUFFIXES:
-@@ -224,22 +223,22 @@
+@@ -246,26 +246,26 @@
  
  clean-libtool:
  	-rm -rf .libs _libs
@@ -41,31 +29,35 @@ diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
 +install-nodist_includeHEADERS: $(nodist_include_HEADERS)
  	@$(NORMAL_INSTALL)
 -	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
--	@list='$(nodist_includes_HEADERS)'; for p in $$list; do \
+-	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
 +	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
-+	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
++	@list='$(nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
+ 	for p in $$list; do \
  	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
- 	  f=$(am__strip_dir) \
--	  echo " $(nodist_includesHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includesdir)/$$f'"; \
--	  $(nodist_includesHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includesdir)/$$f"; \
-+	  echo " $(nodist_includeHEADERS_INSTALL) '$$d$$p' '$(DESTDIR)$(includedir)/$$f'"; \
-+	  $(nodist_includeHEADERS_INSTALL) "$$d$$p" "$(DESTDIR)$(includedir)/$$f"; \
+ 	  echo "$$d$$p"; \
+ 	done | $(am__base_list) | \
+ 	while read files; do \
+-	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includesdir)'"; \
+-	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includesdir)" || exit $$?; \
++	  echo " $(INSTALL_HEADER) $$files '$(DESTDIR)$(includedir)'"; \
++	  $(INSTALL_HEADER) $$files "$(DESTDIR)$(includedir)" || exit $$?; \
  	done
  
 -uninstall-nodist_includesHEADERS:
 +uninstall-nodist_includeHEADERS:
  	@$(NORMAL_UNINSTALL)
--	@list='$(nodist_includes_HEADERS)'; for p in $$list; do \
-+	@list='$(nodist_include_HEADERS)'; for p in $$list; do \
- 	  f=$(am__strip_dir) \
--	  echo " rm -f '$(DESTDIR)$(includesdir)/$$f'"; \
--	  rm -f "$(DESTDIR)$(includesdir)/$$f"; \
-+	  echo " rm -f '$(DESTDIR)$(includedir)/$$f'"; \
-+	  rm -f "$(DESTDIR)$(includedir)/$$f"; \
- 	done
+-	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
++	@list='$(nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
+ 	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
+ 	test -n "$$files" || exit 0; \
+-	echo " ( cd '$(DESTDIR)$(includesdir)' && rm -f" $$files ")"; \
+-	cd "$(DESTDIR)$(includesdir)" && rm -f $$files
++	echo " ( cd '$(DESTDIR)$(includedir)' && rm -f" $$files ")"; \
++	cd "$(DESTDIR)$(includedir)" && rm -f $$files
  
  ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
-@@ -320,7 +319,7 @@
+ 	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
+@@ -353,7 +353,7 @@
  check: check-am
  all-am: Makefile $(HEADERS)
  installdirs:
@@ -74,7 +66,7 @@ diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-am
-@@ -366,7 +365,7 @@
+@@ -402,7 +402,7 @@
  
  info-am:
  
@@ -83,7 +75,7 @@ diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
  
  install-dvi: install-dvi-am
  
-@@ -400,7 +399,7 @@
+@@ -446,7 +446,7 @@
  
  ps-am:
  
@@ -92,7 +84,7 @@ diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
  
  .MAKE: install-am install-strip
  
-@@ -410,12 +409,12 @@
+@@ -456,12 +456,12 @@
  	html-am info info-am install install-am install-data \
  	install-data-am install-dvi install-dvi-am install-exec \
  	install-exec-am install-html install-html-am install-info \
@@ -105,5 +97,5 @@ diff -ur include/Makefile.in libffi-3.0.1/include/Makefile.in
 -	tags uninstall uninstall-am uninstall-nodist_includesHEADERS
 +	tags uninstall uninstall-am uninstall-nodist_includeHEADERS
  
+ 
  # Tell versions [3.59,3.63) of GNU make to not export all variables.
- # Otherwise a system limit (for SysV at least) may be exceeded.

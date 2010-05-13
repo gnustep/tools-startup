@@ -714,6 +714,9 @@ PKG_CONFIG="$PKG_BASE_CONFIG $PKG_EXTRA_CONFIG  ${GSCONFIGFILE}"
 if [ $HAVE_LIBXML = 0 ]; then
   PKG_CONFIG="$PKG_CONFIG --disable-xml"
 fi
+if [ x"$FORCEFFILIB" = xlibffi ]; then
+  PKG_CONFIG="$PKG_CONFIG --enable-ffcall"
+fi
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then
   PKG_INSTALL=DESTDIR=$gs_install_prefix

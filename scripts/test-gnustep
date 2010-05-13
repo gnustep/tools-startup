@@ -38,6 +38,8 @@
 # The files are installed into 
 #    $HOME/gnustep-'$hostname -s`
 #
+# However you can set the installation directory with a --prefix option
+#
 # To customize this script, you might have to change other things
 #
 
@@ -60,6 +62,15 @@ gs_platform()
 # Note: hostname -s doesn't work on every system...
 if [ x"$NAME" = x ]; then
   NAME=`hostname | tr '.' ' ' | awk '{print $1}'`
+fi
+
+if [ -z "$MAKE" ]; then
+  if gmake -v >/dev/null 2>&1
+  then
+    MAKE=gmake
+  else
+    MAKE=make
+  fi
 fi
 
 # Figure out where the GNUstep files are
@@ -111,6 +122,7 @@ fi
 
 gs_nocvs=no
 gs_clean=no
+gs_root_prefix=$HOME/gnustep-$NAME
 while test $# != 0
 do
   case $1 in
@@ -125,6 +137,17 @@ do
       gs_nocvs=yes;;
     --clean | -c)
       gs_clean=yes;;
+    --*=*)
+      gs_option=`expr "x$1" : 'x\([^=]*\)='`
+      gs_optarg=`expr "x$1" : 'x[^=]*=\(.*\)'`
+      ;;
+    *)
+      ;;
+  esac
+
+  case $gs_option in
+    --prefix)
+      gs_root_prefix=$gs_optarg;;
     *)
       ;;
   esac
@@ -139,21 +162,21 @@ if [ "$gs_nocvs" != yes ]; then
 fi
 
 # Remove the old files
-rm -rf HOME/gnustep-$NAME/*
+rm -rf $gs_root_prefix
 
 # Run the install
-GNUSTEP_CONFIG_FILE=$HOME/gnustep-$NAME/GNUstep.conf
+GNUSTEP_CONFIG_FILE=$gs_root_prefix/GNUstep.conf
 export GNUSTEP_CONFIG_FILE
 cd $STARTUP
-./InstallGNUstep --batch --prefix=$HOME/gnustep-$NAME --nopriv
+./InstallGNUstep --batch --prefix=$gs_root_prefix --nopriv --config-options=--with-include-flags=-I/opt/csw/include
 gsexitstatus=$?
 
 # Run the testsuite
 if [ $gsexitstatus = 0  -a -n "$TESTDIR" ]; then
   if [ x$LIBRARY_COMBO = xapple-apple-apple ]; then
-    . $HOME/gnustep-$NAME/Library/GNUstep/Makefiles/GNUstep.sh
+    . $gs_root_prefix/Library/GNUstep/Makefiles/GNUstep.sh
   else
-    . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+    . $gs_root_prefix/System/Library/Makefiles/GNUstep.sh
   fi
   cd $TESTDIR
   echo
@@ -194,12 +217,16 @@ bye
 EOF
 
 DIRS="make base gui back"
-if [ $gs_clean = yes -a -d $HOME/gnustep-$NAME ]; then
+if [ $gs_clean = yes -a -d $gs_root_prefix ]; then
   echo "--- Cleaning Up ---"
-  . $HOME/gnustep-$NAME/System/Library/Makefiles/GNUstep.sh
+  if [ x$LIBRARY_COMBO = xapple-apple-apple ]; then
+    . $gs_root_prefix/Library/GNUstep/Makefiles/GNUstep.sh
+  else
+    . $gs_root_prefix/System/Library/Makefiles/GNUstep.sh
+  fi
   cd $BUILDDIR
   for d in $DIRS; do
     cd $d; make distclean; cd ..
   done
-  rm -rf $HOME/gnustep-$NAME
+  rm -rf $gs_root_prefix
 fi
