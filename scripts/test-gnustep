@@ -168,7 +168,7 @@ rm -rf $gs_root_prefix
 GNUSTEP_CONFIG_FILE=$gs_root_prefix/GNUstep.conf
 export GNUSTEP_CONFIG_FILE
 cd $STARTUP
-./InstallGNUstep --batch --prefix=$gs_root_prefix --nopriv --config-options=--with-include-flags=-I/opt/csw/include
+./InstallGNUstep --batch --prefix=$gs_root_prefix --nopriv
 gsexitstatus=$?
 
 # Run the testsuite

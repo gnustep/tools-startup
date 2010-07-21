@@ -1,6 +1,15 @@
-diff -ur include/Makefile.in libffi-3.0.9/include/Makefile.in
---- include/Makefile.in	2009-12-31 05:41:01.000000000 -0700
-+++ include/Makefile.in	2010-04-09 21:24:26.000000000 -0600
+diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
+--- libffi-3.0.9.orig/include/Makefile.in	2009-12-31 05:41:01.000000000 -0700
++++ libffi-3.0.9/include/Makefile.in	2010-07-21 14:18:39.000000000 -0600
+@@ -43,7 +43,7 @@
+ 	$(top_srcdir)/configure.ac
+ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
+ 	$(ACLOCAL_M4)
+-mkinstalldirs = $(install_sh) -d
++mkinstalldirs = $(INSTALL) -d
+ CONFIG_HEADER = $(top_builddir)/fficonfig.h
+ CONFIG_CLEAN_FILES = ffi.h ffitarget.h
+ CONFIG_CLEAN_VPATH_FILES =
 @@ -70,8 +70,8 @@
  am__base_list = \
    sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
