@@ -512,7 +512,7 @@ fi
 # Check if Objective-C is installed
 #--------------------------------------------------------------------
 AC_MSG_CHECKING(for Objective-C compiler)
-cc1objpath=`gcc -print-prog-name=cc1obj`
+cc1objpath=`$CC -print-prog-name=cc1obj`
 if test "$cc1objpath" != "cc1obj"; then
   AC_MSG_RESULT(yes)
 else
@@ -577,7 +577,7 @@ if test -f "$GNUSTEP_HEADERS/objc/objc.h"; then
   fi
   GS_CUSTOM_OBJC=$gs_cv_objc_libdir
 fi
-gcc_shared_libobjc=`gcc -print-file-name=libobjc.so`
+gcc_shared_libobjc=`$CC -print-file-name=libobjc.so`
 if test -f "$gcc_shared_libobjc"; then
   gs_cv_objc_libdir=`dirname $gcc_shared_libobjc`
 fi
@@ -806,13 +806,13 @@ saved_CPPFLAGS="$CPPFLAGS"
 saved_LIBS="$LIBS"
 CPPFLAGS="$CPPFLAGS -x objective-c $OBJCFLAGS"
 LIBS="$LIBS $LIBOBJC $objc_threaded"		    
-AC_CACHE_VAL(objc_works,
+AC_CACHE_VAL(gs_cv_objc_works,
   AC_TRY_RUN([#include "$srcdir/config/config.objc.m"],
-  objc_works=yes, 
-  objc_works=no, 
-  objc_works=yes)
+  gs_cv_objc_works=yes, 
+  gs_cv_objc_works=no, 
+  gs_cv_objc_works=yes)
 )
-if test $objc_works = yes; then
+if test $gs_cv_objc_works = yes; then
   AC_MSG_RESULT(yes)
 else
   AC_MSG_RESULT(no)

@@ -1,3 +1,8 @@
+2010-08-09  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Fix up some issues with static compiler names
+	(Fixes #30638). Regenerate configure
+
 2010-07-21  Adam Fedor  <fedor@gnu.org>
 
 	* Minor script fixes and updated libffi patch
