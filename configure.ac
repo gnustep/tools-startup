@@ -157,10 +157,10 @@ case "$ac_cv_library_combo" in
        GNUSTEP_TOOLS="$GNUSTEP_PREFIX/usr/local/bin";;
   *)   
        GNUSTEP_MAKEFILES="$GNUSTEP_PREFIX/System/Library/Makefiles"
-       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/Local/Library"
-       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/Local/Library/Headers"
-       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/Local/Library/Libraries"
-       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/Local/Tools";;
+       GNUSTEP_LIBRARY="$GNUSTEP_PREFIX/System/Library"
+       GNUSTEP_HEADERS="$GNUSTEP_PREFIX/System/Library/Headers"
+       GNUSTEP_LIBRARIES="$GNUSTEP_PREFIX/System/Library/Libraries"
+       GNUSTEP_TOOLS="$GNUSTEP_PREFIX/System/Tools";;
 esac
 
 #--------------------------------------------------------------------
@@ -251,6 +251,7 @@ AC_CHECK_PROG(AR, ar, ar)
 AC_CHECK_PROG(LD, ld, ld)
 AC_CHECK_PROG(DLLTOOL, dlltool, dlltool)
 AC_CHECK_PROGS(AWK, gawk awk, awk)
+AC_CHECK_PROG(PATCH, patch, patch)
 
 AC_PROG_RANLIB
 
@@ -315,6 +316,10 @@ if test -n "$iconv_version" -a "$iconv_version" > 2.1; then
   AC_MSG_RESULT(yes $iconv_version)
 else
   AC_MSG_RESULT(no $iconv_version)
+fi
+
+if test x"$ac_cv_prog_PATCH" = x; then
+  SETUP_ERRORS="$SETUP_ERRORS W110"
 fi
 
 #--------------------------------------------------------------------
@@ -506,6 +511,11 @@ fi
 AC_CHECK_HEADER(X11/Intrinsic.h)
 if test "$ac_cv_header_X11_Intrinsic_h" = no; then
   SETUP_ERRORS="$SETUP_ERRORS W128"
+fi
+
+AC_CHECK_HEADER(X11/extensions/shape.h)
+if test "$ac_cv_header_X11_extensions_shape_h" = no; then
+  SETUP_ERRORS="$SETUP_ERRORS W129"
 fi
 
 #--------------------------------------------------------------------

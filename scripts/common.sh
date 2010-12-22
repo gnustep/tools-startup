@@ -37,10 +37,10 @@ gs_build_package()
     tar -zxf $SOURCESDIR/$PKG.tar.gz
   fi
 
-  cd $PKG
   if [ -n "$PKG_PATCHES" ]; then
     gs_patch_package
   fi
+  cd $PKG
   # Clean the project, unless we are making from CVS
   if [ -f config.log -a $IS_CVS = no ]; then
     $MAKE distclean
