@@ -184,7 +184,7 @@ if [ $gsexitstatus = 0  -a -n "$TESTDIR" ]; then
   echo Running Base Testsuite
   echo "--------------------------------------------------------------"
   rm -f testsuite.log
-  ./runtests.sh base | tee testsuite.log
+  $gs_root_prefix/System/Tools/gnustep-tests base | tee testsuite.log
   rm -f $STARTUP/$NAME-$gs_build-testsuite.log
   mv testsuite.log $STARTUP/$NAME-$gs_build-testsuite.log
 fi
