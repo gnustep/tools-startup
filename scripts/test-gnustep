@@ -183,10 +183,15 @@ if [ $gsexitstatus = 0  -a -n "$TESTDIR" ]; then
   echo "--------------------------------------------------------------"
   echo Running Base Testsuite
   echo "--------------------------------------------------------------"
-  rm -f testsuite.log
+  rm -f testsuite.log tests.log tests.sum tests-base.sum
   $gs_root_prefix/System/Tools/gnustep-tests base | tee testsuite.log
+  mv tests.sum tests-base.sum
+  echo "--------------------------------------------------------------"
+  echo Running Gui Testsuite
+  echo "--------------------------------------------------------------"
+  $gs_root_prefix/System/Tools/gnustep-tests gui | tee -a testsuite.log
   rm -f $STARTUP/$NAME-$gs_build-testsuite.log
-  mv testsuite.log $STARTUP/$NAME-$gs_build-testsuite.log
+  cat tests-base.sum tests.sum > $STARTUP/$NAME-$gs_build-testsuite.log
 fi
 
 # Archive the results
