@@ -5,6 +5,7 @@
 #   2. Runs the startup/InstallGNUstep script
 #   3. Runs the testsuite if available
 #   4. Uploads the results to ftp.gnustep.org
+#   5. Results get collated every night and displayed at www.gnuste.org
 #
 # Here's how to check out a copy of the source from SVN for testing:
 #   svn co http://svn.gna.org/svn/gnustep/autotest
@@ -23,6 +24,8 @@
 # export PATH
 # LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 # export LD_LIBRARY_PATH
+# PKG_EXTRA_CONFIG=--with-include-flags=-I/opt/csw/include
+# export PKG_EXTRA_CONFIG
 # cd $HOME/src/gstep/autotest/
 # rm -f gnustep-testrun.txt
 # $HOME/src/gstep/autotest/startup/scripts/test-gnustep > gnustep-testrun.txt 2>&1
@@ -33,14 +36,27 @@
 # level).  It tries to find the GNUstep source files, by checking in the
 # current directory, the directory ../.. from where the script was run
 # from, or as a last resort:
-#    $HOME/src/gnustep-'$hostname -s`
+#    $HOME/src/gnustep-$NAME
+#
+# where NAME=`hostname -s` by default, but can be set to anything. If you have
+# checked out the files via svn autotest, then everything is set up correctly!
 #
 # The files are installed into 
-#    $HOME/gnustep-'$hostname -s`
+#    $HOME/gnustep-$NAME
 #
 # However you can set the installation directory with a --prefix option
 #
-# To customize this script, you might have to change other things
+# You can also use the NAME variable for submitting
+# multiple tests to the testfarm, by using different names for each test.
+# For instance
+# export NAME=myhost-gcc
+# CC=gcc test-gnustep --prefix=$HOME/src/gnustep-$NAME
+# export NAME=myhost-clang
+# CC=clang test-gnustep --prefix=$HOME/src/gnustep-$NAME
+#
+# To customize this script, you might have to change other things. Ask
+# about it on discuss-gnustep@gnu.org, as there are lots of hidden variables
+# that can be set for different cases.
 #
 
 gs_platform()
