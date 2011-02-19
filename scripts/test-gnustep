@@ -211,6 +211,7 @@ fi
 
 # Upload the results somewhere
 echo "--- Upload Results ---"
+echo "NOTE: Ignore any errors about missing files below"
 ftp -n ftp.gnustep.org << EOF
 user anonymous bug-gnustep@gnu.org
 cd pub/incoming
