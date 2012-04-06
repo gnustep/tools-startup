@@ -529,7 +529,7 @@ echo "" >&5
 if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
-  echo "which should have ffcall-1.10.tar.gz and/or libffi present"
+  echo "which should have a libffi tar.gz package present"
   echo "Source files not found. STOP" >&5
   exit 1
 fi
