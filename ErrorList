@@ -131,10 +131,10 @@ as long as you have resolved other errors listed here.
 
 
 W270 Warning
-Cannot find or link the ffcall or ffi library.
-GNUstep requires the ffcall of libffi library to do invocations and DO
+Cannot find or link the ffi library.
+GNUstep requires the libffi library to do invocations and DO
 Make sure this library is installed (see installation instructions)
-In most cases, ffcall/libffi will be installed for you by the GNUstep Startup
+In most cases, libffi will be installed for you by the GNUstep Startup
 package, so you don't have to worry about it. 
 
 E271 Error

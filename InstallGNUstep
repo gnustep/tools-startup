@@ -74,7 +74,6 @@ do
       #echo "  --install-root={dir}	- Install dir prefix"
       echo "  --config-options={options}	- Extra configuration options"
       echo "  --config-file={dir/GNUstep.conf}	- Set location of GNUstep.conf"
-      echo "  --ffi={ffcall|libffi}	- ffi package to build"
       exit 0
       ;;
     --batch | -b)
@@ -107,8 +106,7 @@ do
     --config-file)
       GSCONFIGFILE=--with-config-file=$gs_optarg;; 
     --ffi)
-      FORCEFFILIB=$gs_optarg
-      PKG_EXTRA_CONFIG="$PKG_EXTRA_CONFIG --enable-$gs_optarg";; 
+      ;;
     --install-root)
       gs_install_prefix=$gs_optarg
       # Make sure it has a slash at the end
@@ -142,10 +140,6 @@ gs_platform
 
 if test -z "$LIBRARY_COMBO"; then
   LIBRARY_COMBO=gnu-gnu-gnu
-fi
-
-if test -n "$FORCEFFILIB"; then
-  GS_FFI=$FORCEFFILIB
 fi
 
 if [ -z "$MAKE" ]; then
@@ -265,13 +259,6 @@ fi
 # we need.
 #--------------------------------------------------------------------
 if [ -d $SOURCESDIR ]; then
-  FOUND_FFCALL=yes
-  FFCALL=`find $SOURCESDIR -name ffcall*tar.gz`
-  if [ x$FFCALL = x ]; then
-    FOUND_FFCALL=no
-  else
-    FFCALL=`basename $FFCALL .tar.gz`
-  fi
   FOUND_LIBFFI=yes
   LIBFFI=`find $SOURCESDIR -name libffi*tar.gz`
   if [ x$LIBFFI = x ]; then
@@ -287,12 +274,11 @@ if [ -d $SOURCESDIR ]; then
     LIBOBJC=`basename $LIBOBJC .tar.gz`
   fi
 else
-  FOUND_FFCALL=no
   FOUND_LIBFFI=no
   FOUND_LIBOBJC=no
 fi
 
-FFCALLSOURCESDIR=$SOURCESDIR
+FFISOURCESDIR=$SOURCESDIR
 FOUND_SOURCES=yes
 IS_CVS=no
 if [ -d $SRCDIR/../core ]; then
@@ -526,7 +512,7 @@ echo Library combo: $LIBRARY_COMBO >&5
 echo Library combo: $LIBRARY_COMBO
 echo "" >&5
 
-if [ "$FFCALL_INSTALLED" = no -a "$LIBFFI_INSTALLED" = no -a "$FOUND_FFCALL" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
+if [ "$LIBFFI_INSTALLED" = no -a "$FOUND_LIBFFI" = no -a "$LIBRARY_COMBO" != "apple-apple-apple" ]; then
   echo "******** Source files not found **********"
   echo "The sources directory in this package had no source packages"
   echo "which should have a libffi tar.gz package present"
@@ -582,33 +568,20 @@ GNUSTEP_MAKEFILES=$gs_install_prefix$GNUSTEP_MAKEFILES
 # Build pre-reqs
 #--------------------------------------------------------------------
 PKG_PATCHES=
-if [ $GS_FFI = ffcall ]; then
-  PLOG=02-ffcall
-  PKG=$FFCALL
-  PKG_DISPLAY="ffcall"
-  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
-     --libdir=$GNUSTEP_LIBRARIES \
-     --includedir=$GNUSTEP_HEADERS \
-     CFLAGS=${GS_OTHER_CPPFLAGS} --enable-shared --disable-static"
-else
-  PLOG=02-libffi
-  PKG=$LIBFFI
-  PKG_DISPLAY="libffi"
-  # libffi 3.0.1 uses includesdir?
-  PKG_PATCHES=`find $FFCALLSOURCESDIR -name libffi*patch`
-  PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
+PLOG=02-libffi
+PKG=$LIBFFI
+PKG_DISPLAY="libffi"
+# libffi 3.0.1 uses includesdir?
+PKG_PATCHES=`find $FFISOURCESDIR -name libffi*patch`
+PKG_CONFIG="--prefix=$GNUSTEP_PREFIX \
      --libdir=$GNUSTEP_LIBRARIES \
      --includedir=$GNUSTEP_HEADERS \
      CFLAGS=${GS_OTHER_CPPFLAGS}"
-fi
 gsexitstatus=0
 
 REBUILD_MAKE=no
 if [ "$LIBRARY_COMBO" = "apple-apple-apple" ]; then
   echo
-elif [ $FFCALL_INSTALLED = yes ];then
-  echo ffcall already installed >&5
-  echo ffcall already installed
 elif [ $LIBFFI_INSTALLED = yes ];then
   echo libffi already installed >&5
   echo libffi already installed
@@ -616,7 +589,7 @@ else
   SAVE_IS_CVS=$IS_CVS
   IS_CVS=no
   SAVESOURCESDIR=$SOURCESDIR
-  SOURCESDIR=$FFCALLSOURCESDIR
+  SOURCESDIR=$FFISOURCESDIR
   gs_build_package
   SOURCESDIR=$SAVESOURCESDIR
   IS_CVS=$SAVE_IS_CVS
@@ -629,7 +602,7 @@ PLOG=02-libobjc
 PKG=$LIBOBJC
 PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
-PKG_PATCHES=`find $FFCALLSOURCESDIR -name gnustep-objc*patch`
+PKG_PATCHES=`find $FFISOURCESDIR -name gnustep-objc*patch`
 gsexitstatus=0
 if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   # Need to install our own version of libobjc
@@ -643,7 +616,7 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   SAVE_IS_CVS=$IS_CVS
   IS_CVS=no
   SAVESOURCESDIR=$SOURCESDIR
-  SOURCESDIR=$FFCALLSOURCESDIR
+  SOURCESDIR=$FFISOURCESDIR
   SAVEMAKEFLAGS="$MAKEFLAGS"
   MAKEFLAGS=GNUSTEP_INSTALLATION_DOMAIN=SYSTEM
   gs_build_package
@@ -657,7 +630,7 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   echo "  Exit statis is $gsexitstatus" >&5
   echo "  Install Check:" >&5
   ls $gs_install_prefix$GNUSTEP_HEADERS/objc/Object.h >&5 2>&1
-  # Need to check if libobjc and ffcall got installed...
+  # Need to check if libobjc and libffi got installed...
   if [ $gsexitstatus != 0 ]; then
     gs_log_error
     exit 1
@@ -716,9 +689,6 @@ PKG_DISPLAY="GNUstep Base"
 PKG_CONFIG="$PKG_BASE_CONFIG $PKG_EXTRA_CONFIG  ${GSCONFIGFILE} --with-include-flags=-I$GNUSTEP_HEADERS --with-library-flags=-L$GNUSTEP_LIBRARIES"
 if [ $HAVE_LIBXML = 0 ]; then
   PKG_CONFIG="$PKG_CONFIG --disable-xml"
-fi
-if [ x"$FORCEFFILIB" = xlibffi ]; then
-  PKG_CONFIG="$PKG_CONFIG --enable-ffcall"
 fi
 PKG_INSTALL=
 if [ -n "$gs_install_prefix" ]; then

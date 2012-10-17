@@ -225,6 +225,8 @@ if test "$GCC_VERSION" = 2 -a "$gs_cv_gcc_minor_version=" = 96; then
   SETUP_ERRORS="$SETUP_ERRORS W092"
 fi
 
+AC_PATH_PROG(PKGCONFIG, pkg-config, yes, no)
+
 #--------------------------------------------------------------------
 # Check if we are using Apple cc
 #--------------------------------------------------------------------
@@ -607,64 +609,25 @@ fi
 
 #--------------------------------------------------------------------
 # Check for FFI interface libraries for invocations
-# We enable ffi by default now, as it's fixed for some previouly bad
-# platforms, and it has the advantage over ffcall that it does not
-# mess up the stack, so stacktraces and native exception handling
-# work better with it.
 #--------------------------------------------------------------------
 do_broken_libffi=no
-do_broken_libffcall=no
 do_enable_libffi=yes
-do_enable_libffcall=no
-case "$target_cpu" in
-  sparc64*)
-    case "$target_os" in
-      solaris*)
-        do_broken_libffcall=yes;
-        do_enable_libffi=yes;
-        do_enable_libffcall=no;;
-      *) ;;
-    esac ;;
-  *) ;;
-esac
-
-if test "$exceptions" = "yes"; then
-  # ffcall will mess up native exceptions, so we must disable it.
-  do_broken_libffcall=yes
-  do_enable_libffcall=no
-fi
 
 AC_ARG_ENABLE(libffi,
   [  --enable-libffi  		Enable use of libffi library],,
   enable_libffi=$do_enable_libffi)
 
-AC_ARG_ENABLE(ffcall,
-  [  --enable-ffcall  		Enable use of ffcall library],,
-  enable_ffcall=$do_enable_libffcall)
-
 if test "$do_broken_libffi" = "no"; then
+  if test "$PKGCONFIG" = "yes"; then
+    if pkg-config --exists libffi; then
+      pkg_config_libffi=yes
+      ffi_CFLAGS=`pkg-config --cflags libffi`
+      CFLAGS="$CFLAGS $ffi_CFLAGS"
+    fi
+  fi
   AC_CHECK_HEADER(ffi.h, have_libffi=yes, have_libffi=no)
 else
   have_libffi=no
-fi
-if test "$do_broken_libffcall" = "no"; then
-  AC_CHECK_HEADERS(callback.h, have_ffcall=yes, have_ffcall=no)
-else
-  have_ffcall=no
-fi
-if test $have_ffcall = no; then
-  enable_ffcall=no
-  # If we don't have ffcall but do have libffi, use libffi
-  if test $have_libffi = yes; then
-    enable_libffi=yes
-  fi
-fi
-if test $have_libffi = no; then
-  enable_libffi=no
-  # If we don't have libffi but do have ffcall, use ffcall
-  if test $have_ffcall = yes; then
-    enable_ffcall=yes
-  fi
 fi
 
 have_forward_hook=yes
@@ -676,38 +639,24 @@ AC_COMPILE_IFELSE([#include "$srcdir/config/config.forward.m"],
 AC_MSG_RESULT($have_forward_hook)
 if test $have_forward_hook = no; then
   enable_libffi=no
-  enable_ffcall=no
 fi
 CPPFLAGS="$saved_CPPFLAGS"
 
 AC_MSG_CHECKING("FFI library usage")
 if test $enable_libffi = yes; then
   saved_LIBS="$LIBS"
-  LIBS="-lffi $LIBS"
+  if test "$pkg_config_libffi" = "yes"; then
+    ffi_LIBS=`pkg-config --libs libffi`
+  else
+    ffi_LIBS=-lffi
+  fi
+  LIBS="$ffi_LIBS $LIBS"
   AC_TRY_LINK([#include <ffi.h>], ,ffi_ok="yes", ffi_ok="no")
   if test $ffi_ok = yes; then
     AC_MSG_RESULT(libffi)
   else
     LIBS="$saved_LIBS"
   fi
-elif test $enable_ffcall = yes; then
-  saved_LIBS="$LIBS"
-  LIBS="-lcallback -lavcall $LIBS"
-  AC_TRY_LINK([#include <callback.h>], , ffi_ok="yes", ffi_ok="no")
-  if test $ffi_ok = yes; then
-    AC_MSG_RESULT(ffcall)
-  else
-    LIBS="$saved_LIBS"
-  fi
-  AC_MSG_CHECKING(if ffcall trampolines work)
-  AC_RUN_IFELSE([#include "$srcdir/config/config.trampoline.c"],
-	  have_working_trampoline=yes, have_working_trampoline=no, 
-	  have_working_trampoline=yes)
-  AC_MSG_RESULT($have_working_trampoline)
-  # Don't enforce this. Sometimes things work fine anyway...
-  #if test $have_working_trampoline = no; then
-  #  ffi_ok=no
-  #fi
 else
   ffi_ok=no
 fi
