@@ -1,4 +1,9 @@
 AC_DEFUN(OBJC_CON_AUTOLOAD,
+# Copyright (C) 2005 Free Software Foundation
+#
+# Copying and distribution of this file, with or without modification,
+# are permitted in any medium without royalty provided the copyright
+# notice and this notice are preserved.
 #--------------------------------------------------------------------
 # Guess if we are using a object file format that supports automatic
 # loading of constructor functions.
@@ -27,6 +32,7 @@ AC_TRY_RUN([static int loaded = 0;
 	objc_cv_con_autoload=no)
 case "$target_os" in
     cygwin*)	objc_cv_con_autoload=yes;;
+    mingw*)	objc_cv_con_autoload=yes;;
 esac
 ])
 if test $objc_cv_con_autoload = yes; then

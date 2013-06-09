@@ -1,24 +1,22 @@
-/* Dummy NXConstantString impl for so libobjc that doesn't include it */
-#ifndef NeXT_RUNTIME
-#include <objc/NXConstStr.h>
-@implementation NXConstantString
-@end
-#endif
 
-#include <objc/Object.h>
+#include "objc-common.g"
 
-@interface Test : Object
+GS_OBJC_ROOT_CLASS @interface Test 
 +(int) testResult;
 @end
 
 @implementation Test
++ (void) initialize
+{
+  return;
+}
 +(int) testResult
 {
   return -1;
 }
 @end
 
-int main (void) 
+int main (void)
 {
   return ([Test testResult] + 1);
 }

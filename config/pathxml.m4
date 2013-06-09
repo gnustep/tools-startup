@@ -1,4 +1,8 @@
 dnl Code shamelessly stolen from glib-config by Sebastian Rittau
+dnl  Copyright (C) 2005 Free Software Foundation
+dnl  Copying and distribution of this file, with or without modification,
+dnl  are permitted in any medium without royalty provided the copyright
+dnl  notice and this notice are preserved.
 dnl AM_PATH_XML([MINIMUM-VERSION [, ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND]]])
 AC_DEFUN(AM_PATH_XML,[
 AC_ARG_WITH(xml-prefix,
@@ -104,8 +108,6 @@ main()
       sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\2/'`
     xml_config_micro_version=`$XML_CONFIG $xml_config_args --version | \
       sed 's/\([[0-9]]*\).\([[0-9]]*\).\([[0-9]]*\)/\3/'`
-    # Strip '-L/usr/lib' off since this is always in the link path.
-    XML_LIBS=`echo $XML_LIBS | sed -e 's|-L/usr/lib||'`
 
     if test "x$enable_xmltest" = "xyes" ; then
       ac_save_CFLAGS="$CFLAGS"

@@ -17,8 +17,8 @@
 #   License along with this library; see the file COPYING.LIB.
 #   If not, write to the Free Software Foundation,
 #   59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-AC_INIT([GNUstep Setup], 0.20.0, [bug-gnustep@gnu.org])
-AC_PREREQ(2.57)
+AC_INIT([GNUstep Setup], 0.29.0, [bug-gnustep@gnu.org])
+AC_PREREQ([2.60])
 
 # From gnustep-base
 builtin(include, config/objc-con-autoload.m4)dnl
@@ -29,8 +29,6 @@ SETUP_ERRORS=
 
 AC_CANONICAL_TARGET([])
 AC_CONFIG_SRCDIR([InstallGNUstep])
-
-
 
 #---------------------------------------------------------------------
 # Location of the GNUstep.conf config file (--with-config-file)
@@ -356,8 +354,8 @@ fi
 # First, check if there's a working iconv in libc (ie. if the test program
 # compiles and links without any extra flags).
 AC_MSG_CHECKING(iconv support)
-AC_LINK_IFELSE([[#include <iconv.h>
-int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <iconv.h>
+int main(int argc,char **argv) { iconv_open("foo","bar"); }]])]
 ,
   # libc has a working iconv.
   AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
@@ -370,8 +368,8 @@ int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
 if test $found_iconv = no ; then
   old_LIBS="$LIBS"
   LIBS="-liconv $LIBS"
-  AC_LINK_IFELSE([[#include <iconv.h>
-  int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <iconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }]])]
   ,
     # -liconv works.
     AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
@@ -388,8 +386,8 @@ if test $found_iconv = no ; then
   # BSDs install this lib as libgiconv.
   old_LIBS="$LIBS"
   LIBS="-lgiconv $LIBS"
-  AC_LINK_IFELSE([[#include <giconv.h>
-  int main(int argc,char **argv) { iconv_open("foo","bar"); }]]
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <giconv.h>
+  int main(int argc,char **argv) { iconv_open("foo","bar"); }]])]
   ,
     AC_DEFINE(HAVE_ICONV,1, [Define if you have this function])
     AC_DEFINE(HAVE_GICONV,1, [Define if you have this function])
@@ -528,8 +526,13 @@ cc1objpath=`$CC -print-prog-name=cc1obj`
 if test "$cc1objpath" != "cc1obj"; then
   AC_MSG_RESULT(yes)
 else
-  SETUP_ERRORS="$SETUP_ERRORS E150"
-  AC_MSG_RESULT(no)
+  if "${CC}" -v 2>&1 | grep -q 'clang version'; then
+    # clang ok.
+    AC_MSG_RESULT(yes)
+  else
+    SETUP_ERRORS="$SETUP_ERRORS E150"
+    AC_MSG_RESULT(no)
+  fi
 fi
 
 AC_CHECK_HEADERS(objc/objc.h)
@@ -634,7 +637,7 @@ have_forward_hook=yes
 saved_CPPFLAGS="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $OBJCFLAGS -x objective-c"
 AC_MSG_CHECKING("for forwarding callback in runtime")
-AC_COMPILE_IFELSE([#include "$srcdir/config/config.forward.m"],
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "$srcdir/config/config.forward.m"])],
 	have_forward_hook=yes, have_forward_hook=no)
 AC_MSG_RESULT($have_forward_hook)
 if test $have_forward_hook = no; then
