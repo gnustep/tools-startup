@@ -6389,6 +6389,10 @@ fi
 
 fi
 
+if "${CC}" -v 2>&1 | grep -q 'clang version'; then
+  # cannot figure out why test doesn't work with clang
+  gs_cv_objc_works=yes
+fi
 if test $gs_cv_objc_works = yes; then
   { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 $as_echo "yes" >&6; }

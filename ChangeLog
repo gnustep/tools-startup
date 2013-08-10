@@ -1,3 +1,7 @@
+2013-08-10  Adam Fedor  <fedor@gnu.org>
+
+	* configure.ac: Additional fix for clang ObjC test
+
 2013-06-08  Adam Fedor  <fedor@gnu.org>
 
 	* configure.ac: Updates for clang support

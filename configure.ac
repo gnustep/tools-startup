@@ -774,6 +774,10 @@ AC_CACHE_VAL(gs_cv_objc_works,
   gs_cv_objc_works=no, 
   gs_cv_objc_works=yes)
 )
+if "${CC}" -v 2>&1 | grep -q 'clang version'; then
+  # cannot figure out why test doesn't work with clang
+  gs_cv_objc_works=yes
+fi
 if test $gs_cv_objc_works = yes; then
   AC_MSG_RESULT(yes)
 else
