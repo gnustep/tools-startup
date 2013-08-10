@@ -165,6 +165,7 @@ esac
 # Host, compiler checks
 #--------------------------------------------------------------------
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_CPP
 
 #--------------------------------------------------------------------
@@ -943,6 +944,7 @@ AC_SUBST(GNUSTEP_LIBRARIES)
 AC_SUBST(GNUSTEP_TOOLS)
 AC_SUBST(GNUSTEP_SOURCED)
 AC_SUBST(GS_CUSTOM_OBJC)
+AC_SUBST(ac_ct_CXX)
 AC_SUBST(ac_cv_header_callback_h)
 AC_SUBST(ac_cv_header_ffi_h)
 AC_SUBST(ac_cv_header_AppKit_NSApplication_h)

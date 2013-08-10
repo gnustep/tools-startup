@@ -1,5 +1,7 @@
 2013-08-10  Adam Fedor  <fedor@gnu.org>
 
+	* Version 0.30.0
+	* Use libobjc2 if c++ is present
 	* configure.ac: Additional fix for clang ObjC test
 
 2013-06-08  Adam Fedor  <fedor@gnu.org>

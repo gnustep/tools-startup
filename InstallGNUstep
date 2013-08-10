@@ -253,6 +253,18 @@ if [ $AS_ROOT = no -a $HAVE_SUDO = yes ]; then
 fi
 
 #--------------------------------------------------------------------
+# Check if we can use libobjc2
+#--------------------------------------------------------------------
+LIBOBJC_VERSION=libobjc2
+if [ x$CXX_EXEC = x ]; then
+  # No g++ which is needed by libobjc2
+  LIBOBJC_VERSION=gnustep-objc
+else
+  # We have libobc2 so force the install
+  GS_PLATFORM_BUILD_OBJC=yes
+fi
+
+#--------------------------------------------------------------------
 # Find GNUstep sources. Check first if there is a 'core' directory
 # at the same level as us. If so, we are compiling from the source repository.
 # Otherwise check in the 'sources' subdirectory for all the packages
@@ -267,7 +279,7 @@ if [ -d $SOURCESDIR ]; then
     LIBFFI=`basename $LIBFFI .tar.gz`
   fi
   FOUND_LIBOBJC=yes
-  LIBOBJC=`find $SOURCESDIR -name gnustep-objc*tar.gz`
+  LIBOBJC=`find $SOURCESDIR -name $LIBOBJC_VERSION*tar.gz`
   if [ x$LIBOBJC = x ]; then
     FOUND_LIBOBJC=no
   else
@@ -294,21 +306,21 @@ if [ -d $SRCDIR/../core ]; then
 else
   # Compile from tar.gz
   GMAKE=`find $SOURCESDIR -name gnustep-make*tar.gz`
-  if [ x$GMAKE = x ]; then
+  if [ x"$GMAKE" = x ]; then
     echo Cannot find gnustep-make distribution
     echo Cannot find gnustep-make distribution >&5
     FOUND_SOURCES=no
   fi
   GMAKE=`basename $GMAKE .tar.gz`
   GBASE=`find $SOURCESDIR -name gnustep-base*tar.gz`
-  if [ x$GBASE = x ]; then
+  if [ x"$GBASE" = x ]; then
     echo Cannot find gnustep-base distribution
     echo Cannot find gnustep-base distribution >&5
     FOUND_SOURCES=no
   fi
   GBASE=`basename $GBASE .tar.gz`
   GGUI=`find $SOURCESDIR -name gnustep-gui*tar.gz`
-  if [ x$GGUI = x ]; then
+  if [ x"$GGUI" = x ]; then
     echo Cannot find gnustep-gui distribution
     echo Cannot find gnustep-gui distribution >&5
     FOUND_SOURCES=no
@@ -602,7 +614,7 @@ PLOG=02-libobjc
 PKG=$LIBOBJC
 PKG_DISPLAY="libobjc"
 PKG_CONFIG=NO
-PKG_PATCHES=`find $FFISOURCESDIR -name gnustep-objc*patch`
+PKG_PATCHES=`find $FFISOURCESDIR -name $LIBOBJC_VERSION*patch`
 gsexitstatus=0
 if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
   # Need to install our own version of libobjc
@@ -610,8 +622,8 @@ if [ $GCC_VERSION = 2 -o $GS_PLATFORM_BUILD_OBJC = yes ]; then
     echo Custom libobjc already installed >&5
     echo Custom libobjc already installed
   elif [ $FOUND_LIBOBJC = no ]; then
-    echo Warning: Could not find gnustep-objc sources to install >&5
-    echo Warning: Could not find gnustep-objc sources to install
+    echo Warning: Could not find libobjc2 sources to install >&5
+    echo Warning: Could not find libobjc2 sources to install
   else
   SAVE_IS_CVS=$IS_CVS
   IS_CVS=no

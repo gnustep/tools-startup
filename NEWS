@@ -1,3 +1,9 @@
+Changes in version 0.30.0
+=========================
+Update to latest core libraries
+Remove ffcall support
+Add clang support (if installed)
+
 Changes in version 0.28.0
 =========================
 Update to latest core libraries
