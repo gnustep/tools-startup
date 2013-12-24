@@ -1,7 +1,7 @@
-diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
---- libffi-3.0.9.orig/include/Makefile.in	2009-12-31 05:41:01.000000000 -0700
-+++ libffi-3.0.9/include/Makefile.in	2010-07-21 14:18:39.000000000 -0600
-@@ -43,7 +43,7 @@
+diff -u -r libffi-3.0.13.org/include/Makefile.in libffi-3.0.13/include/Makefile.in
+--- libffi-3.0.13.org/include/Makefile.in	2013-03-17 16:36:21.000000000 -0600
++++ libffi-3.0.13/include/Makefile.in	2013-10-19 17:02:55.285780758 -0600
+@@ -71,7 +71,7 @@
  	$(top_srcdir)/configure.ac
  am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
  	$(ACLOCAL_M4)
@@ -10,10 +10,10 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
  CONFIG_HEADER = $(top_builddir)/fficonfig.h
  CONFIG_CLEAN_FILES = ffi.h ffitarget.h
  CONFIG_CLEAN_VPATH_FILES =
-@@ -70,8 +70,8 @@
- am__base_list = \
-   sed '$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;$$!N;s/\n/ /g' | \
-   sed '$$!N;$$!N;$$!N;$$!N;s/\n/ /g'
+@@ -109,8 +109,8 @@
+     || { echo " ( cd '$$dir' && rm -f" $$files ")"; \
+          $(am__cd) "$$dir" && rm -f $$files; }; \
+   }
 -am__installdirs = "$(DESTDIR)$(includesdir)"
 -HEADERS = $(nodist_includes_HEADERS)
 +am__installdirs = "$(DESTDIR)$(includedir)"
@@ -21,26 +21,32 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
  ETAGS = etags
  CTAGS = ctags
  DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
-@@ -204,7 +204,7 @@
+@@ -250,8 +250,8 @@
+ AUTOMAKE_OPTIONS = foreign
  DISTCLEANFILES = ffitarget.h
  EXTRA_DIST = ffi.h.in ffi_common.h
- includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
+-includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
 -nodist_includes_HEADERS = ffi.h ffitarget.h
++includedir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
 +nodist_include_HEADERS = ffi.h ffitarget.h
  all: all-am
  
  .SUFFIXES:
-@@ -246,26 +246,26 @@
+@@ -293,27 +293,27 @@
  
  clean-libtool:
  	-rm -rf .libs _libs
 -install-nodist_includesHEADERS: $(nodist_includes_HEADERS)
-+install-nodist_includeHEADERS: $(nodist_include_HEADERS)
++install-nodist_includeHEADERS: $(nodist_includes_HEADERS)
  	@$(NORMAL_INSTALL)
--	test -z "$(includesdir)" || $(MKDIR_P) "$(DESTDIR)$(includesdir)"
 -	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
-+	test -z "$(includedir)" || $(MKDIR_P) "$(DESTDIR)$(includedir)"
-+	@list='$(nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
++	@list='$(nodist_include_HEADERS)'; test -n "$(includesdir)" || list=; \
+ 	if test -n "$$list"; then \
+-	  echo " $(MKDIR_P) '$(DESTDIR)$(includesdir)'"; \
+-	  $(MKDIR_P) "$(DESTDIR)$(includesdir)" || exit 1; \
++	  echo " $(MKDIR_P) '$(DESTDIR)$(includedir)'"; \
++	  $(MKDIR_P) "$(DESTDIR)$(includedir)" || exit 1; \
+ 	fi; \
  	for p in $$list; do \
  	  if test -f "$$p"; then d=; else d="$(srcdir)/"; fi; \
  	  echo "$$d$$p"; \
@@ -56,17 +62,14 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
 +uninstall-nodist_includeHEADERS:
  	@$(NORMAL_UNINSTALL)
 -	@list='$(nodist_includes_HEADERS)'; test -n "$(includesdir)" || list=; \
-+	@list='$(nodist_include_HEADERS)'; test -n "$(includedir)" || list=; \
++	@list='$(nodist_include_HEADERS)'; test -n "$(includesdir)" || list=; \
  	files=`for p in $$list; do echo $$p; done | sed -e 's|^.*/||'`; \
- 	test -n "$$files" || exit 0; \
--	echo " ( cd '$(DESTDIR)$(includesdir)' && rm -f" $$files ")"; \
--	cd "$(DESTDIR)$(includesdir)" && rm -f $$files
-+	echo " ( cd '$(DESTDIR)$(includedir)' && rm -f" $$files ")"; \
-+	cd "$(DESTDIR)$(includedir)" && rm -f $$files
+-	dir='$(DESTDIR)$(includesdir)'; $(am__uninstall_files_from_dir)
++	dir='$(DESTDIR)$(includedir)'; $(am__uninstall_files_from_dir)
  
  ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
  	list='$(SOURCES) $(HEADERS) $(LISP) $(TAGS_FILES)'; \
-@@ -353,7 +353,7 @@
+@@ -415,7 +415,7 @@
  check: check-am
  all-am: Makefile $(HEADERS)
  installdirs:
@@ -75,7 +78,7 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
  	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
  	done
  install: install-am
-@@ -402,7 +402,7 @@
+@@ -469,7 +469,7 @@
  
  info-am:
  
@@ -84,7 +87,7 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
  
  install-dvi: install-dvi-am
  
-@@ -446,7 +446,7 @@
+@@ -513,7 +513,7 @@
  
  ps-am:
  
@@ -93,7 +96,7 @@ diff -ur libffi-3.0.9.orig/include/Makefile.in libffi-3.0.9/include/Makefile.in
  
  .MAKE: install-am install-strip
  
-@@ -456,12 +456,12 @@
+@@ -523,12 +523,12 @@
  	html-am info info-am install install-am install-data \
  	install-data-am install-dvi install-dvi-am install-exec \
  	install-exec-am install-html install-html-am install-info \
