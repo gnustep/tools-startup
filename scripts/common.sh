@@ -51,7 +51,7 @@ gs_build_package()
     ./configure ${PKG_CONFIG}
     gsexitstatus=$?
     cp config.log ../logs/$PLOG-config.log
-    if [ $gsexitstatus != 0 -o \! -f config.status ]; then
+    if [ $gsexitstatus != 0 ]; then
       gsexitstatus=1
       cd ..
       return
