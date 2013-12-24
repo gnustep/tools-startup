@@ -1,0 +1,23 @@
+diff -u -r libffi-3.0.13.org/configure libffi-3.0.13/configure
+--- libffi-3.0.13.org/configure	2013-03-17 16:36:19.000000000 -0600
++++ libffi-3.0.13/configure	2013-12-24 09:59:28.566817168 -0700
+@@ -14843,7 +14843,6 @@
+   multi_os_directory=`$CC -print-multi-os-directory`
+   case $multi_os_directory in
+     .) ;; # Avoid trailing /.
+-    ../*) toolexeclibdir=$toolexeclibdir/$multi_os_directory ;;
+   esac
+ 
+ else
+diff -u -r libffi-3.0.13.org/include/Makefile.in libffi-3.0.13/include/Makefile.in
+--- libffi-3.0.13.org/include/Makefile.in	2013-03-17 16:36:21.000000000 -0600
++++ libffi-3.0.13/include/Makefile.in	2013-12-24 10:09:26.746826955 -0700
+@@ -250,7 +250,7 @@
+ AUTOMAKE_OPTIONS = foreign
+ DISTCLEANFILES = ffitarget.h
+ EXTRA_DIST = ffi.h.in ffi_common.h
+-includesdir = $(libdir)/@PACKAGE_NAME@-@PACKAGE_VERSION@/include
++includesdir = $(includedir)
+ nodist_includes_HEADERS = ffi.h ffitarget.h
+ all: all-am
+ 
